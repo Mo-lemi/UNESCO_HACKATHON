@@ -1,0 +1,42 @@
+{
+  "manifest_version": 3,
+  "name": "Isazi: Know before you apply",
+  "version": "0.1.0",
+  "description": "Flags fraudulent job postings for South African job seekers, with plain-language reasons instead of a silent block.",
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "*://*.pnet.co.za/*",
+        "*://*.careers24.com/*",
+        "*://*.indeed.co.za/*",
+        "*://*.indeed.com/*",
+        "*://*.facebook.com/*",
+        "*://*.linkedin.com/*"
+      ],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "permissions": ["storage", "activeTab", "notifications"],
+  "host_permissions": [
+    "http://127.0.0.1:8000/*"
+  ]
+}

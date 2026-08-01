@@ -1,0 +1,55 @@
+/* Same self-hosted fonts and palette as popup.css, kept as a single reading
+   list (not individually boxed lesson cards) so it stays consistent with
+   the popup's terminal-console visual language. */
+
+@font-face {
+  font-family: 'IBM Plex Sans';
+  font-weight: 100 700;
+  font-style: normal;
+  src: url(fonts/plexsans-var.woff2) format('woff2');
+}
+@font-face {
+  font-family: 'IBM Plex Sans Condensed';
+  font-weight: 600;
+  src: url(fonts/plexcond-600.woff2) format('woff2');
+}
+@font-face {
+  font-family: 'Geist Mono';
+  font-weight: 400 600;
+  font-style: normal;
+  src: url(fonts/geistmono-var.woff2) format('woff2');
+}
+
+:root{
+  --bg:#0E1330; --ink:#F3F1E6; --ink-soft:#9C9BC2; --ink-dim:#5E5F86;
+  --rule:#252B57; --gold:#D9A441; --teal:#3BB596;
+  --ui:'IBM Plex Sans', -apple-system, sans-serif;
+  --mono:'Geist Mono', monospace;
+  --display:'IBM Plex Sans Condensed', sans-serif;
+}
+*{ box-sizing:border-box; }
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:var(--ui); max-width:640px; margin:0 auto;
+}
+.bar{ display:flex; align-items:baseline; gap:0.6rem; padding:1rem 1.2rem; border-bottom:1px solid var(--rule); }
+.wordmark{ font-family:var(--display); font-weight:700; font-size:1.1rem; }
+.ver{ font-family:var(--mono); font-size:0.75rem; color:var(--ink-dim); }
+.purpose{ margin:0; padding:0.7rem 1.2rem; font-size:0.85rem; color:var(--ink-soft); border-bottom:1px solid var(--rule); }
+
+main{ padding:0 1.2rem; }
+.lesson{ padding:1.1rem 0; border-bottom:1px solid var(--rule); }
+.lesson:last-child{ border-bottom:none; }
+.lesson h3{ font-family:var(--display); font-size:1.05rem; margin:0 0 0.4rem; font-weight:700; }
+.lesson p{ margin:0 0 0.7rem; font-size:0.88rem; color:var(--ink-soft); line-height:1.55; }
+.lesson-actions{ display:flex; gap:0.6rem; align-items:center; }
+.lang-select{
+  background:transparent; color:var(--ink-soft); border:1px solid var(--rule);
+  font-family:var(--mono); font-size:0.72rem; padding:0.3rem 0.4rem;
+}
+.share-btn{
+  background:var(--gold); color:var(--bg); border:none; font-family:var(--ui);
+  font-weight:700; font-size:0.78rem; padding:0.4rem 0.7rem; cursor:pointer;
+}
+.share-btn:hover{ background:#c9953a; }
+.share-btn.done{ background:var(--teal); }

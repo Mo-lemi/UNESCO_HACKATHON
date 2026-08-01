@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Isazi</title>
+<link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <header class="bar">
+    <span class="wordmark">ISAZI</span>
+    <span class="ver">v0.1</span>
+    <span class="spacer"></span>
+    <span id="api-dot" class="dot"></span>
+    <span id="api-label" class="api-label">checking</span>
+  </header>
+  <p class="purpose">job‑posting fraud reader: reasons, not just a verdict</p>
+
+  <main id="view-loading" class="view">
+    <p class="line muted">scanning page…</p>
+  </main>
+
+  <main id="view-empty" class="view hidden">
+    <p class="line muted">no posting detected on this page</p>
+    <p class="line muted dim">use "scan text" below for anything pasted or forwarded on whatsapp</p>
+  </main>
+
+  <main id="view-result" class="view hidden">
+    <div class="readout">
+      <span id="risk-score" class="score">–</span><span class="score-max">/100</span>
+      <span id="risk-tier" class="tier">–</span>
+    </div>
+    <div class="meter-track"><div id="risk-bar-fill" class="meter-fill"></div></div>
+
+    <div id="flag-line" class="flag-line"></div>
+
+    <div class="why">
+      <p class="label">why</p>
+      <div id="shap-rows"></div>
+    </div>
+
+    <p class="advice" id="advice-text"></p>
+
+    <div class="actions">
+      <button class="btn" id="btn-learn">learn</button>
+      <button class="btn" id="btn-academy">academy</button>
+      <button class="btn" id="btn-report">report</button>
+    </div>
+  </main>
+
+  <section class="scan">
+    <button class="scan-toggle" id="scan-toggle">+ scan text</button>
+    <div class="scan-body hidden" id="scan-body">
+      <textarea id="paste-input" rows="3" placeholder="paste job posting or forwarded text…"></textarea>
+      <button class="btn primary full" id="btn-scan-paste">scan</button>
+    </div>
+  </section>
+
+  <script src="popup.js"></script>
+</body>
+</html>
