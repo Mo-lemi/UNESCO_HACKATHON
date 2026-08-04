@@ -38,7 +38,7 @@ export function App() {
 
       <footer className="border-t border-slate-800 bg-slate-950/60 py-6 text-center text-xs text-slate-500 font-mono">
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
-          <span>ISAZI — Job Posting Fraud Reader & Red Flag Academy</span>
+          <span>QHAPHELA — Job Posting Fraud Reader & Red Flag Academy</span>
           <span className="text-slate-600">South African Deception Pattern Detection • XAI SHAP Scoring Engine</span>
         </div>
       </footer>

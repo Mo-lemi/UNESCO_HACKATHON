@@ -1,0 +1,13 @@
+scikit-learn
+pandas
+numpy
+imbalanced-learn
+shap
+xgboost
+fastapi
+uvicorn[standard]
+pydantic
+joblib
+# Test suite (qhaphela/test_app.py)
+pytest
+httpx

@@ -2,14 +2,15 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Isazi</title>
+<title>Qhaphela</title>
 <link rel="stylesheet" href="popup.css">
 </head>
 <body>
   <header class="bar">
-    <span class="wordmark">ISAZI</span>
+    <span class="wordmark">QHAPHELA</span>
     <span class="ver">v0.1</span>
     <span class="spacer"></span>
+    <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Toggle dark/light mode">☾</button>
     <span id="api-dot" class="dot"></span>
     <span id="api-label" class="api-label">checking</span>
   </header>
@@ -31,17 +32,25 @@
     </div>
     <div class="meter-track"><div id="risk-bar-fill" class="meter-fill"></div></div>
 
-    <div id="flag-line" class="flag-line"></div>
-
-    <div class="why">
-      <p class="label">why</p>
-      <div id="shap-rows"></div>
+    <div class="id-warning hidden" id="id-warning">
+      <p class="id-title">⚠ Identity theft risk</p>
+      <p class="id-body">This posting asks for information that can be used to steal your identity:</p>
+      <div id="id-items"></div>
+      <p class="id-body">Never send these before you have met the employer and verified the company independently.</p>
     </div>
 
     <p class="advice" id="advice-text"></p>
 
+    <button class="more-toggle" id="btn-learn" type="button">+ click for more</button>
+    <div class="details hidden" id="details-body">
+      <div id="flag-line" class="flag-line"></div>
+      <div class="why">
+        <p class="label" id="why-label">why</p>
+        <div id="shap-rows"></div>
+      </div>
+    </div>
+
     <div class="actions">
-      <button class="btn" id="btn-learn">learn</button>
       <button class="btn" id="btn-academy">academy</button>
       <button class="btn" id="btn-report">report</button>
     </div>

@@ -1,4 +1,4 @@
-// Popup script for the Isazi toolbar icon.
+// Popup script for the Qhaphela toolbar icon.
 // Renders whatever content.js already scored for the active tab (see
 // loadForActiveTab below), plus a manual "scan text" box for pages the
 // content script doesn't run on, or text forwarded via WhatsApp.
@@ -14,22 +14,6 @@ const FLAG_LABELS = {
   "Requests an upfront payment or registration fee": "upfront payment",
 };
 
-const FEATURE_LABELS = {
-  popia_clause_with_doc_request: "fake popia clause + doc request",
-  bbbee_claim_no_cert: "unverifiable b-bbee claim",
-  whatsapp_migration: "whatsapp migration",
-  upfront_payment_request: "upfront payment language",
-  id_or_banking_request: "id/banking request",
-  urgency_language: "urgency / scarcity language",
-  salary_mismatch_ratio: "salary/role mismatch",
-  freemail_contact: "free-email contact",
-  posting_length_norm: "posting length pattern",
-};
-
-function featureLabel(name) {
-  return FEATURE_LABELS[name] || name;
-}
-
 function show(id) {
   ["view-loading", "view-empty", "view-result"].forEach((v) => {
     document.getElementById(v).classList.toggle("hidden", v !== id);
@@ -38,6 +22,8 @@ function show(id) {
 
 function renderResult(result) {
   show("view-result");
+  document.getElementById("details-body").classList.add("hidden");
+  document.getElementById("btn-learn").textContent = "+ click for more";
   const cls = TIER_CLASS[result.tier] || "";
 
   const scoreEl = document.getElementById("risk-score");
@@ -62,18 +48,40 @@ function renderResult(result) {
     flagLine.appendChild(span);
   });
 
-  const shapEl = document.getElementById("shap-rows");
-  shapEl.innerHTML = "";
-  const reasons = result.top_reasons || [];
-  if (reasons.length === 0) {
-    shapEl.innerHTML = '<p class="muted dim">no standout signal either way</p>';
+  // Itemized, disclosed point breakdown -- fixed weights per signal (see
+  // features.RULE_POINT_WEIGHTS on the backend), not the raw ML/SHAP
+  // breakdown, which is often just generic recruiting vocabulary with no
+  // meaning to a non-technical reader. A second, transparent lens shown
+  // alongside the AI score, not a decomposition of its own opaque math.
+  const whyEl = document.getElementById("shap-rows");
+  const whyLabelEl = document.getElementById("why-label");
+  whyEl.innerHTML = "";
+  const ruleReasons = result.rule_reasons || [];
+  whyLabelEl.textContent = ruleReasons.length
+    ? `why — ${result.rule_points_total}/100 from disclosed risk factors`
+    : "why";
+  if (ruleReasons.length === 0) {
+    whyEl.innerHTML = '<p class="muted dim">No specific red flags found in the text.</p>';
   }
-  reasons.forEach((r) => {
-    const positive = r.contribution >= 0;
+  ruleReasons.forEach((r) => {
     const row = document.createElement("div");
-    row.className = "shap-row";
-    row.innerHTML = `<span class="name">${featureLabel(r.feature)}</span><span class="val ${positive ? "pos" : "neg"}">${positive ? "+" : ""}${r.contribution.toFixed(3)}</span>`;
-    shapEl.appendChild(row);
+    row.className = "why-row";
+    row.innerHTML = `<span class="reason">${r.reason}</span><span class="points">+${r.points}</span>`;
+    whyEl.appendChild(row);
+  });
+
+  // Identity-theft warning: its own banner, since the harm is different in
+  // kind from "this job isn't real" and stays actionable either way.
+  const idWarnEl = document.getElementById("id-warning");
+  const idItemsEl = document.getElementById("id-items");
+  const idSignals = result.identity_theft_signals || [];
+  idItemsEl.innerHTML = "";
+  idWarnEl.classList.toggle("hidden", idSignals.length === 0);
+  idSignals.forEach((s) => {
+    const row = document.createElement("div");
+    row.className = "id-item";
+    row.textContent = s;
+    idItemsEl.appendChild(row);
   });
 
   const adviceEl = document.getElementById("advice-text");
@@ -99,7 +107,7 @@ async function loadForActiveTab() {
   show("view-loading");
   const tab = await getActiveTab();
   if (!tab) return show("view-empty");
-  chrome.runtime.sendMessage({ type: "ISAZI_GET_TAB_RESULT", tabId: tab.id }, (resp) => {
+  chrome.runtime.sendMessage({ type: "QHAPHELA_GET_TAB_RESULT", tabId: tab.id }, (resp) => {
     if (resp && resp.ok && resp.data) {
       renderResult(resp.data.result);
     } else {
@@ -134,7 +142,7 @@ document.getElementById("btn-scan-paste").addEventListener("click", () => {
   const text = document.getElementById("paste-input").value.trim();
   if (!text) return;
   show("view-loading");
-  chrome.runtime.sendMessage({ type: "ISAZI_SCAN_TEXT", text }, (resp) => {
+  chrome.runtime.sendMessage({ type: "QHAPHELA_SCAN_TEXT", text }, (resp) => {
     if (resp && resp.ok) {
       renderResult(resp.result);
     } else {
@@ -147,8 +155,10 @@ document.getElementById("btn-academy").addEventListener("click", () => {
   chrome.tabs.create({ url: chrome.runtime.getURL("academy.html") });
 });
 
-document.getElementById("btn-learn").addEventListener("click", () => {
-  document.querySelector(".why").scrollIntoView({ behavior: "smooth", block: "center" });
+document.getElementById("btn-learn").addEventListener("click", (e) => {
+  const details = document.getElementById("details-body");
+  const nowHidden = details.classList.toggle("hidden");
+  e.target.textContent = nowHidden ? "+ click for more" : "− less detail";
 });
 
 // Hackathon MVP: this is a local-only acknowledgement, not yet wired to a
@@ -158,6 +168,20 @@ document.getElementById("btn-learn").addEventListener("click", () => {
 document.getElementById("btn-report").addEventListener("click", (e) => {
   e.target.textContent = "noted";
   e.target.disabled = true;
+});
+
+// Theme shared with the in-page panel via chrome.storage.local, so
+// switching it in either surface applies to both.
+chrome.storage.local.get(["qhaphela-theme"]).then((data) => {
+  if (data["qhaphela-theme"] === "light") {
+    document.body.classList.add("light");
+    document.getElementById("theme-toggle").textContent = "☀";
+  }
+});
+document.getElementById("theme-toggle").addEventListener("click", () => {
+  const light = document.body.classList.toggle("light");
+  document.getElementById("theme-toggle").textContent = light ? "☀" : "☾";
+  chrome.storage.local.set({ "qhaphela-theme": light ? "light" : "dark" });
 });
 
 checkApiHealth();

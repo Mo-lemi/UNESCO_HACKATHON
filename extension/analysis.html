@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Qhaphela — Safety Report</title>
+<link rel="stylesheet" href="analysis.css">
+</head>
+<body>
+
+<header class="topbar">
+  <button class="icon-btn" id="btn-back" type="button" aria-label="Back">←</button>
+  <img class="brand-mark" src="icons/logo-mark.png" alt="">
+  <span class="brand-name">QHAPHELA</span>
+  <span class="grow"></span>
+  <select class="lang" id="lang" aria-label="Language"></select>
+  <button class="icon-btn" id="btn-theme" type="button" aria-label="Toggle dark mode">☾</button>
+</header>
+
+<nav class="tabs" id="tabs" role="tablist">
+  <button class="tab is-active" data-panel="overview" role="tab">Overview</button>
+  <button class="tab" data-panel="redflags" role="tab">Red Flags</button>
+  <button class="tab" data-panel="highlights" role="tab">Highlights</button>
+  <button class="tab" data-panel="reasoning" role="tab">AI Reasoning</button>
+  <button class="tab" data-panel="cv" role="tab">CV &amp; Application</button>
+  <button class="tab" data-panel="similar" role="tab">Similar Jobs</button>
+  <button class="tab" data-panel="tracker" role="tab">My Applications</button>
+</nav>
+
+<main id="main">
+  <p class="empty" id="loading">Loading the most recent analysis…</p>
+</main>
+
+<footer class="footbar">
+  <span>Always apply through official websites and never share sensitive information early.</span>
+  <a href="academy.html" target="_blank" rel="noopener">Learn more about job scams →</a>
+</footer>
+
+<script src="analysis.js"></script>
+</body>
+</html>

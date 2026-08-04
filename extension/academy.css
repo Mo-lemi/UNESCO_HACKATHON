@@ -1,55 +1,79 @@
-/* Same self-hosted fonts and palette as popup.css, kept as a single reading
-   list (not individually boxed lesson cards) so it stays consistent with
-   the popup's terminal-console visual language. */
+/* Same self-hosted fonts and theme system as popup.css/panel.css, kept as a
+   single reading list (not individually boxed lesson cards). This page is
+   the most reading-heavy surface in the extension, so the accessible
+   typeface matters most here. */
 
 @font-face {
-  font-family: 'IBM Plex Sans';
-  font-weight: 100 700;
+  font-family: 'Atkinson Hyperlegible';
+  font-weight: 400;
   font-style: normal;
-  src: url(fonts/plexsans-var.woff2) format('woff2');
+  src: url(fonts/atkinson-regular.woff2) format('woff2');
 }
 @font-face {
-  font-family: 'IBM Plex Sans Condensed';
-  font-weight: 600;
-  src: url(fonts/plexcond-600.woff2) format('woff2');
-}
-@font-face {
-  font-family: 'Geist Mono';
-  font-weight: 400 600;
+  font-family: 'Atkinson Hyperlegible';
+  font-weight: 700;
   font-style: normal;
-  src: url(fonts/geistmono-var.woff2) format('woff2');
+  src: url(fonts/atkinson-bold.woff2) format('woff2');
 }
 
-:root{
-  --bg:#0E1330; --ink:#F3F1E6; --ink-soft:#9C9BC2; --ink-dim:#5E5F86;
-  --rule:#252B57; --gold:#D9A441; --teal:#3BB596;
-  --ui:'IBM Plex Sans', -apple-system, sans-serif;
-  --mono:'Geist Mono', monospace;
-  --display:'IBM Plex Sans Condensed', sans-serif;
+/* Shares the measured colour system used by panel.css/popup.css. */
+/* Brand palette sampled from the Qhaphela AI logo, matching panel.css and
+   analysis.css so all three surfaces read as one product. Light is the
+   default here, as in the rest of the ecosystem. */
+:root, body{
+  --bg:#F4F6FA; --surface:#FFFFFF;
+  --ink:#081A2F;       /* 17.51:1 AAA */
+  --ink-soft:#2E3A4B;  /* 11.30:1 AAA */
+  --ink-dim:#5B6472;   /*  5.94:1 AA  */
+  --rule:#E2E8F0;
+  --gold:#8A6200;      /*  5.49:1 AA  (logo gold is 1.60:1 on white) */
+  --teal:#0B6B3A;      /*  6.61:1 AA  */
+  --primary:#083E7D;   /* 10.52:1 AAA */
+  --ui:'Atkinson Hyperlegible', -apple-system, sans-serif;
 }
+body.dark{
+  --bg:#080A0F; --surface:#14161F;
+  --ink:#F2F2F5; --ink-soft:#D7D8DE; --ink-dim:#9DA0AC;
+  --rule:#262A36;
+  --gold:#F4C74A;      /* true logo gold works on dark */
+  --teal:#4ADE80;
+  --primary:#7FB3FF;
+}
+
 *{ box-sizing:border-box; }
 body{
   margin:0; background:var(--bg); color:var(--ink);
   font-family:var(--ui); max-width:640px; margin:0 auto;
+  transition:background .15s ease, color .15s ease;
 }
-.bar{ display:flex; align-items:baseline; gap:0.6rem; padding:1rem 1.2rem; border-bottom:1px solid var(--rule); }
-.wordmark{ font-family:var(--display); font-weight:700; font-size:1.1rem; }
-.ver{ font-family:var(--mono); font-size:0.75rem; color:var(--ink-dim); }
-.purpose{ margin:0; padding:0.7rem 1.2rem; font-size:0.85rem; color:var(--ink-soft); border-bottom:1px solid var(--rule); }
+.bar{ display:flex; align-items:center; gap:0.6rem; padding:1.1rem 1.2rem; background:var(--surface); border-bottom:1px solid var(--rule); }
+.wordmark{ font-family:var(--ui); font-weight:700; font-size:1.15rem; color:var(--primary); }
+.ver{ font-family:var(--ui); font-size:0.8rem; color:var(--ink-dim); }
+.spacer{ flex:1; }
+.theme-toggle{
+  background:none; border:none; color:var(--ink-soft); font-size:0.95rem;
+  cursor:pointer; padding:0.1rem 0.3rem; line-height:1;
+}
+.theme-toggle:hover{ color:var(--gold); }
+.purpose{ margin:0; padding:0.75rem 1.2rem; font-size:0.9rem; color:var(--ink-soft); border-bottom:1px solid var(--rule); }
 
 main{ padding:0 1.2rem; }
-.lesson{ padding:1.1rem 0; border-bottom:1px solid var(--rule); }
-.lesson:last-child{ border-bottom:none; }
-.lesson h3{ font-family:var(--display); font-size:1.05rem; margin:0 0 0.4rem; font-weight:700; }
-.lesson p{ margin:0 0 0.7rem; font-size:0.88rem; color:var(--ink-soft); line-height:1.55; }
+.lesson{ background:var(--surface); border:1px solid var(--rule); border-radius:12px;
+  padding:1rem; margin-bottom:.8rem; }
+
+.lesson h3{ font-family:var(--ui); font-size:1.1rem; margin:0 0 0.45rem; font-weight:700; }
+.lesson p{ margin:0 0 0.75rem; font-size:0.95rem; color:var(--ink-soft); line-height:1.6; }
 .lesson-actions{ display:flex; gap:0.6rem; align-items:center; }
 .lang-select{
   background:transparent; color:var(--ink-soft); border:1px solid var(--rule);
-  font-family:var(--mono); font-size:0.72rem; padding:0.3rem 0.4rem;
+  font-family:var(--ui); font-size:0.78rem; padding:0.35rem 0.45rem;
 }
 .share-btn{
   background:var(--gold); color:var(--bg); border:none; font-family:var(--ui);
-  font-weight:700; font-size:0.78rem; padding:0.4rem 0.7rem; cursor:pointer;
+  font-weight:700; font-size:0.82rem; padding:0.45rem 0.75rem; cursor:pointer;
 }
-.share-btn:hover{ background:#c9953a; }
+.share-btn:hover{ opacity:0.9; }
 .share-btn.done{ background:var(--teal); }
+
+/* Brand mark in the header, matching the panel and analysis page. */
+.brand-mark{ width:30px; height:30px; object-fit:contain; }

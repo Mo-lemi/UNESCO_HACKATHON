@@ -1,5 +1,5 @@
 {
-  "name": "Isazi Job Fraud Detector",
+  "name": "Qhaphela Job Fraud Detector",
   "description": "AI-powered South African job posting fraud reader providing risk scoring, SHAP reason explanations, rule floor flags, and Red Flag Academy media literacy education.",
   "requestFramePermissions": [],
   "majorCapabilities": [

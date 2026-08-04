@@ -1,85 +1,101 @@
-/* Deliberately styled as a single terminal/SOC-console readout rather than a
-   stack of dashboard cards: hairline dividers only, no pill-shaped status
-   badges, monospace-led data. Fonts are self-hosted (no CDN) so scoring and
-   the UI both work offline, which matters for a data-cost-sensitive
-   audience. IBM Plex Sans/Condensed for UI text (real IBM brand, chosen for
-   distinctive character, not a generic default); Geist Mono (Vercel, OFL)
-   for the data-heavy areas. */
+/* Deliberately styled as a single readout rather than a stack of dashboard
+   cards: hairline dividers only, no pill-shaped status badges. Fonts are
+   self-hosted (no CDN) so scoring and the UI both work offline, which
+   matters for a data-cost-sensitive audience.
+
+   Typeface: Atkinson Hyperlegible (Braille Institute, SIL OFL) throughout --
+   checked current accessibility research before choosing it; it's built
+   specifically to maximise character distinction for low-vision and general
+   readers, which matters more here than a developer-tool look, since the
+   real audience is job seekers. */
 
 @font-face {
-  font-family: 'IBM Plex Sans';
-  font-weight: 100 700;
+  font-family: 'Atkinson Hyperlegible';
+  font-weight: 400;
   font-style: normal;
-  src: url(fonts/plexsans-var.woff2) format('woff2');
+  src: url(fonts/atkinson-regular.woff2) format('woff2');
 }
 @font-face {
-  font-family: 'IBM Plex Sans Condensed';
-  font-weight: 600;
-  src: url(fonts/plexcond-600.woff2) format('woff2');
-}
-@font-face {
-  /* Vercel's Geist Mono (OFL) -- chosen over IBM Plex Mono after checking
-     current type-design commentary: it's specifically praised for
-     distinct character forms (dotted zero, tailed l) and reads as a real
-     developer-tool typeface rather than a default choice. Variable font,
-     one file covers the weight range. */
-  font-family: 'Geist Mono';
-  font-weight: 400 600;
+  font-family: 'Atkinson Hyperlegible';
+  font-weight: 700;
   font-style: normal;
-  src: url(fonts/geistmono-var.woff2) format('woff2');
+  src: url(fonts/atkinson-bold.woff2) format('woff2');
 }
 
-:root{
+/* Colour system is shared with panel.css -- see the long note there. Every
+   pair below was measured for WCAG 2.2 contrast against its own theme
+   background; dark --ink-dim and light --gold were both corrected after
+   measurement showed them under AA. */
+:root, body{
+  /* dark theme (default) -- ratios vs #0E1330 */
   --bg:#0E1330;
-  --ink:#F3F1E6; --ink-soft:#9C9BC2; --ink-dim:#5E5F86;
+  --ink:#F3F1E6;        /* 16.06:1 AAA */
+  --ink-soft:#9C9BC2;   /*  6.83:1 AA  */
+  --ink-dim:#8385AE;    /*  5.14:1 AA  (was #5E5F86 at 2.99:1 -- failed) */
   --rule:#252B57;
-  --gold:#D9A441;
-  --teal:#3BB596;
-  --amber:#D89A45;
-  --crimson:#D65B4C;
-  --ui:'IBM Plex Sans', -apple-system, sans-serif;
-  --display:'IBM Plex Sans Condensed', sans-serif;
-  --mono:'Geist Mono', monospace;
+  --gold:#D9A441;       /*  8.09:1 AAA */
+  --teal:#3BB596;       /*  7.13:1 AAA */
+  --amber:#D89A45;      /*  7.47:1 AAA */
+  --crimson:#E06B5C;    /*  5.57:1 AA  */
+  --ui:'Atkinson Hyperlegible', -apple-system, sans-serif;
+}
+body.light{
+  /* light theme -- ratios vs #FBFAF6 */
+  --bg:#FBFAF6;
+  --ink:#14162E;        /* 16.98:1 AAA */
+  --ink-soft:#4B4D66;   /*  7.88:1 AAA */
+  --ink-dim:#6E7086;    /*  4.65:1 AA  */
+  --rule:#E3E1EC;
+  --gold:#8F6109;       /*  5.18:1 AA  (was #9C6A0E at 4.49:1 -- under AA) */
+  --teal:#14795C;       /*  5.13:1 AA  */
+  --amber:#8A5A00;      /*  5.67:1 AA  */
+  --crimson:#B3261E;    /*  6.26:1 AA  */
 }
 
 *{ box-sizing:border-box; }
 html, body{ margin:0; }
 body{
-  width:336px;
+  width:340px;
   background:var(--bg); color:var(--ink);
-  font-family:var(--mono); font-size:12.5px; line-height:1.55;
+  font-family:var(--ui); font-size:13.5px; line-height:1.55;
+  transition:background .15s ease, color .15s ease;
 }
 .hidden{ display:none !important; }
 button{ font-family:inherit; }
 
 /* ---- header: one status line, nothing else ---- */
 .bar{
-  display:flex; align-items:baseline; gap:0.5rem;
-  padding:0.6rem 0.75rem; border-bottom:1px solid var(--rule);
+  display:flex; align-items:center; gap:0.5rem;
+  padding:0.65rem 0.75rem; border-bottom:1px solid var(--rule);
 }
-.wordmark{ font-family:var(--display); font-weight:700; font-size:0.92rem; letter-spacing:0.02em; color:var(--ink); }
-.ver{ color:var(--ink-dim); font-size:0.68rem; }
+.wordmark{ font-family:var(--ui); font-weight:700; font-size:1rem; letter-spacing:0.01em; color:var(--ink); }
+.ver{ color:var(--ink-dim); font-size:0.7rem; }
 .spacer{ flex:1; }
-.dot{ width:6px; height:6px; border-radius:50%; background:var(--ink-dim); }
+.dot{ width:7px; height:7px; border-radius:50%; background:var(--ink-dim); }
 .dot.ok{ background:var(--teal); }
 .dot.down{ background:var(--crimson); }
-.api-label{ font-size:0.66rem; color:var(--ink-dim); }
+.api-label{ font-size:0.7rem; color:var(--ink-dim); }
+.theme-toggle{
+  background:none; border:none; color:var(--ink-soft); font-size:0.9rem;
+  cursor:pointer; padding:0.1rem 0.25rem; line-height:1;
+}
+.theme-toggle:hover{ color:var(--gold); }
 
 .purpose{
-  margin:0; padding:0.4rem 0.75rem; font-family:var(--ui); font-size:0.72rem;
+  margin:0; padding:0.45rem 0.75rem; font-family:var(--ui); font-size:0.76rem;
   color:var(--ink-soft); border-bottom:1px solid var(--rule);
 }
 
-.view{ padding:0.8rem 0.75rem; }
+.view{ padding:0.85rem 0.75rem; }
 .line{ margin:0 0 0.3rem; }
-.muted{ color:var(--ink-soft); font-family:var(--ui); font-size:0.82rem; }
-.muted.dim{ color:var(--ink-dim); font-size:0.74rem; }
+.muted{ color:var(--ink-soft); font-family:var(--ui); font-size:0.86rem; }
+.muted.dim{ color:var(--ink-dim); font-size:0.78rem; }
 
 /* ---- the readout: no box, just scale and colour do the work ---- */
 .readout{ display:flex; align-items:baseline; gap:0.5rem; margin-bottom:0.5rem; }
-.score{ font-size:2.1rem; font-weight:500; font-variant-numeric:tabular-nums; letter-spacing:-0.01em; }
-.score-max{ color:var(--ink-dim); font-size:0.8rem; }
-.tier{ margin-left:auto; font-size:0.7rem; letter-spacing:0.08em; text-transform:uppercase; }
+.score{ font-size:2.2rem; font-weight:700; font-variant-numeric:tabular-nums; letter-spacing:-0.01em; }
+.score-max{ color:var(--ink-dim); font-size:0.82rem; }
+.tier{ margin-left:auto; font-size:0.74rem; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; }
 .tier.high{ color:var(--crimson); }
 .tier.medium{ color:var(--amber); }
 .tier.low{ color:var(--teal); }
@@ -87,52 +103,75 @@ button{ font-family:inherit; }
 .score.medium{ color:var(--amber); }
 .score.low{ color:var(--teal); }
 
-.floor-note{ color:var(--ink-dim); font-size:0.68rem; margin-left:0.4rem; }
+.floor-note{ color:var(--ink-dim); font-size:0.7rem; margin-left:0.4rem; }
 
-.meter-track{ height:3px; background:var(--rule); margin-bottom:0.75rem; }
-.meter-fill{ height:100%; transition:width .25s ease; }
+.meter-track{ height:4px; background:var(--rule); margin-bottom:0.8rem; border-radius:2px; }
+.meter-fill{ height:100%; border-radius:2px; transition:width .25s ease; }
 @media (prefers-reduced-motion: reduce){ .meter-fill{ transition:none; } }
 
 /* ---- flags: inline text tags, no pills ---- */
-.flag-line{ font-size:0.74rem; margin-bottom:0.75rem; color:var(--ink-soft); }
-.flag-line .tag{ color:var(--crimson); }
+.flag-line{ font-size:0.78rem; margin-bottom:0.8rem; color:var(--ink-soft); }
+.flag-line .tag{ color:var(--crimson); font-weight:700; }
 .flag-line .tag::before{ content:"⚑ "; }
 .flag-line .tag + .tag{ margin-left:0.6rem; }
 
 /* ---- why: a log, not a panel ---- */
-.why{ margin-bottom:0.75rem; }
-.label{ margin:0 0 0.4rem; font-size:0.66rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--ink-dim); }
-.shap-row{ display:flex; justify-content:space-between; gap:0.6rem; font-size:0.78rem; padding:0.12rem 0; }
-.shap-row .name{ color:var(--ink-soft); font-family:var(--ui); }
-.shap-row .val{ font-variant-numeric:tabular-nums; flex-shrink:0; }
-.shap-row .val.pos{ color:var(--crimson); }
-.shap-row .val.neg{ color:var(--teal); }
+.why{ margin-bottom:0.8rem; }
+.label{ margin:0 0 0.4rem; font-size:0.7rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink-dim); }
+.why-row{
+  display:flex; justify-content:space-between; gap:0.6rem;
+  font-family:var(--ui); font-size:0.84rem; color:var(--ink); padding:0.2rem 0;
+  border-bottom:1px solid var(--rule);
+}
+.why-row:last-child{ border-bottom:none; }
+.why-row .reason{ flex:1; }
+.why-row .points{ flex-shrink:0; color:var(--crimson); font-weight:700; font-variant-numeric:tabular-nums; }
+
+/* Identity-theft banner: the one filled-background element in the popup,
+   because it's the highest-consequence warning and must break out of the
+   flat readout hierarchy. */
+.id-warning{
+  background:rgba(214,91,76,0.12); border-left:3px solid var(--crimson);
+  padding:0.6rem 0.65rem; margin:0 0 0.75rem;
+}
+body.light .id-warning{ background:rgba(179,38,30,0.08); }
+.id-title{ margin:0 0 0.35rem; color:var(--crimson); font-weight:700; font-size:0.88rem; }
+.id-body{ margin:0.35rem 0; font-size:0.8rem; color:var(--ink-soft); }
+.id-item{ font-size:0.82rem; color:var(--ink); padding:0.12rem 0; }
+.id-item::before{ content:"• "; color:var(--crimson); font-weight:700; }
 
 .advice{
-  font-family:var(--ui); font-size:0.78rem; color:var(--ink-soft);
-  border-left:2px solid var(--gold); padding-left:0.6rem; margin:0 0 0.8rem;
+  font-family:var(--ui); font-size:0.82rem; color:var(--ink-soft);
+  border-left:3px solid var(--gold); padding-left:0.6rem; margin:0 0 0.65rem;
 }
-.advice::before{ content:"› "; color:var(--gold); }
+.advice::before{ content:"› "; color:var(--gold); font-weight:700; }
+
+.more-toggle{
+  display:block; background:none; border:none; color:var(--ink-dim); font-family:var(--ui);
+  font-size:0.78rem; font-weight:700; cursor:pointer; padding:0.1rem 0 0.7rem;
+}
+.more-toggle:hover{ color:var(--ink-soft); }
+.details.hidden{ display:none; }
 
 .actions{ display:flex; gap:1px; background:var(--rule); border:1px solid var(--rule); margin-bottom:0.2rem; }
 .btn{
-  flex:1; background:var(--bg); color:var(--ink); border:none; padding:0.45rem 0.4rem;
-  font-family:var(--ui); font-size:0.74rem; font-weight:600; cursor:pointer;
+  flex:1; background:var(--bg); color:var(--ink); border:none; padding:0.5rem 0.4rem;
+  font-family:var(--ui); font-size:0.78rem; font-weight:700; cursor:pointer;
 }
 .btn:hover{ background:var(--rule); }
 .btn.primary{ background:var(--gold); color:var(--bg); }
-.btn.primary:hover{ background:#c9953a; }
+.btn.primary:hover{ opacity:0.9; }
 .btn.full{ width:100%; }
 
-.scan{ border-top:1px solid var(--rule); padding:0.5rem 0.75rem 0.7rem; }
+.scan{ border-top:1px solid var(--rule); padding:0.55rem 0.75rem 0.75rem; }
 .scan-toggle{
-  background:none; border:none; color:var(--ink-dim); font-family:var(--mono);
-  font-size:0.74rem; cursor:pointer; padding:0.2rem 0;
+  background:none; border:none; color:var(--ink-dim); font-family:var(--ui); font-weight:700;
+  font-size:0.78rem; cursor:pointer; padding:0.2rem 0;
 }
 .scan-toggle:hover{ color:var(--ink-soft); }
 .scan-body{ margin-top:0.5rem; }
 textarea{
-  width:100%; background:#0A0D24; color:var(--ink); border:1px solid var(--rule);
-  font-family:var(--ui); font-size:0.78rem; padding:0.5rem; resize:vertical;
+  width:100%; background:var(--bg); color:var(--ink); border:1px solid var(--rule);
+  font-family:var(--ui); font-size:0.82rem; padding:0.5rem; resize:vertical;
 }
-textarea:focus{ outline:1px solid var(--gold); outline-offset:-1px; }
+textarea:focus{ outline:2px solid var(--gold); outline-offset:-1px; }

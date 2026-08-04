@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Isazi: Know before you apply",
+  "name": "Qhaphela: Know before you apply",
   "version": "0.1.0",
   "description": "Flags fraudulent job postings for South African job seekers, with plain-language reasons instead of a silent block.",
   "action": {
@@ -29,14 +29,36 @@
         "*://*.indeed.co.za/*",
         "*://*.indeed.com/*",
         "*://*.facebook.com/*",
-        "*://*.linkedin.com/*"
+        "*://*.linkedin.com/*",
+        "*://*.gumtree.co.za/*",
+        "*://*.careerjunction.co.za/*",
+        "*://*.jobmail.co.za/*",
+        "*://*.jobvine.co.za/*",
+        "*://*.adzuna.co.za/*",
+        "*://*.glassdoor.co.za/*",
+        "*://*.glassdoor.com/*",
+        "*://*.simplyhired.co.za/*",
+        "*://*.jobjack.co.za/*",
+        "*://*.executiveplacements.com/*",
+        "*://*.bestjobs.co.za/*"
       ],
       "js": ["content.js"],
+      "css": ["panel.css"],
       "run_at": "document_idle"
     }
   ],
   "permissions": ["storage", "activeTab", "notifications"],
   "host_permissions": [
     "http://127.0.0.1:8000/*"
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "fonts/atkinson-regular.woff2",
+        "fonts/atkinson-bold.woff2",
+        "icons/logo-mark.png"
+      ],
+      "matches": ["<all_urls>"]
+    }
   ]
 }

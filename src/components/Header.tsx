@@ -20,7 +20,7 @@ export const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab, apiStat
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="font-mono font-extrabold tracking-wider text-xl text-slate-100">ISAZI</span>
+                <span className="font-mono font-extrabold tracking-wider text-xl text-slate-100">QHAPHELA</span>
                 <span className="text-xs font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700">v0.1.0</span>
               </div>
               <p className="text-xs text-slate-400 hidden sm:block">Job-Posting Fraud Reader: Reasons, Not Just a Verdict</p>

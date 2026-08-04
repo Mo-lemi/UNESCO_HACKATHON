@@ -1,19 +1,21 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ScoreResponse, SamplePosting } from '../types';
 import { SAMPLE_POSTINGS } from '../data/samples';
-import { scorePosting, FEATURE_LABELS, FLAG_LABELS } from '../lib/fraudScorer';
+import { FLAG_LABELS } from '../lib/labels';
 import { ShieldAlert, AlertTriangle, CheckCircle2, Sparkles, RefreshCw, Info, ExternalLink, HelpCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
 export const FraudScanner: React.FC = () => {
   const [inputText, setInputText] = useState<string>(SAMPLE_POSTINGS[0].text);
   const [activeSampleId, setActiveSampleId] = useState<string>(SAMPLE_POSTINGS[0].id);
-  const [result, setResult] = useState<ScoreResponse>(() => scorePosting(SAMPLE_POSTINGS[0].text));
+  const [result, setResult] = useState<ScoreResponse | null>(null);
   const [isScanning, setIsScanning] = useState<boolean>(false);
+  const [scanError, setScanError] = useState<string | null>(null);
   const [selectedHighlightIndex, setSelectedHighlightIndex] = useState<number | null>(null);
 
   const handleScan = async (textToScan: string) => {
     setIsScanning(true);
+    setScanError(null);
     setSelectedHighlightIndex(null);
     try {
       const resp = await fetch('/api/score', {
@@ -25,15 +27,20 @@ export const FraudScanner: React.FC = () => {
         const data: ScoreResponse = await resp.json();
         setResult(data);
       } else {
-        // Local calculation fallback
-        setResult(scorePosting(textToScan));
+        const data = await resp.json().catch(() => ({}));
+        setScanError(data.error || `Model service returned ${resp.status}`);
       }
     } catch {
-      setResult(scorePosting(textToScan));
+      setScanError('Cannot reach the Qhaphela model service. Is uvicorn running on port 8000?');
     } finally {
       setIsScanning(false);
     }
   };
+
+  useEffect(() => {
+    handleScan(SAMPLE_POSTINGS[0].text);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const selectSample = (sample: SamplePosting) => {
     setActiveSampleId(sample.id);
@@ -73,10 +80,10 @@ export const FraudScanner: React.FC = () => {
     }
   };
 
-  const tierStyle = getTierColorClass(result.tier);
+  const tierStyle = getTierColorClass(result?.tier ?? 'LOW');
 
   // Helper to render text with clickable highlighted phrase spans
-  const renderAnnotatedText = () => {
+  const renderAnnotatedText = (result: ScoreResponse) => {
     if (!result.highlights || result.highlights.length === 0) {
       return <p className="text-slate-300 whitespace-pre-wrap leading-relaxed">{inputText}</p>;
     }
@@ -206,8 +213,9 @@ export const FraudScanner: React.FC = () => {
       </div>
 
       {/* Main Scanner Grid */}
+      {result ? (
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        
+
         {/* Left Column: Text Input & Live Annotations */}
         <div className="lg:col-span-7 space-y-4">
           <div className="bg-slate-950 border border-slate-800 rounded-xl p-5 shadow-sm space-y-4">
@@ -270,7 +278,7 @@ export const FraudScanner: React.FC = () => {
             </div>
 
             <div className="p-4 bg-slate-900/80 rounded-lg border border-slate-800/80 min-h-[140px]">
-              {renderAnnotatedText()}
+              {renderAnnotatedText(result)}
             </div>
 
             {/* Highlights Legend */}
@@ -386,34 +394,26 @@ export const FraudScanner: React.FC = () => {
             </div>
 
             <p className="text-xs text-slate-400">
-              Breakdown of individual deception signals contributing to the overall risk verdict:
+              Each factor below carries a fixed, disclosed weight. Shown alongside the model's own
+              score so the reasoning is checkable, not just asserted.
             </p>
 
             <div className="space-y-2 pt-1">
-              {result.top_reasons.length === 0 ? (
+              {result.rule_reasons.length === 0 ? (
                 <p className="text-xs text-slate-500 italic p-3 text-center bg-slate-900/50 rounded-lg">
-                  No standout deception signals detected in text.
+                  No specific red flags found in the text.
                 </p>
               ) : (
-                result.top_reasons.map((reason, idx) => {
-                  const label = FEATURE_LABELS[reason.feature] || reason.feature;
-                  const positive = reason.contribution >= 0;
-                  const pct = Math.min(Math.abs(reason.contribution) * 200, 100);
-
+                result.rule_reasons.map((reason, idx) => {
+                  const pct = Math.min(reason.points * 2, 100);
                   return (
                     <div key={idx} className="p-2.5 bg-slate-900/70 border border-slate-800/80 rounded-lg text-xs space-y-1.5">
-                      <div className="flex items-center justify-between font-mono">
-                        <span className="text-slate-200 font-medium">{label}</span>
-                        <span className={`font-bold ${positive ? 'text-red-400' : 'text-emerald-400'}`}>
-                          {positive ? '+' : ''}
-                          {reason.contribution.toFixed(3)}
-                        </span>
+                      <div className="flex items-center justify-between gap-3">
+                        <span className="text-slate-200 font-medium">{reason.reason}</span>
+                        <span className="font-bold font-mono text-red-400 flex-shrink-0">+{reason.points}</span>
                       </div>
                       <div className="w-full bg-slate-950 h-1.5 rounded-full overflow-hidden">
-                        <div
-                          className={`h-full ${positive ? 'bg-red-500' : 'bg-emerald-500'}`}
-                          style={{ width: `${pct}%` }}
-                        />
+                        <div className="h-full bg-red-500" style={{ width: `${pct}%` }} />
                       </div>
                     </div>
                   );
@@ -422,9 +422,74 @@ export const FraudScanner: React.FC = () => {
             </div>
           </div>
 
+          {/* Identity-theft warning: separate from the fraud score because the
+              harm (identity theft, SIM-swap fraud) is different in kind. */}
+          {result.identity_theft_signals.length > 0 && (
+            <div className="bg-red-950/40 border border-red-800/60 rounded-xl p-5 space-y-2">
+              <div className="flex items-center gap-2">
+                <AlertTriangle className="w-4 h-4 text-red-400" />
+                <h3 className="text-sm font-semibold text-red-300 font-mono uppercase tracking-wider">
+                  Identity Theft Risk
+                </h3>
+              </div>
+              <p className="text-xs text-slate-300">
+                This posting asks for information that can be used to steal your identity:
+              </p>
+              <ul className="space-y-1">
+                {result.identity_theft_signals.map((s, idx) => (
+                  <li key={idx} className="text-xs text-slate-200">• {s}</li>
+                ))}
+              </ul>
+              <p className="text-xs text-slate-400">
+                Never send these before meeting the employer and verifying the company independently.
+              </p>
+            </div>
+          )}
+
+          {/* Contact & domain checks -- observations from the posting text,
+              deliberately not labelled "verified". */}
+          {(result.contact_checks.positive.length > 0 || result.contact_checks.warning.length > 0) && (
+            <div className="bg-slate-950 border border-slate-800 rounded-xl p-5 space-y-2">
+              <h3 className="text-sm font-semibold text-slate-200 font-mono uppercase tracking-wider">
+                Contact &amp; Domain Checks
+              </h3>
+              {result.contact_checks.positive.map((c, idx) => (
+                <p key={`p${idx}`} className="text-xs text-slate-200">
+                  <span className="text-emerald-400 font-bold">✓</span> {c}
+                </p>
+              ))}
+              {result.contact_checks.warning.map((c, idx) => (
+                <p key={`w${idx}`} className="text-xs text-slate-200">
+                  <span className="text-amber-400 font-bold">⚠</span> {c}
+                </p>
+              ))}
+              <p className="text-[11px] text-slate-500 italic pt-1">
+                Based on the posting text only. Not a company registry check.
+              </p>
+            </div>
+          )}
+
         </div>
 
       </div>
+      ) : (
+        <div className="bg-slate-950 border border-slate-800 rounded-xl p-8 text-center">
+          {scanError ? (
+            <>
+              <AlertTriangle className="w-6 h-6 text-red-400 mx-auto mb-2" />
+              <p className="text-sm text-red-300 font-mono">{scanError}</p>
+              <button
+                onClick={() => handleScan(inputText)}
+                className="mt-3 px-4 py-2 rounded-lg bg-slate-900 border border-slate-800 text-xs text-slate-300 hover:text-slate-100"
+              >
+                Retry
+              </button>
+            </>
+          ) : (
+            <p className="text-sm text-slate-400 font-mono">Scoring against the live model...</p>
+          )}
+        </div>
+      )}
 
     </div>
   );

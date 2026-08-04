@@ -3,3 +3,8 @@ __pycache__/
 *.pyc
 .DS_Store
 .env.example
+node_modules/
+dist/
+# Local community-report store (qhaphela/reports.py). Runtime data, and it
+# can contain excerpts of pages the user visited -- never commit it.
+*.db

@@ -14,7 +14,7 @@ export const RedFlagAcademy: React.FC = () => {
   };
 
   const handleShare = async (lessonId: string, title: string, content: string) => {
-    const cardText = `⚑ ${title} (${langNames[lang]})\n\n${content}\n\nvia Isazi Red Flag Academy`;
+    const cardText = `⚑ ${title} (${langNames[lang]})\n\n${content}\n\nvia Qhaphela Red Flag Academy`;
     try {
       await navigator.clipboard.writeText(cardText);
       setCopiedLessonId(lessonId);

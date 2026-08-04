@@ -1,0 +1,282 @@
+/* ============================================================
+   QHAPHELA — in-page safety panel
+   ============================================================
+
+   Design system taken from the approved product mockup: light surface,
+   white cards on a soft lavender page, indigo primary, green for safe,
+   red for risk. Dark mode is a first-class alternate, not an afterthought.
+
+   Every foreground/background pair below was measured for WCAG 2.2
+   contrast against its own theme background, not eyeballed. Ratios are
+   noted inline so they can be re-checked when a colour changes.
+
+   Risk level is NEVER communicated by colour alone (WCAG 1.4.1): each tier
+   also carries a text label and a distinct symbol, because red/amber/green
+   is precisely what red-green colourblind readers cannot separate --
+   roughly 8% of men, a large share of the young job seekers this is for.
+
+   NOTE ON FONTS: this stylesheet is injected into the host page, so the
+   @font-face URLs below resolve to chrome-extension:// and are fetched by
+   the *page's* renderer. Manifest V3 blocks that unless the font files are
+   listed under web_accessible_resources in manifest.json -- without that
+   entry the panel silently falls back to a system font on real sites only,
+   which is easy to miss in local testing.
+   ============================================================ */
+
+@font-face {
+  font-family: 'Atkinson Hyperlegible';
+  font-weight: 400;
+  font-style: normal;
+  src: url(fonts/atkinson-regular.woff2) format('woff2');
+}
+@font-face {
+  font-family: 'Atkinson Hyperlegible';
+  font-weight: 700;
+  font-style: normal;
+  src: url(fonts/atkinson-bold.woff2) format('woff2');
+}
+
+:root { --qp-width: 340px; --qp-width-collapsed: 44px; }
+
+/* Palette derived from the Qhaphela AI logo itself, sampled from the
+   artwork rather than guessed: navy #081A2F (the Q), blue #083E7D,
+   green #084729, gold #F4C74A.
+
+   One correction the measurement forced: the logo's gold is 1.60:1 on
+   white -- far below AA -- so a darkened #8A6200 is used for gold text on
+   light surfaces, and the true logo gold is used only on dark, where it
+   reaches 11.26:1. The mark itself always renders in its original colours. */
+#qhaphela-panel {
+  /* ---- LIGHT (default) — ratios quoted against --surface (#FFFFFF) ---- */
+  --page:#F4F6FA;        /* cool page behind the cards */
+  --surface:#FFFFFF;
+  --surface-2:#F7F9FC;
+  --ink:#081A2F;         /* 17.51:1 AAA — logo navy */
+  --ink-body:#2E3A4B;    /* 11.30:1 AAA */
+  --ink-muted:#5B6472;   /*  5.94:1 AA  */
+  --line:#E2E8F0;
+  --primary:#083E7D;     /* 10.52:1 AAA — logo blue */
+  --primary-ink:#FFFFFF; /* 10.52:1 AAA on --primary */
+  --primary-soft:#EAF1FB;
+  --safe:#0B6B3A;        /*  6.61:1 AA  — logo green, usable weight */
+  --safe-soft:#E8F5EE;
+  --risk:#C0281C;        /*  5.90:1 AA  */
+  --risk-soft:#FDECEA;
+  --warn:#8A6200;        /*  5.49:1 AA  — logo gold darkened for legibility */
+  --warn-soft:#FCF4E3;
+  --shadow:0 1px 2px rgba(8,26,47,.06), 0 4px 16px rgba(8,26,47,.07);
+}
+#qhaphela-panel.qhaphela-dark {
+  /* ---- DARK — each colour re-picked against #14161F, never inverted ---- */
+  --page:#080A0F;
+  --surface:#14161F;
+  --surface-2:#1B1E28;
+  --ink:#F2F2F5;         /* 15.2:1  AAA */
+  --ink-body:#D7D8DE;    /* 11.4:1  AAA */
+  --ink-muted:#9DA0AC;   /*  6.4:1  AA  */
+  --line:#262A36;
+  --primary:#7FB3FF;     /*  8.41:1 AAA — logo blue lightened for dark */
+  --primary-ink:#081A2F;
+  --primary-soft:#12203A;
+  --safe:#4ADE80;        /* 10.35:1 AAA */
+  --safe-soft:#0F2419;
+  --risk:#FF7B6B;        /*  6.9:1  AA  */
+  --risk-soft:#2A1512;
+  --warn:#F4C74A;        /* 11.26:1 AAA — the true logo gold works here */
+  --warn-soft:#2A2110;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 4px 16px rgba(0,0,0,.35);
+}
+
+/* ---- Shell: docked into the page layout, not floating over it ---- */
+#qhaphela-panel {
+  all: initial;
+  position: fixed !important;
+  inset: 0 auto 0 0 !important;
+  z-index: 2147483647 !important;
+  width: var(--qp-width) !important;
+  height: 100vh !important;
+  overflow-y: auto !important;
+  background: var(--page) !important;
+  color: var(--ink) !important;
+  border-right: 1px solid var(--line) !important;
+  box-shadow: var(--shadow) !important;
+  font-family: 'Atkinson Hyperlegible', -apple-system, sans-serif !important;
+  font-size: 13.5px !important;
+  line-height: 1.5 !important;
+  transition: width .2s ease !important;
+}
+#qhaphela-panel * { box-sizing: border-box !important; }
+#qhaphela-panel.qhaphela-collapsed { width: var(--qp-width-collapsed) !important; overflow: hidden !important; }
+
+html.qhaphela-shifted { margin-left: var(--qp-width) !important; transition: margin-left .2s ease !important; }
+html.qhaphela-shifted.qhaphela-shifted-collapsed { margin-left: var(--qp-width-collapsed) !important; }
+
+/* ---- Header ---- */
+#qhaphela-panel .qp-header {
+  display: flex !important; align-items: center !important; gap: .5rem !important;
+  padding: .8rem .85rem !important; background: var(--surface) !important;
+  border-bottom: 1px solid var(--line) !important; cursor: pointer !important;
+}
+#qhaphela-panel.qhaphela-collapsed .qp-header {
+  flex-direction: column !important; height: 100% !important;
+  justify-content: flex-start !important; padding: .8rem 0 !important; gap: .7rem !important;
+}
+#qhaphela-panel.qhaphela-collapsed .qp-brand,
+#qhaphela-panel.qhaphela-collapsed .qp-spacer,
+#qhaphela-panel.qhaphela-collapsed .qp-lang { display: none !important; }
+
+/* Real brand mark (the shield from the Qhaphela AI logo), not a stand-in. */
+#qhaphela-panel .qp-shield {
+  width: 30px !important; height: 30px !important; flex-shrink: 0 !important;
+  object-fit: contain !important; display: block !important;
+}
+#qhaphela-panel .qp-brand { display: flex !important; flex-direction: column !important; line-height: 1.15 !important; }
+#qhaphela-panel .qp-word { font-weight: 700 !important; font-size: .98rem !important; color: var(--primary) !important; letter-spacing: .01em !important; }
+#qhaphela-panel .qp-tagline { font-size: .68rem !important; color: var(--ink-muted) !important; }
+#qhaphela-panel .qp-spacer { flex: 1 !important; }
+#qhaphela-panel .qp-icon-btn {
+  all: unset !important; cursor: pointer !important; color: var(--ink-muted) !important;
+  font-size: .9rem !important; line-height: 1 !important; padding: .2rem !important; border-radius: 5px !important;
+}
+#qhaphela-panel .qp-icon-btn:hover { color: var(--primary) !important; }
+#qhaphela-panel .qp-lang {
+  all: unset !important; cursor: pointer !important; font-size: .72rem !important;
+  color: var(--ink-body) !important; background: var(--surface-2) !important;
+  border: 1px solid var(--line) !important; border-radius: 6px !important; padding: .2rem .35rem !important;
+  font-family: inherit !important;
+}
+
+#qhaphela-panel .qp-body { padding: .8rem !important; display: flex !important; flex-direction: column !important; gap: .7rem !important; }
+
+/* ---- Card primitive: one consistent surface, no stacked variants ---- */
+#qhaphela-panel .qp-card {
+  background: var(--surface) !important; border: 1px solid var(--line) !important;
+  border-radius: 12px !important; padding: .8rem !important; box-shadow: var(--shadow) !important;
+}
+#qhaphela-panel .qp-card-label {
+  margin: 0 0 .55rem !important; font-size: .66rem !important; font-weight: 700 !important;
+  letter-spacing: .07em !important; text-transform: uppercase !important; color: var(--ink-muted) !important;
+  display: flex !important; align-items: center !important; gap: .3rem !important;
+}
+
+/* ---- Safety score readout ---- */
+#qhaphela-panel .qp-score-row { display: flex !important; align-items: center !important; gap: .5rem !important; }
+#qhaphela-panel .qp-score { font-size: 2.5rem !important; font-weight: 700 !important; line-height: 1 !important; font-variant-numeric: tabular-nums !important; }
+#qhaphela-panel .qp-score-max { font-size: .8rem !important; color: var(--ink-muted) !important; }
+#qhaphela-panel .qp-score.low { color: var(--safe) !important; }
+#qhaphela-panel .qp-score.medium { color: var(--warn) !important; }
+#qhaphela-panel .qp-score.high { color: var(--risk) !important; }
+
+/* Tier pill carries a symbol + word, so meaning survives without colour. */
+#qhaphela-panel .qp-tier {
+  margin-left: auto !important; display: inline-flex !important; align-items: center !important; gap: .3rem !important;
+  font-size: .72rem !important; font-weight: 700 !important; padding: .3rem .6rem !important;
+  border-radius: 999px !important; white-space: nowrap !important;
+}
+#qhaphela-panel .qp-tier.low { background: var(--safe-soft) !important; color: var(--safe) !important; }
+#qhaphela-panel .qp-tier.medium { background: var(--warn-soft) !important; color: var(--warn) !important; }
+#qhaphela-panel .qp-tier.high { background: var(--risk-soft) !important; color: var(--risk) !important; }
+
+#qhaphela-panel .qp-meter { height: 6px !important; border-radius: 999px !important; background: var(--line) !important; margin: .65rem 0 .4rem !important; overflow: hidden !important; }
+#qhaphela-panel .qp-meter-fill { height: 100% !important; border-radius: 999px !important; transition: width .3s ease !important; }
+#qhaphela-panel .qp-meter-fill.low { background: var(--safe) !important; }
+#qhaphela-panel .qp-meter-fill.medium { background: var(--warn) !important; }
+#qhaphela-panel .qp-meter-fill.high { background: var(--risk) !important; }
+#qhaphela-panel .qp-confidence { text-align: right !important; font-size: .7rem !important; color: var(--ink-muted) !important; }
+
+/* ---- Verdict callout ---- */
+#qhaphela-panel .qp-verdict { border-radius: 10px !important; padding: .7rem !important; display: flex !important; gap: .5rem !important; }
+#qhaphela-panel .qp-verdict.low { background: var(--safe-soft) !important; }
+#qhaphela-panel .qp-verdict.medium { background: var(--warn-soft) !important; }
+#qhaphela-panel .qp-verdict.high { background: var(--risk-soft) !important; }
+#qhaphela-panel .qp-verdict-mark { flex-shrink: 0 !important; font-weight: 700 !important; }
+#qhaphela-panel .qp-verdict.low .qp-verdict-mark { color: var(--safe) !important; }
+#qhaphela-panel .qp-verdict.medium .qp-verdict-mark { color: var(--warn) !important; }
+#qhaphela-panel .qp-verdict.high .qp-verdict-mark { color: var(--risk) !important; }
+#qhaphela-panel .qp-verdict-title { margin: 0 0 .2rem !important; font-weight: 700 !important; font-size: .84rem !important; color: var(--ink) !important; }
+#qhaphela-panel .qp-verdict-body { margin: 0 !important; font-size: .78rem !important; color: var(--ink-body) !important; }
+
+/* ---- Buttons ---- */
+#qhaphela-panel .qp-btn {
+  all: unset !important; box-sizing: border-box !important; display: flex !important;
+  align-items: center !important; justify-content: center !important; gap: .4rem !important;
+  width: 100% !important; padding: .65rem .8rem !important; border-radius: 10px !important;
+  font-family: inherit !important; font-size: .84rem !important; font-weight: 700 !important; cursor: pointer !important;
+}
+#qhaphela-panel .qp-btn.primary { background: var(--primary) !important; color: var(--primary-ink) !important; }
+#qhaphela-panel .qp-btn.primary:hover { filter: brightness(1.08) !important; }
+#qhaphela-panel .qp-btn.ghost { background: var(--surface) !important; color: var(--ink-body) !important; border: 1px solid var(--line) !important; }
+#qhaphela-panel .qp-btn.ghost:hover { border-color: var(--primary) !important; color: var(--primary) !important; }
+#qhaphela-panel .qp-btn:disabled { opacity: .65 !important; cursor: default !important; }
+
+/* ---- Job match rows (real jobs from this page only) ---- */
+#qhaphela-panel .qp-job { display: flex !important; gap: .55rem !important; padding: .55rem 0 !important; border-bottom: 1px solid var(--line) !important; }
+#qhaphela-panel .qp-job:last-child { border-bottom: none !important; }
+#qhaphela-panel .qp-job-badge {
+  width: 26px !important; height: 26px !important; flex-shrink: 0 !important; border-radius: 6px !important;
+  background: var(--primary-soft) !important; color: var(--primary) !important;
+  display: inline-flex !important; align-items: center !important; justify-content: center !important;
+  font-size: .8rem !important; font-weight: 700 !important;
+}
+#qhaphela-panel .qp-job-main { flex: 1 !important; min-width: 0 !important; }
+#qhaphela-panel .qp-job-title { font-size: .8rem !important; font-weight: 700 !important; color: var(--ink) !important; overflow: hidden !important; text-overflow: ellipsis !important; white-space: nowrap !important; }
+#qhaphela-panel .qp-job-meta { font-size: .7rem !important; color: var(--ink-muted) !important; overflow: hidden !important; text-overflow: ellipsis !important; white-space: nowrap !important; }
+#qhaphela-panel .qp-job-side { display: flex !important; flex-direction: column !important; align-items: flex-end !important; gap: .25rem !important; flex-shrink: 0 !important; }
+#qhaphela-panel .qp-job-score { font-size: .7rem !important; font-weight: 700 !important; color: var(--safe) !important; white-space: nowrap !important; }
+#qhaphela-panel .qp-job-open {
+  all: unset !important; cursor: pointer !important; font-size: .7rem !important; font-weight: 700 !important;
+  color: var(--primary) !important; border: 1px solid var(--line) !important; border-radius: 6px !important;
+  padding: .18rem .45rem !important; white-space: nowrap !important;
+}
+#qhaphela-panel .qp-job-open:hover { border-color: var(--primary) !important; background: var(--primary-soft) !important; }
+
+/* ---- Tick / warn lists ---- */
+#qhaphela-panel .qp-list { list-style: none !important; margin: 0 !important; padding: 0 !important; }
+#qhaphela-panel .qp-list li { font-size: .78rem !important; color: var(--ink-body) !important; padding: .22rem 0 !important; display: flex !important; gap: .4rem !important; }
+#qhaphela-panel .qp-list li::before { flex-shrink: 0 !important; font-weight: 700 !important; }
+#qhaphela-panel .qp-list.ticks li::before { content: "✓" !important; color: var(--safe) !important; }
+#qhaphela-panel .qp-list.warns li::before { content: "⚠" !important; color: var(--warn) !important; }
+#qhaphela-panel .qp-list.risks li::before { content: "✖" !important; color: var(--risk) !important; }
+#qhaphela-panel .qp-list.arrows li::before { content: "➜" !important; color: var(--primary) !important; }
+
+/* ---- Itemised risk factors ---- */
+#qhaphela-panel .qp-factor { display: flex !important; justify-content: space-between !important; gap: .5rem !important; font-size: .78rem !important; padding: .3rem 0 !important; border-bottom: 1px solid var(--line) !important; }
+#qhaphela-panel .qp-factor:last-child { border-bottom: none !important; }
+#qhaphela-panel .qp-factor .r { color: var(--ink-body) !important; }
+#qhaphela-panel .qp-factor .p { flex-shrink: 0 !important; font-weight: 700 !important; font-variant-numeric: tabular-nums !important; }
+#qhaphela-panel .qp-factor .p.up { color: var(--risk) !important; }
+#qhaphela-panel .qp-factor .p.down { color: var(--safe) !important; }
+
+/* ---- Identity theft: the one high-consequence callout ---- */
+#qhaphela-panel .qp-idtheft { background: var(--risk-soft) !important; border-left: 3px solid var(--risk) !important; border-radius: 10px !important; padding: .7rem !important; }
+#qhaphela-panel .qp-idtheft-title { margin: 0 0 .3rem !important; color: var(--risk) !important; font-weight: 700 !important; font-size: .84rem !important; }
+#qhaphela-panel .qp-idtheft p { margin: .3rem 0 !important; font-size: .76rem !important; color: var(--ink-body) !important; }
+
+/* ---- Digital safety tip ---- */
+#qhaphela-panel .qp-tip { background: var(--primary-soft) !important; border-radius: 10px !important; padding: .7rem !important; }
+#qhaphela-panel .qp-tip-title { margin: 0 0 .25rem !important; font-size: .66rem !important; font-weight: 700 !important; letter-spacing: .07em !important; text-transform: uppercase !important; color: var(--primary) !important; }
+#qhaphela-panel .qp-tip p { margin: 0 !important; font-size: .78rem !important; color: var(--ink-body) !important; }
+
+/* ---- Report form ---- */
+#qhaphela-panel .qp-report-form { margin-top: .5rem !important; display: flex !important; flex-direction: column !important; gap: .45rem !important; }
+#qhaphela-panel .qp-report-form.hidden { display: none !important; }
+#qhaphela-panel .qp-select {
+  all: unset !important; box-sizing: border-box !important; width: 100% !important; cursor: pointer !important;
+  background: var(--surface-2) !important; color: var(--ink) !important; border: 1px solid var(--line) !important;
+  border-radius: 8px !important; padding: .45rem .5rem !important; font-family: inherit !important; font-size: .78rem !important;
+}
+#qhaphela-panel .qp-report-count { margin: .45rem 0 0 !important; font-size: .72rem !important; color: var(--ink-muted) !important; }
+#qhaphela-panel .qp-report-count.hidden { display: none !important; }
+
+/* ---- Scan progress ---- */
+#qhaphela-panel .qp-step { display: flex !important; gap: .45rem !important; font-size: .8rem !important; padding: .22rem 0 !important; color: var(--ink-muted) !important; }
+#qhaphela-panel .qp-step.done { color: var(--ink-body) !important; }
+#qhaphela-panel .qp-step.done .m { color: var(--safe) !important; }
+#qhaphela-panel .qp-step.active { color: var(--ink) !important; font-weight: 700 !important; }
+#qhaphela-panel .qp-step.active .m { color: var(--primary) !important; }
+#qhaphela-panel .qp-step .m { flex-shrink: 0 !important; width: 1em !important; }
+
+#qhaphela-panel .qp-empty { font-size: .8rem !important; color: var(--ink-muted) !important; margin: 0 !important; }
+#qhaphela-panel .qp-note { margin: .4rem 0 0 !important; font-size: .68rem !important; color: var(--ink-muted) !important; font-style: italic !important; }
+#qhaphela-panel .qp-foot { text-align: center !important; font-size: .7rem !important; color: var(--ink-muted) !important; padding: .3rem 0 .6rem !important; }
+#qhaphela-panel .hidden { display: none !important; }

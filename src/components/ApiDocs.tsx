@@ -45,7 +45,7 @@ export const ApiDocs: React.FC = () => {
       <div className="bg-slate-950 border border-slate-800 rounded-xl p-5 shadow-sm space-y-2">
         <div className="flex items-center gap-2">
           <Code className="w-5 h-5 text-indigo-400" />
-          <h2 className="text-lg font-bold font-mono text-slate-100">Isazi Scoring API Specification</h2>
+          <h2 className="text-lg font-bold font-mono text-slate-100">Qhaphela Scoring API Specification</h2>
         </div>
         <p className="text-xs text-slate-400 leading-relaxed">
           The FastAPI & Express endpoint called by background service workers or mobile clients. POST a job posting's text to obtain a 0–100 risk score, tier classification, top SHAP feature contributions, rule safety flags, and phrase highlights.

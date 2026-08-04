@@ -1,34 +1,58 @@
-import React, { useState } from 'react';
-import { scorePosting, FEATURE_LABELS, FLAG_LABELS } from '../lib/fraudScorer';
+import React, { useEffect, useState } from 'react';
+import { FLAG_LABELS } from '../lib/labels';
 import { ScoreResponse } from '../types';
 import { SAMPLE_POSTINGS } from '../data/samples';
 import { Chrome, Shield, ExternalLink, RefreshCw, AlertTriangle, Layers } from 'lucide-react';
 
+async function scoreViaApi(text: string): Promise<ScoreResponse> {
+  const resp = await fetch('/api/score', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ text }),
+  });
+  if (!resp.ok) throw new Error(`Model service returned ${resp.status}`);
+  return resp.json();
+}
+
 export const ExtensionSimulator: React.FC = () => {
   const [selectedSampleIndex, setSelectedSampleIndex] = useState<number>(0);
   const [inputText, setInputText] = useState<string>(SAMPLE_POSTINGS[0].text);
-  const [result, setResult] = useState<ScoreResponse>(() => scorePosting(SAMPLE_POSTINGS[0].text));
+  const [result, setResult] = useState<ScoreResponse | null>(null);
+  const [scanError, setScanError] = useState<string | null>(null);
   const [isScanOpen, setIsScanOpen] = useState<boolean>(false);
   const [pasteText, setPasteText] = useState<string>('');
+
+  const scoreAndSet = async (text: string) => {
+    setScanError(null);
+    try {
+      setResult(await scoreViaApi(text));
+    } catch {
+      setScanError('Cannot reach the Qhaphela model service. Is uvicorn running on port 8000?');
+    }
+  };
+
+  useEffect(() => {
+    scoreAndSet(SAMPLE_POSTINGS[0].text);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleSelectSample = (index: number) => {
     setSelectedSampleIndex(index);
     const text = SAMPLE_POSTINGS[index].text;
     setInputText(text);
-    setResult(scorePosting(text));
+    scoreAndSet(text);
   };
 
   const handlePasteScan = () => {
     if (!pasteText.trim()) return;
     setInputText(pasteText);
-    setResult(scorePosting(pasteText));
+    scoreAndSet(pasteText);
     setPasteText('');
     setIsScanOpen(false);
   };
 
-  const tierClass = result.tier.toLowerCase();
-  const isHigh = result.tier === 'HIGH';
-  const isMed = result.tier === 'MEDIUM';
+  const isHigh = result?.tier === 'HIGH';
+  const isMed = result?.tier === 'MEDIUM';
 
   const badgeColor = isHigh ? 'text-red-400 bg-red-950/80 border-red-800' : isMed ? 'text-amber-400 bg-amber-950/80 border-amber-800' : 'text-emerald-400 bg-emerald-950/80 border-emerald-800';
   const barColor = isHigh ? 'bg-red-500' : isMed ? 'bg-amber-500' : 'bg-emerald-500';
@@ -75,12 +99,12 @@ export const ExtensionSimulator: React.FC = () => {
             {/* Extension Header */}
             <div className="bg-slate-900 px-4 py-3 border-b border-slate-800 flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <span className="font-mono font-black text-sm tracking-wider text-slate-100">ISAZI</span>
+                <span className="font-mono font-black text-sm tracking-wider text-slate-100">QHAPHELA</span>
                 <span className="text-[10px] font-mono text-slate-500">v0.1</span>
               </div>
-              <div className="flex items-center gap-1.5 text-[11px] text-emerald-400 font-mono">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                <span>RandomForest</span>
+              <div className={`flex items-center gap-1.5 text-[11px] font-mono ${scanError ? 'text-red-400' : 'text-emerald-400'}`}>
+                <span className={`w-1.5 h-1.5 rounded-full ${scanError ? 'bg-red-500' : 'bg-emerald-500 animate-pulse'}`}></span>
+                <span>{scanError ? 'disconnected' : 'RandomForest'}</span>
               </div>
             </div>
 
@@ -89,8 +113,26 @@ export const ExtensionSimulator: React.FC = () => {
             </p>
 
             {/* Popup Body Content */}
+            {!result ? (
+              <div className="p-6 text-center">
+                {scanError ? (
+                  <>
+                    <AlertTriangle className="w-5 h-5 text-red-400 mx-auto mb-2" />
+                    <p className="text-xs text-red-300 font-mono">{scanError}</p>
+                    <button
+                      onClick={() => scoreAndSet(inputText)}
+                      className="mt-3 px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-xs text-slate-300 hover:text-slate-100"
+                    >
+                      Retry
+                    </button>
+                  </>
+                ) : (
+                  <p className="text-xs text-slate-400 font-mono">Scoring against the live model...</p>
+                )}
+              </div>
+            ) : (
             <div className="p-4 space-y-4">
-              
+
               {/* Score Readout */}
               <div className="flex items-baseline justify-between">
                 <div className="flex items-baseline gap-1">
@@ -122,26 +164,26 @@ export const ExtensionSimulator: React.FC = () => {
                 </div>
               )}
 
-              {/* Why (SHAP Reasons) */}
+              {/* Why: itemised fixed-weight risk factors, matching what the
+                  real extension shows. Raw SHAP values are deliberately not
+                  surfaced here -- they're often generic recruiting words
+                  that mean nothing to a non-technical reader. */}
               <div className="space-y-1.5 pt-1">
-                <p className="text-[11px] font-mono text-slate-400 uppercase font-semibold">why</p>
+                <p className="text-[11px] font-mono text-slate-400 uppercase font-semibold">
+                  why{result.rule_reasons.length > 0 ? ` — ${result.rule_points_total}/100` : ''}
+                </p>
                 <div className="space-y-1 bg-slate-900/60 p-2.5 rounded-lg border border-slate-800">
-                  {result.top_reasons.length === 0 ? (
-                    <p className="text-[11px] text-slate-500 italic">no standout signal either way</p>
+                  {result.rule_reasons.length === 0 ? (
+                    <p className="text-[11px] text-slate-500 italic">no specific red flags found</p>
                   ) : (
-                    result.top_reasons.map((r, i) => {
-                      const pos = r.contribution >= 0;
-                      return (
-                        <div key={i} className="flex items-center justify-between text-xs font-mono">
-                          <span className="text-slate-300 truncate max-w-[200px]">
-                            {FEATURE_LABELS[r.feature] || r.feature}
-                          </span>
-                          <span className={`font-semibold ${pos ? 'text-red-400' : 'text-emerald-400'}`}>
-                            {pos ? '+' : ''}{r.contribution.toFixed(3)}
-                          </span>
-                        </div>
-                      );
-                    })
+                    result.rule_reasons.map((r, i) => (
+                      <div key={i} className="flex items-start justify-between gap-2 text-xs">
+                        <span className="text-slate-300">{r.reason}</span>
+                        <span className="font-semibold font-mono text-red-400 flex-shrink-0">
+                          +{r.points}
+                        </span>
+                      </div>
+                    ))
                   )}
                 </div>
               </div>
@@ -197,6 +239,7 @@ export const ExtensionSimulator: React.FC = () => {
               </div>
 
             </div>
+            )}
 
           </div>
 
