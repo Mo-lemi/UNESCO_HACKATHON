@@ -184,6 +184,24 @@ mark.flagphrase {
   border-bottom: 2px solid var(--risk); padding: 0 .12rem; border-radius: 3px;
 }
 
+/* ---- Evidence cards (Highlights tab) ----
+   One card per flagged phrase: the quote, the sentence it came from, why it
+   matters, and what it was flagged as. Replaces a raw dump of page text. */
+.evidence {
+  border: 1px solid var(--line); border-left: 3px solid var(--risk);
+  border-radius: 11px; padding: .8rem; margin-bottom: .7rem; background: var(--surface-2);
+}
+.evidence:last-child { margin-bottom: 0; }
+.evidence-head { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; margin-bottom: .45rem; }
+.evidence-phrase { font-weight: 700; font-size: .92rem; color: var(--risk); }
+.evidence-ctx {
+  margin: .35rem 0 .55rem; padding: .55rem .65rem; border-radius: 8px;
+  background: var(--surface); border: 1px solid var(--line);
+  font-size: .84rem; line-height: 1.6; color: var(--ink-body);
+}
+.evidence-why, .evidence-flag { margin: .25rem 0 0; font-size: .82rem; color: var(--ink-body); }
+.evidence-flag { color: var(--ink-muted); }
+
 /* ---- Job rows ---- */
 .job { display: flex; gap: .7rem; align-items: center; padding: .6rem 0; border-bottom: 1px solid var(--line); }
 .job:last-child { border-bottom: none; }

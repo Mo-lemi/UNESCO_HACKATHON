@@ -24,30 +24,40 @@
   "content_scripts": [
     {
       "matches": [
-        "*://*.pnet.co.za/*",
-        "*://*.careers24.com/*",
-        "*://*.indeed.co.za/*",
-        "*://*.indeed.com/*",
-        "*://*.facebook.com/*",
-        "*://*.linkedin.com/*",
-        "*://*.gumtree.co.za/*",
-        "*://*.careerjunction.co.za/*",
-        "*://*.jobmail.co.za/*",
-        "*://*.jobvine.co.za/*",
-        "*://*.adzuna.co.za/*",
-        "*://*.glassdoor.co.za/*",
-        "*://*.glassdoor.com/*",
-        "*://*.simplyhired.co.za/*",
-        "*://*.jobjack.co.za/*",
-        "*://*.executiveplacements.com/*",
-        "*://*.bestjobs.co.za/*"
+        "http://*/*",
+        "https://*/*"
       ],
-      "js": ["content.js"],
-      "css": ["panel.css"],
-      "run_at": "document_idle"
+      "js": [
+        "content.js"
+      ],
+      "css": [
+        "panel.css"
+      ],
+      "run_at": "document_idle",
+      "exclude_matches": [
+        "*://*.google.com/*",
+        "*://*.bing.com/*",
+        "*://*.duckduckgo.com/*",
+        "*://mail.google.com/*",
+        "*://*.outlook.com/*",
+        "*://*.office.com/*",
+        "*://*.bankofamerica.com/*",
+        "*://*.standardbank.co.za/*",
+        "*://*.fnb.co.za/*",
+        "*://*.absa.co.za/*",
+        "*://*.nedbank.co.za/*",
+        "*://*.capitecbank.co.za/*",
+        "*://*.sars.gov.za/*",
+        "*://*.paypal.com/*",
+        "*://*.github.com/*"
+      ]
     }
   ],
-  "permissions": ["storage", "activeTab", "notifications"],
+  "permissions": [
+    "storage",
+    "activeTab",
+    "notifications"
+  ],
   "host_permissions": [
     "http://127.0.0.1:8000/*"
   ],
@@ -58,7 +68,9 @@
         "fonts/atkinson-bold.woff2",
         "icons/logo-mark.png"
       ],
-      "matches": ["<all_urls>"]
+      "matches": [
+        "<all_urls>"
+      ]
     }
   ]
 }

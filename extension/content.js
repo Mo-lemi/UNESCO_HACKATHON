@@ -1112,6 +1112,53 @@ function wireReportUi(body, result) {
   });
 }
 
+
+// ---- Is this actually a job page? --------------------------------------
+// The extension now matches every site, because a hardcoded list of job
+// boards can never cover the long tail -- jobsora, jobplacements, agency
+// sites, university career portals -- and that long tail is exactly where
+// less-protected job seekers end up.
+//
+// Matching broadly only stays acceptable if the extension is INERT
+// everywhere else. Nothing is injected and no page text is ever sent to the
+// scoring service unless this returns true.
+function looksLikeJobPage() {
+  // 1. schema.org JobPosting. The strongest signal: a site that declares
+  //    this is telling us outright. Read from the live DOM, since most
+  //    boards inject it with JavaScript.
+  for (const tag of document.querySelectorAll('script[type="application/ld+json"]')) {
+    try {
+      const raw = JSON.parse(tag.textContent);
+      const nodes = Array.isArray(raw) ? raw : [raw, ...(raw["@graph"] || [])];
+      for (const node of nodes) {
+        const t = node && node["@type"];
+        if (t === "JobPosting" || (Array.isArray(t) && t.includes("JobPosting"))) return true;
+      }
+    } catch {
+      /* malformed JSON-LD is common; ignore and fall through */
+    }
+  }
+
+  // 2. URL shape. Job boards are consistent about this.
+  if (/\/(job|jobs|jobb|vacanc|vacature|career|careers|viewjob|job-detail|joblisting|learnership|internship|graduate-programme|recruit)/i.test(location.pathname)) {
+    return true;
+  }
+  if (/^(jobs?|careers?|vacanc|recruit)\./i.test(location.hostname)) return true;
+
+  // 3. Content shape. Requires several independent hiring phrases, not one,
+  //    so an article that merely mentions "salary" doesn't trigger it.
+  const body = (document.body?.innerText || "").toLowerCase().slice(0, 20000);
+  if (body.length < 200) return false;
+  const phrases = [
+    "apply now", "apply for this", "job description", "job title", "vacancy",
+    "responsibilities", "requirements", "qualifications", "salary", "remuneration",
+    "full-time", "part-time", "permanent position", "closing date", "recruiter",
+    "we are hiring", "join our team", "send your cv", "submit your cv",
+  ];
+  const hits = phrases.filter((p) => body.includes(p)).length;
+  return hits >= 4;
+}
+
 function extractPosting() {
   const candidates = Array.from(
     document.querySelectorAll(
@@ -1366,6 +1413,9 @@ function scanDetailMode(text, container) {
 }
 
 function sendForScoring() {
+  // Re-checked each time: single-page job boards swap content without a
+  // navigation, so a page can become a job page after first load.
+  if (!IS_JOB_PAGE && !looksLikeJobPage()) return;
   const { text, container } = extractPosting();
   const isDetail = container !== document.body && text.length >= 200;
   const cards = extractJobCards();
@@ -1390,10 +1440,15 @@ function sendForScoring() {
   }
 }
 
-// Show the panel immediately on any matched job platform so "connected" is
-// visible even before a specific posting has been scored.
-ensurePanel();
-renderPanelConnecting();
+// Only activate on pages that genuinely look like job listings. Everywhere
+// else the extension stays completely inert: no panel, no DOM changes, and
+// no page text leaves the browser.
+const IS_JOB_PAGE = looksLikeJobPage();
+
+if (IS_JOB_PAGE) {
+  ensurePanel();
+  renderPanelConnecting();
+}
 
 // Run once the page has settled, and again on SPA-style content swaps
 // (Facebook/LinkedIn/Indeed re-render without a full navigation).

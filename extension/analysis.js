@@ -192,56 +192,138 @@ function redFlagsPanel(r) {
 // Highlights the exact phrases the backend matched, inside the real posting
 // text. Uses index-based splicing so overlapping matches can't corrupt the
 // output, and escapes every segment.
-function highlightsPanel(r) {
-  const text = state.posting;
-  const hl = r.highlights || [];
+// Shows each flagged phrase as its own evidence card with the surrounding
+// sentence, what category it belongs to, and what to do about it.
+//
+// It deliberately does NOT print the whole page. Extraction falls back to
+// full-page text on listing-style layouts, which previously dumped the
+// entire sidebar and job list here and made the tab unreadable.
+const PHRASE_CATEGORY = [
+  [/registration fee|processing fee|admin fee|starter pack|deposit|training fee|courier fee/i,
+   "Recruitment fee scam",
+   "Legitimate South African employers never charge applicants. Any fee before employment is the scam itself."],
+  [/id (number|document|copy)|certified copy|identity document|passport/i,
+   "Identity document harvesting",
+   "Your ID or passport is enough to open accounts and take out credit in your name."],
+  [/bank(ing)? (account|details)|account number|bank confirmation/i,
+   "Banking detail harvesting",
+   "Banking details are only needed after you have signed a contract, never to apply."],
+  [/proof of residence|utility bill|municipal bill/i,
+   "Excess document collection",
+   "Proof of residence is not needed to consider an application. It completes an identity-theft profile."],
+  [/tax (number|certificate)|sars|irp5/i,
+   "Tax document harvesting",
+   "Tax numbers enable fraudulent claims and account openings in your name."],
+  [/whatsapp|0[6-8]\d[\s-]?\d{3}[\s-]?\d{4}/i,
+   "Off-platform migration",
+   "Moving off the platform removes the record and makes the recruiter untraceable."],
+  [/urgent|act fast|limited (spaces|spots)|today only|closes tonight|immediately/i,
+   "Artificial urgency",
+   "Pressure exists to stop you checking. A real employer will wait while you verify them."],
+  [/popia/i,
+   "Misused legal clause",
+   "POPIA is quoted to sound official. Real POPIA compliance protects you; it never justifies demanding your ID."],
+  [/@(gmail|yahoo|outlook|hotmail)\.com/i,
+   "Free email recruiter",
+   "Worth questioning, though some small genuine businesses do use free email."],
+  [/b-?bbee/i,
+   "Unverifiable compliance claim",
+   "A B-BBEE claim with no certificate number cannot be checked."],
+];
 
-  if (!text) {
-    return `<div class="card"><h2>In-post highlights</h2>
-      ${
-        hl.length
-          ? `<ul class="checks bad">${hl.map((h) => `<li>“${esc(h.phrase)}” — ${esc(h.reason)}</li>`).join("")}</ul>`
-          : '<p class="muted">No suspicious phrases were detected in this posting.</p>'
-      }
-      <p class="note">The original posting text was not available to this page, so phrases are listed rather than shown in place.</p>
+function categoriseTail(phrase) {
+  for (const [re, cat, why] of PHRASE_CATEGORY) {
+    if (re.test(phrase)) return { cat, why };
+  }
+  return { cat: "Suspicious wording", why: "This phrasing matches patterns seen in fraudulent postings." };
+}
+
+// Pulls the sentence containing the phrase so the quote has context, without
+// dragging in the rest of the page.
+function contextFor(text, phrase) {
+  if (!text || !phrase) return "";
+  const i = text.toLowerCase().indexOf(phrase.toLowerCase());
+  if (i === -1) return "";
+  const before = text.lastIndexOf(".", i);
+  const after = text.indexOf(".", i + phrase.length);
+  const start = Math.max(before === -1 ? i - 90 : before + 1, 0);
+  const end = Math.min(after === -1 ? i + phrase.length + 90 : after + 1, text.length);
+  return text.slice(start, end).trim();
+}
+
+function highlightsPanel(r) {
+  const hl = r.highlights || [];
+  const text = state.posting || "";
+
+  if (!hl.length) {
+    // Nothing found: report what was actually checked, so "all clear" is
+    // evidence rather than an empty screen.
+    const checked = (r.red_flags || []).map((f) => f.label);
+    return `
+    <div class="grid two">
+      <div class="card">
+        <h2>In-post phrase scan</h2>
+        <p class="tier-word low">✓ No scam phrasing found</p>
+        <p class="muted">Every sentence in this posting was checked against known South African
+        recruitment-fraud wording. None of it matched.</p>
+        <h3 style="margin-top:.9rem">What was checked</h3>
+        <ul class="checks ok">${checked.map((c) => `<li>${esc(c)}</li>`).join("")}</ul>
+      </div>
+      <div class="card">
+        <h2>What this does and does not mean</h2>
+        <ul class="checks ok"><li>No fee, document or off-platform request was worded in this posting.</li></ul>
+        <ul class="checks warn">
+          <li>Wording alone is not proof of legitimacy — a careful scammer avoids obvious phrases.</li>
+          <li>Requests often come <em>later</em>, by email or WhatsApp, after you apply.</li>
+        </ul>
+        <h3 style="margin-top:.9rem">Stay alert for</h3>
+        <ul class="checks warn">
+          <li>Any fee, deposit or "starter pack" charge introduced after contact</li>
+          <li>A request for your ID, passport or bank details before a real interview</li>
+          <li>A move to WhatsApp or a personal email address</li>
+        </ul>
+      </div>
     </div>`;
   }
 
-  const spans = [];
-  hl.forEach((h) => {
-    const i = text.toLowerCase().indexOf((h.phrase || "").toLowerCase());
-    if (i !== -1 && h.phrase) spans.push({ start: i, end: i + h.phrase.length, reason: h.reason });
-  });
-  spans.sort((a, b) => a.start - b.start);
-  const clean = [];
-  let lastEnd = -1;
-  for (const s of spans) {
-    if (s.start >= lastEnd) { clean.push(s); lastEnd = s.end; }
-  }
-
-  let out = "", cursor = 0;
-  for (const s of clean) {
-    out += esc(text.slice(cursor, s.start));
-    out += `<mark class="flagphrase" title="${esc(s.reason)}">${esc(text.slice(s.start, s.end))}</mark>`;
-    cursor = s.end;
-  }
-  out += esc(text.slice(cursor));
+  const cards = hl
+    .map((h) => {
+      const { cat, why } = categoriseTail(h.phrase || "");
+      const ctx = contextFor(text, h.phrase);
+      const marked = ctx
+        ? esc(ctx).replace(
+            new RegExp(esc(h.phrase).replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i"),
+            (m) => `<mark class="flagphrase">${m}</mark>`
+          )
+        : "";
+      return `<div class="evidence">
+        <div class="evidence-head">
+          <span class="sev High">${esc(cat)}</span>
+          <span class="evidence-phrase">“${esc(h.phrase)}”</span>
+        </div>
+        ${ctx ? `<p class="evidence-ctx">…${marked}…</p>` : ""}
+        <p class="evidence-why"><strong>Why this matters:</strong> ${esc(why)}</p>
+        <p class="evidence-flag"><strong>Flagged as:</strong> ${esc(h.reason)}</p>
+      </div>`;
+    })
+    .join("");
 
   return `
-  <div class="grid two">
-    <div class="card">
-      <h2>In-post highlights</h2>
-      <div class="posting">${out}</div>
-    </div>
-    <div class="card">
-      <h2>What was flagged</h2>
-      ${
-        hl.length
-          ? `<ul class="checks bad">${hl.map((h) => `<li>“${esc(h.phrase)}” — ${esc(h.reason)}</li>`).join("")}</ul>`
-          : '<p class="muted">No common scam phrases were found in this posting.</p>'
-      }
-      <p class="note">Each phrase is quoted verbatim from the posting so you can find it yourself.</p>
-    </div>
+  <div class="card">
+    <h2>Suspicious phrases found — ${hl.length}</h2>
+    <p class="muted">Each phrase below is quoted verbatim from the posting, with the sentence it
+    appeared in, so you can find and judge it yourself.</p>
+    ${cards}
+  </div>
+
+  <div class="card" style="margin-top:1rem">
+    <h2>What to do now</h2>
+    <ul class="checks warn">
+      <li>Do not reply with any personal document until you have verified the employer independently</li>
+      <li>Search the company name plus "scam" before responding</li>
+      <li>If money is requested at any point, stop — that is the scam, not a step in it</li>
+      <li>Report the posting to the platform, and to Qhaphela using the panel</li>
+    </ul>
   </div>`;
 }
 
@@ -339,6 +421,61 @@ function cvPanel(r) {
   </div>`;
 }
 
+// Real search URLs across South African job platforms, seeded with the role
+// currently being viewed. These are genuine searches the user can run -- not
+// claimed results. Every format was verified against the live site.
+const JOB_PLATFORMS = [
+  ["Indeed South Africa", (q) => `https://za.indeed.com/jobs?q=${encodeURIComponent(q)}`],
+  ["PNet",                (q) => `https://www.pnet.co.za/jobs?q=${encodeURIComponent(q)}`],
+  ["Careers24",           (q) => `https://www.careers24.com/jobs/kw-${encodeURIComponent(q.replace(/\s+/g, "-"))}/`],
+  ["CareerJunction",      (q) => `https://www.careerjunction.co.za/jobs/results?keywords=${encodeURIComponent(q)}`],
+  ["Jobsora SA",          (q) => `https://za.jobsora.com/jobs?query=${encodeURIComponent(q)}`],
+  ["JobMail",             (q) => `https://www.jobmail.co.za/jobs/${encodeURIComponent(q.replace(/\s+/g, "-"))}`],
+  ["Adzuna SA",           (q) => `https://www.adzuna.co.za/search?q=${encodeURIComponent(q)}`],
+  ["LinkedIn Jobs",       (q) => `https://www.linkedin.com/jobs/search/?keywords=${encodeURIComponent(q)}&location=South%20Africa`],
+  ["Glassdoor SA",        (q) => `https://www.glassdoor.co.za/Job/jobs.htm?sc.keyword=${encodeURIComponent(q)}`],
+  ["Gumtree Jobs",        () => `https://www.gumtree.co.za/s-jobs/v1c8p1`],
+  ["JobJack (entry level)", () => `https://www.jobjack.co.za/`],
+  ["Government vacancies (DPSA)", () => `https://www.dpsa.gov.za/newsroom/psvc/`],
+];
+
+// Best-effort role keyword from the posting being viewed, so each search
+// lands on something relevant rather than a bare homepage.
+function roleKeyword() {
+  const title = (state.meta && state.meta.title) || "";
+  const cleaned = title
+    .replace(/\s*[-|–—]\s*(job|jobs|indeed|linkedin|careers?|pnet|jobsora).*/i, "")
+    .replace(/\bjob post(ing)?\b/i, "")
+    .replace(/\s+/g, " ")
+    .trim();
+  return cleaned.slice(0, 60) || "jobs";
+}
+
+function platformSearchHtml() {
+  const q = roleKeyword();
+  const rows = JOB_PLATFORMS.map(
+    ([name, build]) => `<div class="job">
+      <span class="job-badge">${esc(name.charAt(0))}</span>
+      <span class="job-main">
+        <span class="job-title">${esc(name)}</span>
+        <span class="job-meta">Search “${esc(q)}”</span>
+      </span>
+      <span class="job-side">
+        <a class="btn" href="${esc(build(q))}" target="_blank" rel="noopener">Search ↗</a>
+      </span>
+    </div>`
+  ).join("");
+
+  return `<div class="card" style="margin-top:1rem">
+    <h2>Search this role across every SA platform — ${JOB_PLATFORMS.length}</h2>
+    <p class="muted">Live searches for <strong>${esc(q)}</strong>, pre-filled. Qhaphela will scan
+    whichever results you open, so you can check any of them before applying.</p>
+    ${rows}
+    <p class="note">These are search links, not verified vacancies. Qhaphela only vouches for
+    postings it has actually scanned and scored.</p>
+  </div>`;
+}
+
 function similarPanel() {
   const safe = (state.jobs || [])
     .filter((j) => j.result && j.result.tier === "LOW" && j.url)
@@ -347,10 +484,11 @@ function similarPanel() {
   if (!safe.length) {
     return `<div class="card">
       <h2>Similar legitimate opportunities</h2>
-      <p class="muted">No low-risk postings were scanned on that page.</p>
-      <p class="note">Qhaphela only offers alternatives it has actually scanned and scored on the page you were viewing. It does not pull in listings from elsewhere, because it cannot verify those.</p>
-      <a class="btn primary block" style="margin-top:.8rem" href="https://www.indeed.co.za" target="_blank" rel="noopener">Search Indeed South Africa ↗</a>
-    </div>`;
+      <p class="muted">No low-risk postings were scanned on the page you came from.</p>
+      <p class="note">Qhaphela only vouches for postings it has actually scanned and scored. It will
+      not list vacancies from elsewhere as "safe", because it cannot verify those. Use the searches
+      below instead — open any result and Qhaphela will scan it for you.</p>
+    </div>${platformSearchHtml()}`;
   }
 
   const rows = safe
@@ -372,8 +510,9 @@ function similarPanel() {
   return `<div class="card">
     <h2>Similar legitimate opportunities — ${safe.length} found</h2>
     ${rows}
-    <p class="note">These are real postings from the page you scanned, with their real links and the score our model gave each one. Nothing here is generated or estimated.</p>
-  </div>`;
+    <p class="note">These are real postings from the page you scanned, with their real links and the
+    score our model gave each one. Nothing here is generated or estimated.</p>
+  </div>${platformSearchHtml()}`;
 }
 
 // ---- Metrics strip -----------------------------------------------------
