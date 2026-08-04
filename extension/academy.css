@@ -70,11 +70,16 @@ body.dark::after { opacity: .11; }
 @media print { body::after { display: none; } }
 
 *{ box-sizing:border-box; }
+/* Sticky footer: keeps trailing content at the bottom of the viewport on
+   short pages rather than floating mid-screen. */
+html{ height:100%; }
 body{
-  margin:0; background:var(--bg); color:var(--ink);
-  font-family:var(--ui); max-width:640px; margin:0 auto;
+  margin:0 auto; background:var(--bg); color:var(--ink);
+  font-family:var(--ui); max-width:640px;
   transition:background .15s ease, color .15s ease;
+  min-height:100vh; display:flex; flex-direction:column;
 }
+main{ flex:1 0 auto; }
 .bar{ display:flex; align-items:center; gap:0.6rem; padding:1.1rem 1.2rem; background:var(--surface); border-bottom:1px solid var(--rule); }
 .wordmark{ font-family:var(--ui); font-weight:700; font-size:1.15rem; color:var(--primary); }
 .ver{ font-family:var(--ui); font-size:0.8rem; color:var(--ink-dim); }

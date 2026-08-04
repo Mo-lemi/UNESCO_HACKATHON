@@ -23,12 +23,37 @@ const PANELS = {
       <h2>The short version</h2>
       <p class="tier-word low">✓ Qhaphela does not collect your personal information</p>
       <p class="muted">No account. No login. No analytics. No advertising. No tracking.
-      The analysis runs on your own computer, so there is nothing to send anywhere.</p>
+      Fraud detection runs entirely on your own computer.</p>
       <ul class="checks ok">
-        <li>Your CV never leaves your machine — it is read in memory and never saved</li>
+        <li>The risk score, red flags and CV matching all happen on your machine</li>
         <li>The jobs you look at are never transmitted to us</li>
         <li>No name, ID number, email, phone, location or IP address is ever collected</li>
       </ul>
+      <p class="note"><strong>One exception, stated plainly:</strong> Qhaphela AI (the
+      assistant, chat, and interview / cover-letter / CV tools) sends the text
+      <em>you choose to give it</em> to Groq for processing. Nothing else leaves your
+      device, and no identifier for you is attached. If you would rather nothing left
+      your machine at all, simply do not use the AI features — everything else keeps
+      working offline. See “Qhaphela AI” below.</p>
+    </div>
+
+    <div class="card" style="margin-top:1rem">
+      <h2>Qhaphela AI, and what it sends</h2>
+      <p class="muted">This is the only part of Qhaphela that transmits anything off
+      your device, so here is exactly what goes and when. Nothing is sent unless you
+      actively use one of these features.</p>
+      <ul class="checks warn">
+        <li><strong>Ask a question / paste a message</strong> — your question or pasted text</li>
+        <li><strong>Explain this posting, Interview prep</strong> — the job advert text</li>
+        <li><strong>Cover letter, Application email, Improve my CV</strong> — the job advert text <em>and your CV text</em></li>
+      </ul>
+      <ul class="checks ok">
+        <li>Processed by Groq. No account, no identifier, no browsing history is attached</li>
+        <li>The extension holds no API key. It never contacts Groq directly</li>
+        <li>The AI never sets your risk score — it only explains the score your own machine produced</li>
+      </ul>
+      <p class="note">Please do not paste your ID number, banking details or passwords.
+      The assistant will never ask you for them.</p>
     </div>
 
     <div class="grid two" style="margin-top:1rem">

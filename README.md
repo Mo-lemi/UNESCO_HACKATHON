@@ -110,10 +110,19 @@ pip install -r requirements.txt
 cd qhaphela && pytest test_app.py -v
 ```
 
-**38 tests** covering detection accuracy on real scam and real legitimate postings (including
-regression tests for every false positive found during live testing), fairness toward small
-informal employers, excerpt anonymisation, multi-class scam typing, explainability output,
-the identity-theft layer, contact checks, CV matching, input validation and reporting.
+```bash
+cd qhaphela && pytest -q          # runs both suites
+```
+
+**53 tests.** `test_app.py` (38) covers detection accuracy on real scam and real legitimate
+postings — including a regression test for every false positive found during live testing —
+fairness toward small informal employers, excerpt anonymisation, multi-class scam typing,
+explainability output, the identity-theft layer, contact checks, CV matching, input validation
+and reporting. `test_ai.py` (15) covers the assistant's security properties: that the API key
+can never appear in any response, that prompt-injection attempts are detected while ordinary
+recruiter wording is not, that fabricated evidence quotes are discarded, and that scoring is
+completely unaffected when the AI is unreachable. The AI tests stub the network, so they keep
+protecting you with no internet and no key.
 
 ### Honest evaluation on real postings
 
@@ -184,5 +193,11 @@ device and erases it on request.
 
 ## 🔒 Privacy in one line
 
-No account, no analytics, no tracking. The model runs on your own computer, so
-your CV and the jobs you look at **never leave your machine**.
+No account, no analytics, no tracking. Fraud detection runs entirely on your own
+computer, so the jobs you look at **never leave your machine**.
+
+The single exception is **Qhaphela AI**: text you actively choose to give the
+assistant is sent to Groq for processing. Nothing else is, no identifier for you
+is attached, and the extension never holds the API key. Everything except the
+assistant works with no internet connection at all. Full detail in
+[PRIVACY.md](PRIVACY.md#5a-qhaphela-ai-and-what-it-sends).

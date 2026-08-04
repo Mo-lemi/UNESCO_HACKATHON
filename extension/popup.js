@@ -108,6 +108,7 @@ async function loadForActiveTab() {
   const tab = await getActiveTab();
   if (!tab) return show("view-empty");
   chrome.runtime.sendMessage({ type: "QHAPHELA_GET_TAB_RESULT", tabId: tab.id }, (resp) => {
+    if (chrome.runtime.lastError) return show("view-empty");
     if (resp && resp.ok && resp.data) {
       renderResult(resp.data.result);
     } else {
@@ -143,11 +144,17 @@ document.getElementById("btn-scan-paste").addEventListener("click", () => {
   if (!text) return;
   show("view-loading");
   chrome.runtime.sendMessage({ type: "QHAPHELA_SCAN_TEXT", text }, (resp) => {
-    if (resp && resp.ok) {
-      renderResult(resp.result);
-    } else {
+    if (chrome.runtime.lastError || !resp || !resp.ok) {
+      // Distinguish "nothing to show" from "the check failed" -- telling
+      // someone no posting was found when the service is simply down would
+      // be a quietly wrong answer in a tool people rely on.
       show("view-empty");
+      const dot = document.getElementById("api-dot");
+      const label = document.getElementById("api-label");
+      if (dot && label) { dot.className = "dot down"; label.textContent = "api offline"; }
+      return;
     }
+    renderResult(resp.result);
   });
 });
 
@@ -155,11 +162,15 @@ document.getElementById("btn-academy").addEventListener("click", () => {
   chrome.tabs.create({ url: chrome.runtime.getURL("academy.html") });
 });
 
+// Expand/collapse the itemised breakdown. The button is declared in
+// popup.html, so this listener is what keeps it from being dead UI.
 document.getElementById("btn-learn").addEventListener("click", (e) => {
   const details = document.getElementById("details-body");
   const nowHidden = details.classList.toggle("hidden");
-  e.target.textContent = nowHidden ? "+ click for more" : "− less detail";
+  e.target.textContent = nowHidden ? "+ click for more" : "\u2212 less detail";
+  e.target.setAttribute("aria-expanded", String(!nowHidden));
 });
+
 
 // Hackathon MVP: this is a local-only acknowledgement, not yet wired to a
 // backend feedback endpoint. The roadmap's retraining loop depends on a

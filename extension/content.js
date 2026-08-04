@@ -71,6 +71,9 @@ const I18N = {
     safetyTipBody: "Never share your ID, banking details, or pay recruitment fees before verifying the employer.",
     noPosting: "Open a specific job posting to get a safety score",
     scanning: "Scanning this page for a job posting…",
+    steps: ["Reading the posting text", "Checking South African scam patterns", "Running the AI risk model", "Preparing the explanation"],
+    checkingLabel: "Checking this posting",
+    scanSlow: "The check is taking longer than usual.",
     offline: "Can't reach the Qhaphela model service. Is it running on port 8000?",
     noFlags: "No specific red flags found in the text.",
     notDetected: "Not detected",
@@ -119,6 +122,9 @@ const I18N = {
     safetyTipBody: "Ungalokothi wabelane nge-ID yakho, imininingwane yasebhange, noma ukhokhe izimali zokuqasha ngaphambi kokuqinisekisa umqashi.",
     noPosting: "Vula isikhangiso somsebenzi esithile ukuze uthole amaphuzu okuphepha",
     scanning: "Kuskenwa leli khasi kufunwa isikhangiso somsebenzi…",
+    steps: ["Sifunda umbhalo wesikhangiso", "Sihlola amaphethini okukhwabanisa aseNingizimu Afrika", "Sisebenzisa imodeli ye-AI yobungozi", "Silungiselela incazelo"],
+    checkingLabel: "Sihlola lesi sikhangiso",
+    scanSlow: "Ukuhlola kuthatha isikhathi eside kunokujwayelekile.",
     offline: "Ayikwazi ukufinyelela isevisi ye-Qhaphela. Ingabe isebenza ku-port 8000?",
     noFlags: "Azitholakalanga izimpawu ezibomvu ezithile embhalweni.",
     notDetected: "Akutholakalanga",
@@ -167,6 +173,9 @@ const I18N = {
     safetyTipBody: "Ungaze wabelane nge-ID yakho, iinkcukacha zebhanki, okanye uhlawule iimali zoqeshwa phambi kokuqinisekisa umqeshi.",
     noPosting: "Vula isaziso somsebenzi esithile ukufumana amanqaku okhuseleko",
     scanning: "Kukhangelwa eli phepha isaziso somsebenzi…",
+    steps: ["Sifunda umbhalo wesibhengezo", "Sijonga iipatheni zobuqhetseba zoMzantsi Afrika", "Sisebenzisa imodeli ye-AI yomngcipheko", "Silungiselela ingcaciso"],
+    checkingLabel: "Sijonga esi sibhengezo",
+    scanSlow: "Ukujonga kuthatha ixesha elide kunesiqhelo.",
     offline: "Ayikwazi ukufikelela kwinkonzo ye-Qhaphela. Ingaba isebenza kwi-port 8000?",
     noFlags: "Akukho miqondiso ibomvu ithile ifunyenweyo kumbhalo.",
     notDetected: "Ayifunyanwanga",
@@ -215,6 +224,9 @@ const I18N = {
     safetyTipBody: "Le ka mohla o se ke wa arolelana ID ya hao, dintlha tsa banka, kapa wa lefa ditefiso tsa ho hira pele o netefatsa mohiri.",
     noPosting: "Bula tsebiso e itseng ea mosebetsi ho fumana lintlha tsa polokeho",
     scanning: "Ho hlahlojoa leqephe lena ho batloa tsebiso ea mosebetsi…",
+    steps: ["Re bala mongolo wa phatlalatso", "Re hlahloba mekgwa ya bomenemene ba Afrika Borwa", "Re sebedisa mohlala wa AI wa kotsi", "Re lokisetsa tlhaloso"],
+    checkingLabel: "Re hlahloba phatlalatso ena",
+    scanSlow: "Tlhahlobo e nka nako e telele ho feta tloaelo.",
     offline: "Ha e khone ho fihlela tshebeletso ea Qhaphela. Na e sebetsa ho port 8000?",
     noFlags: "Ha ho matshwao a kotsi a fumanweng sengolweng.",
     notDetected: "Ha e a fumanoa",
@@ -263,6 +275,9 @@ const I18N = {
     safetyTipBody: "Le ka mohla o se abelane ka ID ya gago, dintlha tša panka, goba wa lefa ditefelo tša go thwalwa pele o netefatša mothwadi.",
     noPosting: "Bula tsebišo ye e itšego ya mošomo",
     scanning: "Go hlahlobja letlakala le…",
+    steps: ["Re bala sengwalwa sa papatšo", "Re hlahloba mekgwa ya bomenetša ya Afrika Borwa", "Re šomiša mohlala wa AI wa kotsi", "Re lokišetša tlhaloso"],
+    checkingLabel: "Re hlahloba papatšo ye",
+    scanSlow: "Tlhahlobo e tšea nako ye telele go feta tlwaelo.",
     offline: "Ga e kgone go fihlelela tirelo ya Qhaphela.",
     noFlags: "Ga go matshwao a kotsi a hweditšwego.",
     notDetected: "Ga se ya hwetšwa",
@@ -311,6 +326,9 @@ const I18N = {
     safetyTipBody: "Le ka motlha o se ka wa abelana ka ID ya gago, dintlha tsa banka, kgotsa wa duela ditefiso tsa go thapiwa pele o netefatsa mothapi.",
     noPosting: "Bula kitsiso e e rileng ya tiro",
     scanning: "Go sekasekwa tsebe e…",
+    steps: ["Re bala mokwalo wa kitsiso", "Re tlhatlhoba mekgwa ya botsietsi ya Aforika Borwa", "Re dirisa sekao sa AI sa kotsi", "Re baakanya tlhaloso"],
+    checkingLabel: "Re tlhatlhoba kitsiso e",
+    scanSlow: "Tlhatlhobo e tsaya nako e telele go feta jaaka gantsi.",
     offline: "Ga e kgone go fitlhelela tirelo ya Qhaphela.",
     noFlags: "Ga go na matshwao a kotsi a a bonweng.",
     notDetected: "Ga e a bonwa",
@@ -359,6 +377,9 @@ const I18N = {
     safetyTipBody: "U nga tshuki u avelana ID ya wena, vuxokoxoko bya bangi, kumbe u hakela mali yo thoriwa u nga si tiyisisa mutholi.",
     noPosting: "Pfula xitiviso xin'wana xa ntirho",
     scanning: "Ku kamberiwa tluka leri…",
+    steps: ["Hi hlaya matsalwa ya xitiviso", "Hi kambela maendlelo ya vukanganyisi bya Afrika Dzonga", "Hi tirhisa xikombiso xa AI xa khombo", "Hi lunghiselela nhlamuselo"],
+    checkingLabel: "Hi kambela xitiviso lexi",
+    scanSlow: "Ku kambela ku teka nkarhi wo leha ku tlula ntolovelo.",
     offline: "A yi swi koti ku fikelela vukorhokeri bya Qhaphela.",
     noFlags: "A ku na swikombiso swa khombo leswi kumekeke.",
     notDetected: "A swi kumekanga",
@@ -407,6 +428,9 @@ const I18N = {
     safetyTipBody: "Ungalokotsi wabelane nge-ID yakho, imininingwane yasebhange, nobe ukhokhe timali tekucashwa ungakaciniseki ngemcashi.",
     noPosting: "Vula lesatiso lesitsite semsebenti",
     scanning: "Kuskenwa leli khasi…",
+    steps: ["Sifundza umbhalo wesatiso", "Sihlola emaphethini ekukhwabanisa aseNingizimu Afrika", "Sisebentisa imodeli ye-AI yebungoti", "Silungiselela inchazelo"],
+    checkingLabel: "Sihlola lesi satiso",
+    scanSlow: "Kuhlola kutsatsa sikhatsi lesidze kunalokujwayelekile.",
     offline: "Ayikwati kufinyelela lusito lwe-Qhaphela.",
     noFlags: "Atikho timphawu letibovu letitfoliwe.",
     notDetected: "Akutfolakalanga",
@@ -455,6 +479,9 @@ const I18N = {
     safetyTipBody: "Ni songo vhuya na kovhekana ID yaṋu, zwidodombedzwa zwa bannga, kana na badela mbadelo dza u shumiswa ni sa athu khwaṱhisedza mushumisi.",
     noPosting: "Vulani ndivhadzo yo tiwaho ya mushumo",
     scanning: "Hu khou sedzuluswa siaṱari ḽino…",
+    steps: ["Ri khou vhala maṅwalwa a ndivhadzo", "Ri khou ṱolisisa maitele a vhufhura ha Afrika Tshipembe", "Ri khou shumisa modele wa AI wa khombo", "Ri khou lugiselela ṱhalutshedzo"],
+    checkingLabel: "Ri khou ṱolisisa ndivhadzo iyi",
+    scanSlow: "U ṱolisisa hu khou dzhia tshifhinga tshilapfu u fhira zwo ḓoweleaho.",
     offline: "A i koni u swikelela tshumelo ya Qhaphela.",
     noFlags: "A hu na zwiga zwa khombo zwo wanalaho.",
     notDetected: "A zwo ngo wanala",
@@ -503,6 +530,9 @@ const I18N = {
     safetyTipBody: "Ungakhe wabelane nge-ID yakho, imininingwana yebhange, namkha ukhokhe iimali zokuqatjhwa ungakaqinisekisi umqatjhi.",
     noPosting: "Vula isaziso esithileko somsebenzi",
     scanning: "Kuskenwa ikhasi leli…",
+    steps: ["Sifunda umtlolo wesaziso", "Sihlola amaphethini wekukhwabanisa yeSewula Afrika", "Sisebenzisa imodeli ye-AI yengozi", "Silungiselela ihlathululo"],
+    checkingLabel: "Sihlola lesi saziso",
+    scanSlow: "Ukuhlola kuthatha isikhathi eside kunalokujayelekileko.",
     offline: "Ayikwazi ukufikelela isevisi ye-Qhaphela.",
     noFlags: "Azikho iimphawu ezibovu ezitholakeleko.",
     notDetected: "Akutholakalanga",
@@ -551,6 +581,9 @@ const I18N = {
     safetyTipBody: "Deel nooit jou ID, bankbesonderhede nie, en betaal nooit werwingsfooie voordat jy die werkgewer geverifieer het nie.",
     noPosting: "Maak 'n spesifieke werksadvertensie oop",
     scanning: "Hierdie bladsy word geskandeer…",
+    steps: ["Lees die advertensie se teks", "Kontroleer Suid-Afrikaanse bedrogpatrone", "Voer die KI-risikomodel uit", "Berei die verduideliking voor"],
+    checkingLabel: "Kontroleer hierdie advertensie",
+    scanSlow: "Die kontrole neem langer as gewoonlik.",
     offline: "Kan nie die Qhaphela-diens bereik nie. Loop dit op poort 8000?",
     noFlags: "Geen spesifieke rooivlae in die teks gevind nie.",
     notDetected: "Nie opgespoor nie",
@@ -911,23 +944,35 @@ function renderPanelConnecting() {
   body.innerHTML = cardHtml("", `<p class="qp-empty">${escapeHtml(t("scanning"))}</p>`) + trustedChannelsHtml() + safetyTipHtml();
 }
 
-// Each line corresponds to a step that genuinely happens; steps are only
-// ticked off as they actually complete, not on a decorative timer.
-const SCAN_STEPS = [
-  "Reading the posting text",
-  "Checking South African scam patterns",
-  "Running the AI risk model",
-  "Preparing the explanation",
-];
-
-function renderPanelScanning(activeStep) {
+// Each line corresponds to a step that genuinely happens, and a step is only
+// ticked once it has actually completed -- never on a decorative timer. The
+// distinction matters here: this is a security tool, so a progress readout
+// that implies work which did not happen is the same class of problem as a
+// score that implies evidence which does not exist.
+function renderPanelScanning(activeStep, slow = false) {
   const body = ensurePanel().querySelector("#qp-body");
-  const rows = SCAN_STEPS.map((label, i) => {
-    const state = i < activeStep ? "done" : i === activeStep ? "active" : "";
-    const mark = i < activeStep ? "✓" : i === activeStep ? "▸" : "·";
-    return `<div class="qp-step ${state}"><span class="m">${mark}</span>${escapeHtml(label)}</div>`;
-  }).join("");
-  body.innerHTML = cardHtml("", rows) + safetyTipHtml();
+  const steps = t("steps");
+  const rows = steps
+    .map((label, i) => {
+      const state = i < activeStep ? "done" : i === activeStep ? "active" : "";
+      const mark = i < activeStep ? "✓" : i === activeStep ? "▸" : "·";
+      // The mark is hidden from assistive tech: it is a visual restatement of
+      // the state already conveyed by the live region, not extra information.
+      return `<div class="qp-step ${state}"><span class="m" aria-hidden="true">${mark}</span>${escapeHtml(label)}</div>`;
+    })
+    .join("");
+
+  // Stated plainly rather than left to a spinner that never resolves.
+  const note = slow ? `<p class="qp-step-slow">${escapeHtml(t("scanSlow"))}</p>` : "";
+
+  // A screen-reader user would otherwise get silence for the whole scan.
+  // aria-busy tells assistive tech the region is still settling, so the steps
+  // are not announced as a finished result.
+  const region =
+    `<div role="status" aria-live="polite" aria-busy="${slow ? "false" : "true"}" ` +
+    `aria-label="${escapeHtml(t("checkingLabel"))}">${rows}${note}</div>`;
+
+  body.innerHTML = cardHtml("", region) + safetyTipHtml();
 }
 
 function renderPanelResult(result) {
@@ -1409,16 +1454,36 @@ function extractCompanyName() {
   return "";
 }
 
+// Manifest V3 shuts idle service workers down aggressively, so a scan that
+// gets no reply at all is ordinary operation rather than an edge case. Every
+// scan therefore runs under a watchdog: the panel either advances because a
+// real response arrived, or it says plainly that the check could not finish.
+// It must never sit on a step forever implying work is still in progress.
+const SCAN_SLOW_MS = 4000;
+const SCAN_TIMEOUT_MS = 12000;
+
 function scanDetailMode(text, container) {
   if (text === lastScannedText) return;
   lastScannedText = text;
   lastListSignature = null;
 
-  // Step 0 is genuinely complete by this point (the text has been extracted
-  // from the DOM). Step 1 begins as the request goes out; the remaining
-  // steps are ticked when the response actually lands, so the readout never
-  // claims progress that hasn't happened.
+  // Step 0 is genuinely complete by this point: the text has been extracted
+  // from the DOM. Step 1 begins as the request goes out.
   renderPanelScanning(1);
+
+  let settled = false;
+  const slowTimer = setTimeout(() => {
+    if (!settled) renderPanelScanning(1, true);
+  }, SCAN_SLOW_MS);
+  const failTimer = setTimeout(() => {
+    if (settled) return;
+    settled = true;
+    // Clearing this is what makes recovery possible: the guard at the top of
+    // the function would otherwise skip the identical text forever, leaving
+    // the page permanently unable to retry after one transient failure.
+    lastScannedText = null;
+    renderPanelUnreachable();
+  }, SCAN_TIMEOUT_MS);
 
   chrome.runtime.sendMessage(
     {
@@ -1429,12 +1494,30 @@ function scanDetailMode(text, container) {
       company_name: extractCompanyName(),
     },
     (resp) => {
-      if (resp && resp.ok && resp.result) {
+      if (settled) return;
+      settled = true;
+      clearTimeout(slowTimer);
+      clearTimeout(failTimer);
+
+      // lastError must be read, not merely ignored: when the worker was
+      // asleep or threw, `resp` is undefined, and leaving the error unchecked
+      // also floods the console of every page the extension runs on.
+      if (chrome.runtime.lastError || !resp || !resp.ok || !resp.result) {
+        lastScannedText = null;
+        renderPanelUnreachable();
+        return;
+      }
+
+      // The response landing is itself the evidence that the pattern checks
+      // and the model both ran, so those steps tick on proof rather than on a
+      // timer. The final step is painted before the local highlighting work
+      // it describes actually runs, so it describes outstanding work rather
+      // than being backfilled after the fact.
+      renderPanelScanning(3);
+      requestAnimationFrame(() => {
         applyHighlights(container, resp.result.highlights || []);
         renderPanelResult(resp.result);
-      } else {
-        renderPanelUnreachable();
-      }
+      });
     }
   );
 }

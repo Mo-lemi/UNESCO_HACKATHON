@@ -41,15 +41,35 @@
         "*://mail.google.com/*",
         "*://*.outlook.com/*",
         "*://*.office.com/*",
-        "*://*.bankofamerica.com/*",
+        "*://*.live.com/*",
+        "*://mail.yahoo.com/*",
+        "*://*.proton.me/*",
+        "*://*.protonmail.com/*",
+        "*://*.zoho.com/*",
+        "*://*.icloud.com/*",
         "*://*.standardbank.co.za/*",
         "*://*.fnb.co.za/*",
         "*://*.absa.co.za/*",
         "*://*.nedbank.co.za/*",
         "*://*.capitecbank.co.za/*",
+        "*://*.tymebank.co.za/*",
+        "*://*.africanbank.co.za/*",
+        "*://*.investec.com/*",
+        "*://*.discovery.co.za/*",
+        "*://*.bidvestbank.co.za/*",
+        "*://*.oldmutual.co.za/*",
+        "*://*.sanlam.co.za/*",
+        "*://*.bankofamerica.com/*",
         "*://*.sars.gov.za/*",
+        "*://*.sarsefiling.co.za/*",
+        "*://*.dha.gov.za/*",
         "*://*.paypal.com/*",
-        "*://*.github.com/*"
+        "*://*.payfast.co.za/*",
+        "*://*.ozow.com/*",
+        "*://*.yoco.com/*",
+        "*://*.peachpayments.com/*",
+        "*://*.github.com/*",
+        "*://*.gitlab.com/*"
       ]
     }
   ],
@@ -70,8 +90,13 @@
         "icons/watermark.png"
       ],
       "matches": [
-        "<all_urls>"
+        "http://*/*",
+        "https://*/*"
       ]
     }
-  ]
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'; base-uri 'none'; form-action 'none'"
+  },
+  "minimum_chrome_version": "116"
 }

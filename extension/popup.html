@@ -16,7 +16,7 @@
   </header>
   <p class="purpose">Protecting Opportunities. Empowering Futures.</p>
 
-  <main id="view-loading" class="view">
+  <main id="view-loading" class="view" role="status" aria-live="polite">
     <p class="line muted">scanning page…</p>
   </main>
 
@@ -25,7 +25,7 @@
     <p class="line muted dim">use "scan text" below for anything pasted or forwarded on whatsapp</p>
   </main>
 
-  <main id="view-result" class="view hidden">
+  <main id="view-result" class="view hidden" role="region" aria-live="polite" aria-label="Job safety result">
     <div class="readout">
       <span id="risk-score" class="score">–</span><span class="score-max">/100</span>
       <span id="risk-tier" class="tier">–</span>
@@ -41,7 +41,7 @@
 
     <p class="advice" id="advice-text"></p>
 
-    <button class="more-toggle" id="btn-learn" type="button">+ click for more</button>
+    <button class="more-toggle" id="btn-learn" type="button" aria-expanded="false" aria-controls="details-body">+ click for more</button>
     <div class="details hidden" id="details-body">
       <div id="flag-line" class="flag-line"></div>
       <div class="why">

@@ -22,7 +22,9 @@ from fastapi import FastAPI, File, Form, HTTPException, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
+import ai_assistant
 import cv_extract
+import groq_client
 import reports
 import threat_intel
 from features import (
@@ -378,6 +380,152 @@ async def match_file(
     result = job_match(cv_text[:MAX_TEXT_CHARS], job_text[:MAX_TEXT_CHARS])
     result["learning"] = learning_for(result["missing"])
     return MatchResponse(**result)
+
+
+# ---- Qhaphela AI -------------------------------------------------------
+# Every AI route lives behind this backend. The API key is read only in
+# groq_client and is never returned, logged, or sent to the extension.
+#
+# Failures here must never break fraud detection: the AI is additive, and a
+# 503 from these routes leaves /score working exactly as before.
+
+AI_MAX_CHARS = 8000
+
+
+class AiAskRequest(BaseModel):
+    question: str = Field(..., max_length=AI_MAX_CHARS)
+    language: str = Field("en", max_length=5)
+    history: list[dict] = Field(default_factory=list)
+
+
+class AiExplainRequest(BaseModel):
+    text: str = Field(..., max_length=AI_MAX_CHARS)
+    language: str = Field("en", max_length=5)
+
+
+class AiJobRequest(BaseModel):
+    job_text: str = Field(..., max_length=AI_MAX_CHARS)
+    cv_text: str = Field("", max_length=AI_MAX_CHARS)
+    company: str = Field("", max_length=200)
+    language: str = Field("en", max_length=5)
+
+
+class AiResponse(BaseModel):
+    answer: str
+    model: str
+
+
+def _ai_guard(request: Request) -> None:
+    """Shared preconditions for every AI route."""
+    _rate_limit(request)
+    if not groq_client.is_configured():
+        raise HTTPException(
+            status_code=503,
+            detail="The AI assistant is not configured. Add GROQ_API_KEY to .env and restart.",
+        )
+
+
+def _ai_call(fn, *args, **kwargs) -> AiResponse:
+    """
+    Run an assistant call, mapping failures to safe user-facing messages.
+
+    Every AI route goes through here, which makes it the right place for the
+    final credential scrub. groq_client.complete() already scrubs its own
+    output, but relying on that alone means the guarantee lives in one deep
+    function and quietly disappears the moment any other code path returns
+    text. Scrubbing again at the boundary costs one regex and makes the
+    property true of the API itself: nothing key-shaped leaves this service,
+    regardless of how it got here.
+    """
+    try:
+        answer = groq_client._scrub(fn(*args, **kwargs))
+        return AiResponse(answer=answer, model=groq_client.model_name())
+    except groq_client.GroqError as exc:
+        # str(exc) is one of our own mapped messages, never an upstream body.
+        raise HTTPException(status_code=502, detail=groq_client._scrub(str(exc)))
+
+
+@app.get("/ai/status")
+def ai_status():
+    """Lets the UI hide AI features cleanly when no key is present."""
+    return {"configured": groq_client.is_configured(), "model": groq_client.model_name()}
+
+
+@app.post("/ai/ask", response_model=AiResponse)
+def ai_ask(req: AiAskRequest, request: Request):
+    """
+    General assistant, and the paste-a-message checker.
+
+    Most South African job scams arrive as a forwarded WhatsApp message
+    rather than a web page the extension can scan, so this is the route that
+    covers the biggest real-world gap.
+    """
+    _ai_guard(request)
+    return _ai_call(ai_assistant.ask, req.question, req.language, req.history)
+
+
+@app.post("/ai/explain", response_model=AiResponse)
+def ai_explain(req: AiExplainRequest, request: Request):
+    """
+    Explain a verdict in plain language, in the user's language.
+
+    The posting is re-scored here deterministically so the explanation can
+    never describe a different verdict from the one the user was shown.
+    """
+    _ai_guard(request)
+    text = req.text
+    tfidf_vec = _vectorizer.transform([text])
+    rule_vec = np.array([rule_features(text)])
+    X = combine_features(tfidf_vec, rule_vec)
+    proba = float(_model.predict_proba(X)[0, 1])
+    score_val = int(round(proba * 100))
+    if hard_floor_flags(text):
+        score_val = max(score_val, 75)
+    points = rule_points(text)
+    positives = positive_signals(text)
+    if not any(v > 0 for v in rule_vec[0][:8]):
+        score_val = min(score_val, 25)
+    if not hard_floor_flags(text) and not has_strong_signal(text):
+        score_val = min(score_val, 25)
+
+    result = {
+        "score": score_val,
+        "tier": _tier_for(score_val),
+        "rule_reasons": points["items"],
+        "positive_signals": positives,
+        "identity_theft_signals": identity_theft_signals(text),
+    }
+    return _ai_call(ai_assistant.explain_posting, result, text, req.language)
+
+
+@app.post("/ai/interview", response_model=AiResponse)
+def ai_interview(req: AiJobRequest, request: Request):
+    _ai_guard(request)
+    return _ai_call(ai_assistant.interview_prep, req.job_text, req.company, req.language)
+
+
+@app.post("/ai/cover-letter", response_model=AiResponse)
+def ai_cover_letter(req: AiJobRequest, request: Request):
+    _ai_guard(request)
+    if not req.cv_text.strip():
+        raise HTTPException(status_code=400, detail="Upload your CV first so the letter uses your real experience.")
+    return _ai_call(ai_assistant.cover_letter, req.job_text, req.cv_text, req.company, req.language)
+
+
+@app.post("/ai/email", response_model=AiResponse)
+def ai_email(req: AiJobRequest, request: Request):
+    _ai_guard(request)
+    if not req.cv_text.strip():
+        raise HTTPException(status_code=400, detail="Upload your CV first so the email uses your real experience.")
+    return _ai_call(ai_assistant.application_email, req.job_text, req.cv_text, req.company, req.language)
+
+
+@app.post("/ai/improve-cv", response_model=AiResponse)
+def ai_improve_cv(req: AiJobRequest, request: Request):
+    _ai_guard(request)
+    if not req.cv_text.strip():
+        raise HTTPException(status_code=400, detail="Upload your CV first.")
+    return _ai_call(ai_assistant.improve_cv, req.cv_text, req.job_text, req.language)
 
 
 @app.get("/health")

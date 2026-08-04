@@ -2,7 +2,11 @@ venv/
 __pycache__/
 *.pyc
 .DS_Store
-.env.example
+# Secrets. .env holds the Groq API key and must never be committed.
+# .env.example is the safe template with empty values.
+.env
+.env.*
+!.env.example
 node_modules/
 dist/
 # Local community-report store (qhaphela/reports.py). Runtime data, and it

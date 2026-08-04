@@ -182,6 +182,8 @@ body.light .id-warning{ background:rgba(179,38,30,0.08); }
 .more-toggle:hover{ color:var(--ink-soft); }
 .details.hidden{ display:none; }
 
+/* The 1px gaps are the border colour showing through, which draws the
+   separators without extra elements. .btn below relies on this being flex. */
 .actions{ display:flex; gap:1px; background:var(--rule); border:1px solid var(--rule); margin-bottom:0.2rem; }
 .btn{
   flex:1; background:var(--bg); color:var(--ink); border:none; padding:0.5rem 0.4rem;

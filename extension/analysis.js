@@ -37,7 +37,7 @@ const esc = (s) => {
 const TIER_SYMBOL = { HIGH: "✖", MEDIUM: "!", LOW: "✓" };
 const TIER_CLASS = { HIGH: "high", MEDIUM: "medium", LOW: "low" };
 
-let state = { result: null, posting: "", jobs: [], meta: null, cvMatch: null };
+let state = { result: null, posting: "", jobs: [], meta: null, cvMatch: null, cvText: "" };
 
 // ---- Data loading ------------------------------------------------------
 // Reads what the content script already stored for the scanned tab. Falls
@@ -607,6 +607,179 @@ async function renderTracker() {
     }));
 }
 
+// ---- Qhaphela AI --------------------------------------------------------
+// The extension holds no key and never calls Groq: every request goes
+// through the background worker to the local service, which is the only
+// place the credential exists.
+let aiConfigured = null;
+let chatLog = [];
+
+function aiCall(endpoint, payload) {
+  return new Promise((resolve) => {
+    chrome.runtime.sendMessage({ type: "QHAPHELA_AI", endpoint, payload }, (resp) => {
+      // A torn-down service worker returns undefined with lastError set.
+      // Resolving to a shaped error keeps every caller on one code path
+      // instead of hitting `undefined.ok` and dying silently.
+      if (chrome.runtime.lastError || !resp) {
+        resolve({ ok: false, error: "The Qhaphela service could not be reached. Check it is running on port 8000." });
+        return;
+      }
+      resolve(resp);
+    });
+  });
+}
+
+// Model output is inserted as text, never as HTML, so nothing an LLM returns
+// can execute in the page.
+function renderMarkdownish(text) {
+  return esc(text)
+    .replace(/^### (.*)$/gm, "<strong>$1</strong>")
+    .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+    .replace(/^\s*[-*]\s+(.*)$/gm, "• $1")
+    .replace(/\n{2,}/g, "<br><br>")
+    .replace(/\n/g, "<br>");
+}
+
+const AI_TOOLS = [
+  ["explain",      "Explain this posting",   "Plain language, in your language",            (r) => ({ text: state.posting })],
+  ["interview",    "Prepare me for interview","Likely questions and STAR answers",          (r) => ({ job_text: state.posting, company: companyName() })],
+  ["cover-letter", "Write a cover letter",   "Uses only what is really in your CV",         (r) => ({ job_text: state.posting, cv_text: state.cvText, company: companyName() })],
+  ["email",        "Write application email","Ready to send with your CV attached",         (r) => ({ job_text: state.posting, cv_text: state.cvText, company: companyName() })],
+  ["improve-cv",   "Improve my CV",          "Stronger wording for this role",              (r) => ({ job_text: state.posting, cv_text: state.cvText })],
+];
+
+function companyName() {
+  return (state.meta && state.meta.title ? state.meta.title : "").slice(0, 120);
+}
+
+function aiPanel() {
+  return `
+  <div class="card" id="ai-disclosure">
+    <h2>Qhaphela AI</h2>
+    <p class="tier-word medium">! This feature sends text to an AI service</p>
+    <p class="muted">Fraud detection runs entirely on your computer. <strong>Qhaphela AI is
+    different</strong> — the posting text or question you send is processed by Groq's servers
+    (Llama 3.3 70B) to generate an answer. Nothing else about you is sent: no name, no CV unless
+    you attach one, no browsing history.</p>
+    <p class="note">Do not paste your ID number, banking details or passwords into the assistant.</p>
+  </div>
+
+  <div class="grid two" style="margin-top:1rem">
+    <div class="card">
+      <h2>Ask Qhaphela AI</h2>
+      <p class="muted">Paste a suspicious WhatsApp message or advert, or ask anything about
+      staying safe while job hunting.</p>
+      <div class="chat" id="chat-log"></div>
+      <div class="chat-input">
+        <textarea id="chat-box" rows="3" placeholder="Paste a message, or ask a question…"></textarea>
+        <button class="btn primary" id="chat-send" type="button">Ask</button>
+      </div>
+      <p class="note">Qhaphela AI can be wrong. It never changes the risk score — that comes from
+      the model running on your machine.</p>
+    </div>
+
+    <div class="card">
+      <h2>AI tools for this job</h2>
+      <div id="ai-tools"></div>
+      <div id="ai-output" class="ai-output hidden"></div>
+    </div>
+  </div>`;
+}
+
+async function wireAi() {
+  const status = await new Promise((r) =>
+    chrome.runtime.sendMessage({ type: "QHAPHELA_AI_STATUS" }, (resp) =>
+      r(chrome.runtime.lastError || !resp ? { ok: false, configured: false } : resp)
+    )
+  );
+  aiConfigured = status && status.configured;
+
+  const tools = document.getElementById("ai-tools");
+  const out = document.getElementById("ai-output");
+
+  if (!aiConfigured) {
+    tools.innerHTML = `<p class="muted">The AI assistant is not set up. Add <code>GROQ_API_KEY</code>
+      to the <code>.env</code> file in the project root and restart the service.</p>`;
+    document.getElementById("chat-send").disabled = true;
+    return;
+  }
+
+  tools.innerHTML = AI_TOOLS.map(
+    ([id, label, hint]) => `<div class="job">
+      <span class="job-main">
+        <span class="job-title">${esc(label)}</span>
+        <span class="job-meta">${esc(hint)}</span>
+      </span>
+      <span class="job-side"><button class="btn" data-ai="${id}" type="button">Run</button></span>
+    </div>`
+  ).join("");
+
+  tools.querySelectorAll("[data-ai]").forEach((btn) =>
+    btn.addEventListener("click", async () => {
+      const [, label, , build] = AI_TOOLS.find((t) => t[0] === btn.dataset.ai);
+      const payload = { ...build(state.result), language: lang };
+      if (!state.posting) {
+        out.classList.remove("hidden");
+        out.innerHTML = `<p class="muted">Scan a job posting first.</p>`;
+        return;
+      }
+      btn.disabled = true;
+      const original = btn.textContent;
+      btn.textContent = "…";
+      out.classList.remove("hidden");
+      out.innerHTML = `<p class="muted">Qhaphela AI is thinking…</p>`;
+      const res = await aiCall(btn.dataset.ai, payload);
+      btn.disabled = false;
+      btn.textContent = original;
+      out.innerHTML = res && res.ok
+        ? `<h3>${esc(label)}</h3><div class="ai-body">${renderMarkdownish(res.answer)}</div>
+           <p class="note">Generated by ${esc(res.model || "AI")}. Check it before you send anything.</p>`
+        : `<p class="muted">${esc((res && res.error) || "That did not work.")}</p>`;
+    })
+  );
+
+  const box = document.getElementById("chat-box");
+  const send = document.getElementById("chat-send");
+  const log = document.getElementById("chat-log");
+
+  const paint = () => {
+    log.innerHTML = chatLog
+      .map(
+        (m) => `<div class="msg ${m.role}">
+          <span class="msg-who">${m.role === "user" ? "You" : "Qhaphela AI"}</span>
+          <div class="msg-body">${m.role === "user" ? esc(m.content) : renderMarkdownish(m.content)}</div>
+        </div>`
+      )
+      .join("");
+    log.scrollTop = log.scrollHeight;
+  };
+
+  async function ask() {
+    const question = box.value.trim();
+    if (!question) return;
+    chatLog.push({ role: "user", content: question });
+    box.value = "";
+    send.disabled = true;
+    paint();
+    log.insertAdjacentHTML("beforeend", `<div class="msg assistant" id="thinking"><span class="msg-who">Qhaphela AI</span><div class="msg-body">…</div></div>`);
+    log.scrollTop = log.scrollHeight;
+
+    const res = await aiCall("ask", { question, language: lang, history: chatLog.slice(0, -1) });
+    document.getElementById("thinking")?.remove();
+    chatLog.push({
+      role: "assistant",
+      content: res && res.ok ? res.answer : (res && res.error) || "That did not work.",
+    });
+    send.disabled = false;
+    paint();
+  }
+
+  send.addEventListener("click", ask);
+  box.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) ask();
+  });
+}
+
 const PANELS = {
   overview: overviewPanel,
   redflags: redFlagsPanel,
@@ -615,6 +788,7 @@ const PANELS = {
   cv: cvPanel,
   similar: () => similarPanel(),
   tracker: () => trackerPanel(),
+  ai: () => aiPanel(),
 };
 
 function render(which) {
@@ -631,6 +805,7 @@ function render(which) {
   if (which === "overview") loadMetrics();
   if (which === "cv") wireCv();
   if (which === "tracker") renderTracker();
+  if (which === "ai") wireAi();
 }
 
 function wireCv() {

@@ -141,6 +141,40 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     return true;
   }
 
+  // ---- Qhaphela AI ----
+  // Routed through here like every other backend call: the extension holds
+  // no credentials and never talks to Groq. The key lives only in the local
+  // service's .env, and this worker only ever sees the finished answer.
+  if (message.type === "QHAPHELA_AI") {
+    fetch(`${API_BASE}/ai/${message.endpoint}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(message.payload || {}),
+    })
+      .then(async (res) => {
+        const data = await res.json();
+        sendResponse(
+          res.ok
+            ? { ok: true, answer: data.answer, model: data.model }
+            : { ok: false, error: data.detail || `AI error ${res.status}` }
+        );
+      })
+      .catch(() =>
+        sendResponse({ ok: false, error: "Cannot reach the Qhaphela service on port 8000." })
+      );
+    return true;
+  }
+
+  if (message.type === "QHAPHELA_AI_STATUS") {
+    // Lets the interface say "the assistant is unavailable" up front, rather
+    // than offering buttons that only fail once someone clicks them.
+    fetch(`${API_BASE}/ai/status`)
+      .then((r) => r.json())
+      .then((d) => sendResponse({ ok: true, ...d }))
+      .catch(() => sendResponse({ ok: false, configured: false }));
+    return true;
+  }
+
   if (message.type === "QHAPHELA_OPEN_ABOUT") {
     chrome.tabs.create({ url: chrome.runtime.getURL("about.html") });
     sendResponse({ ok: true });
