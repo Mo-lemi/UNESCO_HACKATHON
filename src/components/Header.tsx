@@ -13,19 +13,29 @@ export const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab, apiStat
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           
-          {/* Logo & Title */}
-          <div className="flex items-center gap-3 cursor-pointer" onClick={() => setActiveTab('scanner')}>
-            <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-red-500 to-amber-500 flex items-center justify-center font-mono font-black text-slate-950 text-xl shadow-lg shadow-red-500/20">
-              I
+          {/* Logo & Title. A real <button>: this navigates back to the scanner,
+              so it must be reachable by keyboard, not a bare div with onClick. */}
+          <button
+            type="button"
+            className="flex items-center gap-3 cursor-pointer text-left rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-red-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900"
+            onClick={() => setActiveTab('scanner')}
+            aria-label="Qhaphela home — go to the fraud scanner"
+          >
+            {/* Was "I", left over from the project's former name, Isazi. */}
+            <div
+              aria-hidden="true"
+              className="w-9 h-9 rounded-lg bg-gradient-to-br from-red-500 to-amber-500 flex items-center justify-center font-mono font-black text-slate-950 text-xl shadow-lg shadow-red-500/20"
+            >
+              Q
             </div>
             <div>
               <div className="flex items-center gap-2">
                 <span className="font-mono font-extrabold tracking-wider text-xl text-slate-100">QHAPHELA</span>
                 <span className="text-xs font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700">v0.1.0</span>
               </div>
-              <p className="text-xs text-slate-400 hidden sm:block">Job-Posting Fraud Reader: Reasons, Not Just a Verdict</p>
+              <p className="text-xs text-slate-400 hidden sm:block">Protecting Opportunities. Empowering Futures.</p>
             </div>
-          </div>
+          </button>
 
           {/* Nav Tabs */}
           <nav className="flex items-center gap-1 sm:gap-2">
@@ -79,14 +89,24 @@ export const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab, apiStat
           </nav>
 
           {/* API Status Badge */}
-          <div className="flex items-center gap-2 bg-slate-900 border border-slate-800 rounded-full px-3 py-1 text-xs">
+          <div
+            className="flex items-center gap-2 bg-slate-900 border border-slate-800 rounded-full px-3 py-1 text-xs"
+            role="status"
+            aria-live="polite"
+            aria-label={`Model service: ${apiStatus}`}
+          >
+            {/* Decorative: the state is already in the text beside it. The
+                animation is suppressed for anyone who asked for reduced
+                motion -- a constantly pulsing dot is a real problem for some
+                vestibular and attention conditions. */}
             <span
+              aria-hidden="true"
               className={`w-2 h-2 rounded-full ${
                 apiStatus === 'online'
-                  ? 'bg-emerald-500 animate-pulse'
+                  ? 'bg-emerald-500 animate-pulse motion-reduce:animate-none'
                   : apiStatus === 'offline'
                   ? 'bg-red-500'
-                  : 'bg-amber-500 animate-ping'
+                  : 'bg-amber-500 animate-ping motion-reduce:animate-none'
               }`}
             />
             <span className="font-mono text-slate-300">

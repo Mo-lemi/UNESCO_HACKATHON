@@ -133,28 +133,41 @@ export const FraudScanner: React.FC = () => {
         );
       }
       const isSelected = selectedHighlightIndex === span.hlIndex;
+      // A real <button>, not a clickable <mark>. The flagged phrase and its
+      // reason are the whole point of this view, and as a bare <mark onClick>
+      // they were unreachable without a mouse: no tab stop, no key handler,
+      // and a tooltip that only appeared on hover. The reason is carried in
+      // aria-label so it is announced rather than shown only on hover, and
+      // the tooltip now also opens on keyboard focus.
       elements.push(
-        <mark
+        <button
           key={`hl-${keyIdx++}`}
+          type="button"
           onClick={() => setSelectedHighlightIndex(isSelected ? null : span.hlIndex)}
-          className={`relative group inline-block px-1 py-0.5 rounded cursor-pointer transition-all ${
+          aria-pressed={isSelected}
+          aria-label={`Flagged phrase: ${span.phrase}. Reason: ${span.reason}`}
+          className={`relative group inline-block px-1 py-0.5 rounded cursor-pointer transition-all text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-red-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900 ${
             isSelected
               ? 'bg-red-500 text-white font-medium ring-2 ring-red-400 ring-offset-2 ring-offset-slate-900 shadow-md'
               : 'bg-red-500/20 text-red-200 border-b-2 border-red-500 hover:bg-red-500/40 hover:text-white'
           }`}
         >
-          {span.phrase}
-          <span className="inline-flex items-center ml-1 opacity-70 group-hover:opacity-100">
+          <mark className="bg-transparent text-inherit">{span.phrase}</mark>
+          <span className="inline-flex items-center ml-1 opacity-70 group-hover:opacity-100" aria-hidden="true">
             <Info className="w-3 h-3 inline" />
           </span>
 
-          {/* Tooltip on hover/click */}
-          <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:flex flex-col items-center w-64 p-2 bg-slate-950 text-slate-100 text-xs rounded-lg border border-red-500/40 shadow-xl z-20 pointer-events-none">
+          {/* Visual tooltip. aria-hidden because the same text is already in
+              the button's accessible name -- announcing it twice is noise. */}
+          <span
+            aria-hidden="true"
+            className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:flex group-focus-visible:flex flex-col items-center w-64 p-2 bg-slate-950 text-slate-100 text-xs rounded-lg border border-red-500/40 shadow-xl z-20 pointer-events-none"
+          >
             <span className="font-semibold text-red-400 mb-0.5">Flagged Reason</span>
             <span>{span.reason}</span>
             <span className="w-2 h-2 bg-slate-950 border-r border-b border-red-500/40 transform rotate-45 -mb-3 mt-1"></span>
           </span>
-        </mark>
+        </button>
       );
       lastEnd = span.end;
     });
@@ -255,9 +268,10 @@ export const FraudScanner: React.FC = () => {
               <button
                 onClick={() => handleScan(inputText)}
                 disabled={isScanning || !inputText.trim()}
-                className="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-red-600 hover:bg-red-500 text-white font-medium text-sm transition-all shadow-lg shadow-red-600/20 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                aria-busy={isScanning}
+                className="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-red-600 hover:bg-red-500 text-white font-medium text-sm transition-all shadow-lg shadow-red-600/20 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-red-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
               >
-                <RefreshCw className={`w-4 h-4 ${isScanning ? 'animate-spin' : ''}`} />
+                <RefreshCw aria-hidden="true" className={`w-4 h-4 ${isScanning ? 'animate-spin motion-reduce:animate-none' : ''}`} />
                 <span>{isScanning ? 'Scoring...' : 'Scan Posting'}</span>
               </button>
             </div>
@@ -473,10 +487,10 @@ export const FraudScanner: React.FC = () => {
 
       </div>
       ) : (
-        <div className="bg-slate-950 border border-slate-800 rounded-xl p-8 text-center">
+        <div className="bg-slate-950 border border-slate-800 rounded-xl p-8 text-center" role="status" aria-live="polite">
           {scanError ? (
             <>
-              <AlertTriangle className="w-6 h-6 text-red-400 mx-auto mb-2" />
+              <AlertTriangle className="w-6 h-6 text-red-400 mx-auto mb-2" aria-hidden="true" />
               <p className="text-sm text-red-300 font-mono">{scanError}</p>
               <button
                 onClick={() => handleScan(inputText)}

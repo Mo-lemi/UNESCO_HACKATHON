@@ -308,6 +308,32 @@ html.qhaphela-shifted.qhaphela-shifted-collapsed { margin-left: var(--qp-width-c
 /* Shown only once the scan has genuinely exceeded its expected time, so the
    readout states the delay instead of sitting on a step that implies work is
    still progressing. */
+/* Qhaphela AI card in the panel. */
+#qhaphela-panel .qp-ai-ask { margin-top: .5rem !important; }
+#qhaphela-panel .qp-ai-ask textarea {
+  width: 100% !important; box-sizing: border-box !important; resize: vertical !important;
+  font: inherit !important; font-size: .8rem !important; padding: .45rem !important;
+  border: 1px solid var(--rule) !important; border-radius: 6px !important;
+  background: var(--bg) !important; color: var(--ink) !important; margin-bottom: .4rem !important;
+}
+#qhaphela-panel .qp-ai-ask textarea:focus-visible {
+  outline: 2px solid var(--primary) !important; outline-offset: 1px !important;
+}
+#qhaphela-panel .qp-ai-out {
+  margin-top: .55rem !important; padding: .55rem !important;
+  border-left: 3px solid var(--primary) !important; background: var(--bg-soft) !important;
+  border-radius: 0 6px 6px 0 !important; font-size: .8rem !important; line-height: 1.5 !important;
+  max-height: 20rem !important; overflow-y: auto !important;
+}
+#qhaphela-panel .qp-ai-body { color: var(--ink-body) !important; }
+#qhaphela-panel .qp-ai-thinking { color: var(--ink-muted) !important; font-style: italic !important; }
+#qhaphela-panel .qp-ai-err { color: var(--crimson) !important; }
+#qhaphela-panel .qp-ai-note {
+  margin: .4rem 0 0 !important; font-size: .68rem !important;
+  color: var(--ink-muted) !important; line-height: 1.45 !important;
+}
+#qhaphela-panel .qp-btn:disabled { opacity: .55 !important; cursor: not-allowed !important; }
+
 #qhaphela-panel .qp-step-slow {
   margin: .4rem 0 0 !important; font-size: .75rem !important;
   color: var(--ink-muted) !important; line-height: 1.45 !important;

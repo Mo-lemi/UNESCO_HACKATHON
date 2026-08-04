@@ -124,6 +124,21 @@ features** — every other part of Qhaphela continues to work fully offline.
 document you would not want processed by a third party. The assistant will never
 ask you for these.
 
+**Employer verification lookups.** When you press *Check the recruiter's email
+& domain*, Qhaphela looks up public infrastructure records for the **employer's**
+domain, not yours:
+
+| Lookup | Sent to | What is sent |
+|---|---|---|
+| DNS records (MX, SPF, DMARC) | Cloudflare's public resolver (`cloudflare-dns.com`) | The employer's domain name only |
+| Domain registration date | `rdap.org` | The employer's domain name only |
+| HTTPS certificate | The employer's own website | An ordinary HTTPS connection, as any browser makes |
+
+**Nothing about you is sent in these lookups** — no name, no identifier, not the
+posting text, not your CV. Only the employer's domain. These run **only when you
+press the button**, never automatically, and every other feature works without
+them.
+
 **The AI never decides your risk score.** Scoring is done by the model on your
 own machine. The assistant explains that score; it cannot change it.
 

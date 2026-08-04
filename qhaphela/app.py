@@ -15,6 +15,7 @@ import os
 import time
 from collections import deque
 from contextlib import asynccontextmanager
+from typing import Literal
 
 import joblib
 import numpy as np
@@ -25,6 +26,7 @@ from pydantic import BaseModel, Field
 import ai_assistant
 import cv_extract
 import groq_client
+import recon
 import reports
 import threat_intel
 from features import (
@@ -391,11 +393,35 @@ async def match_file(
 
 AI_MAX_CHARS = 8000
 
+# AI calls cost real tokens and take seconds, unlike scoring which is local
+# and instant. They therefore get their own, much tighter budget: a runaway
+# loop in the extension should not be able to burn a day's quota in a minute,
+# and the person it would strand is a job seeker relying on the tool.
+AI_RATE_LIMIT_REQUESTS = 12
+AI_RATE_LIMIT_WINDOW_SECONDS = 60
+_ai_request_times: dict[str, deque] = {}
+
+
+class ChatTurn(BaseModel):
+    """
+    One prior turn of conversation.
+
+    Typed rather than a bare dict: groq_client slices `content` as a string,
+    so a non-string value arriving here raised a TypeError and turned a
+    malformed request into a 500. Pydantic now rejects it as a 422, which is
+    both the correct answer and one the caller can act on.
+    """
+
+    role: Literal["user", "assistant"]
+    content: str = Field(..., max_length=4000)
+
 
 class AiAskRequest(BaseModel):
     question: str = Field(..., max_length=AI_MAX_CHARS)
     language: str = Field("en", max_length=5)
-    history: list[dict] = Field(default_factory=list)
+    # Bounded. groq_client only ever forwards the last few turns, but an
+    # unbounded list was still parsed into memory in full before reaching it.
+    history: list[ChatTurn] = Field(default_factory=list, max_length=20)
 
 
 class AiExplainRequest(BaseModel):
@@ -415,9 +441,29 @@ class AiResponse(BaseModel):
     model: str
 
 
+def _ai_rate_limit(request: Request) -> None:
+    """Separate, stricter budget for the routes that cost money."""
+    client = request.client.host if request.client else "unknown"
+    now = time.monotonic()
+    times = _ai_request_times.setdefault(client, deque())
+    while times and now - times[0] > AI_RATE_LIMIT_WINDOW_SECONDS:
+        times.popleft()
+    if len(times) >= AI_RATE_LIMIT_REQUESTS:
+        raise HTTPException(
+            status_code=429,
+            detail=(
+                "The AI assistant is rate limited "
+                f"({AI_RATE_LIMIT_REQUESTS} requests per minute). "
+                "Fraud detection is unaffected and still works normally."
+            ),
+        )
+    times.append(now)
+
+
 def _ai_guard(request: Request) -> None:
     """Shared preconditions for every AI route."""
     _rate_limit(request)
+    _ai_rate_limit(request)
     if not groq_client.is_configured():
         raise HTTPException(
             status_code=503,
@@ -461,7 +507,8 @@ def ai_ask(req: AiAskRequest, request: Request):
     covers the biggest real-world gap.
     """
     _ai_guard(request)
-    return _ai_call(ai_assistant.ask, req.question, req.language, req.history)
+    history = [turn.model_dump() for turn in req.history]
+    return _ai_call(ai_assistant.ask, req.question, req.language, history)
 
 
 @app.post("/ai/explain", response_model=AiResponse)
@@ -496,6 +543,44 @@ def ai_explain(req: AiExplainRequest, request: Request):
         "identity_theft_signals": identity_theft_signals(text),
     }
     return _ai_call(ai_assistant.explain_posting, result, text, req.language)
+
+
+class VerifyRequest(BaseModel):
+    text: str = Field(..., max_length=AI_MAX_CHARS)
+    company: str = Field("", max_length=200)
+    language: str = Field("en", max_length=5)
+
+
+@app.post("/verify-employer")
+def verify_employer(req: VerifyRequest, request: Request):
+    """
+    Passive verification of the employer details the posting actually states.
+
+    Deterministic and available with no AI configured: DNS, RDAP and TLS are
+    public infrastructure records, and the local text checks need no network
+    at all. Returns evidence and counts -- never a trust percentage, which
+    would imply a precision these checks cannot support.
+
+    Rate limited on the general budget because each call makes several
+    outbound lookups.
+    """
+    _rate_limit(request)
+    return recon.verify_employer(req.text, req.company)
+
+
+@app.post("/ai/verify-employer", response_model=AiResponse)
+def ai_verify_employer(req: VerifyRequest, request: Request):
+    """
+    The same checks, with the findings put into plain language.
+
+    The verification itself is done by recon.py before the model is involved;
+    the model receives only the structured findings, never the posting text.
+    It therefore has nothing to investigate and nothing to invent -- it can
+    only explain checks that genuinely ran.
+    """
+    _ai_guard(request)
+    report = recon.verify_employer(req.text, req.company)
+    return _ai_call(ai_assistant.explain_verification, report, req.company, req.language)
 
 
 @app.post("/ai/interview", response_model=AiResponse)

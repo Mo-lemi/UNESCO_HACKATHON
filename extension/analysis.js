@@ -34,6 +34,22 @@ const esc = (s) => {
   return d.innerHTML;
 };
 
+// Only http(s) URLs may ever reach an href. esc() alone is insufficient:
+// it prevents breaking out of the attribute, but `javascript:` needs no
+// escaping to run. Job URLs here originate from scanned pages.
+const safeUrl = (raw) => {
+  // An empty link should render as no link, not as the current page.
+  if (!raw) return "";
+  try {
+    const u = new URL(String(raw || ""), location.href);
+    if (u.protocol !== "http:" && u.protocol !== "https:") return "";
+    return esc(u.href);
+  } catch {
+    return "";
+  }
+};
+
+
 const TIER_SYMBOL = { HIGH: "✖", MEDIUM: "!", LOW: "✓" };
 const TIER_CLASS = { HIGH: "high", MEDIUM: "medium", LOW: "low" };
 
@@ -382,7 +398,7 @@ function cvPanel(r) {
               ${m.matched.length ? `<h3>You have</h3><ul class="checks ok">${m.matched.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>` : ""}
               ${m.missing.length ? `<h3 style="margin-top:.6rem">Missing from your CV</h3><ul class="checks warn">${m.missing.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>` : ""}
               ${(m.learning || []).length ? `<h3 style="margin-top:.7rem">Free ways to close the gap</h3>
-                 <ul class="checks ok">${m.learning.map((l) => `<li><a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.title)}</a> <span class="muted">— ${esc(l.skill)}</span></li>`).join("")}</ul>` : ""}
+                 <ul class="checks ok">${m.learning.map((l) => `<li><a href="${safeUrl(l.url)}" target="_blank" rel="noopener">${esc(l.title)}</a> <span class="muted">— ${esc(l.skill)}</span></li>`).join("")}</ul>` : ""}
             </div>
           </div>
           <p class="note">${esc(m.note)}</p>`;
@@ -461,7 +477,7 @@ function platformSearchHtml() {
         <span class="job-meta">Search “${esc(q)}”</span>
       </span>
       <span class="job-side">
-        <a class="btn" href="${esc(build(q))}" target="_blank" rel="noopener">Search ↗</a>
+        <a class="btn" href="${safeUrl(build(q))}" target="_blank" rel="noopener">Search ↗</a>
       </span>
     </div>`
   ).join("");
@@ -501,7 +517,7 @@ function similarPanel() {
         </span>
         <span class="job-side">
           <span class="score-chip">${j.result.score}/100 low risk</span>
-          <a class="btn" href="${esc(j.url)}" target="_blank" rel="noopener">Open job ↗</a>
+          <a class="btn" href="${safeUrl(j.url)}" target="_blank" rel="noopener">Open job ↗</a>
         </span>
       </div>`
     )

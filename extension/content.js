@@ -74,6 +74,15 @@ const I18N = {
     steps: ["Reading the posting text", "Checking South African scam patterns", "Running the AI risk model", "Preparing the explanation"],
     checkingLabel: "Checking this posting",
     scanSlow: "The check is taking longer than usual.",
+    aiTitle: "Qhaphela AI",
+    aiExplain: "Explain this in simple words",
+    aiVerify: "Check the recruiter's email & domain",
+    aiNotice: "Sends this posting's text to an AI service to write an explanation. Nothing else about you is sent.",
+    aiUnavailable: "The AI assistant is not set up on this device.",
+    aiThinking: "Thinking…",
+    aiDisclaimer: "AI can be wrong. It never changes the risk score.",
+    aiPlaceholder: "Ask a question about this job…",
+    aiSend: "Ask",
     offline: "Can't reach the Qhaphela model service. Is it running on port 8000?",
     noFlags: "No specific red flags found in the text.",
     notDetected: "Not detected",
@@ -125,6 +134,15 @@ const I18N = {
     steps: ["Sifunda umbhalo wesikhangiso", "Sihlola amaphethini okukhwabanisa aseNingizimu Afrika", "Sisebenzisa imodeli ye-AI yobungozi", "Silungiselela incazelo"],
     checkingLabel: "Sihlola lesi sikhangiso",
     scanSlow: "Ukuhlola kuthatha isikhathi eside kunokujwayelekile.",
+    aiTitle: "Qhaphela AI",
+    aiExplain: "Chaza lokhu ngamazwi alula",
+    aiVerify: "Hlola i-imeyili nesizinda somqashi",
+    aiNotice: "Kuthumela umbhalo walesi sikhangiso kunsizakalo ye-AI ukuze ibhale incazelo. Akukho okunye ngawe okuthunyelwayo.",
+    aiUnavailable: "Umsizi we-AI awulungiselelwe kule divayisi.",
+    aiThinking: "Iyacabanga…",
+    aiDisclaimer: "I-AI ingaphambanisa. Ayilushintshi neze isikolo sobungozi.",
+    aiPlaceholder: "Buza umbuzo ngalo msebenzi…",
+    aiSend: "Buza",
     offline: "Ayikwazi ukufinyelela isevisi ye-Qhaphela. Ingabe isebenza ku-port 8000?",
     noFlags: "Azitholakalanga izimpawu ezibomvu ezithile embhalweni.",
     notDetected: "Akutholakalanga",
@@ -176,6 +194,15 @@ const I18N = {
     steps: ["Sifunda umbhalo wesibhengezo", "Sijonga iipatheni zobuqhetseba zoMzantsi Afrika", "Sisebenzisa imodeli ye-AI yomngcipheko", "Silungiselela ingcaciso"],
     checkingLabel: "Sijonga esi sibhengezo",
     scanSlow: "Ukujonga kuthatha ixesha elide kunesiqhelo.",
+    aiTitle: "Qhaphela AI",
+    aiExplain: "Cacisa oku ngamagama alula",
+    aiVerify: "Jonga i-imeyile nedomeyini yomqeshi",
+    aiNotice: "Kuthumela umbhalo wesi sibhengezo kwinkonzo ye-AI ukuze ibhale ingcaciso. Akukho nto yimbi ngawe ethunyelwayo.",
+    aiUnavailable: "Umncedisi we-AI akasetyenziswanga kwesi sixhobo.",
+    aiThinking: "Iyacinga…",
+    aiDisclaimer: "I-AI inokuphazama. Ayitshintshi amanqaku omngcipheko.",
+    aiPlaceholder: "Buza umbuzo ngalo msebenzi…",
+    aiSend: "Buza",
     offline: "Ayikwazi ukufikelela kwinkonzo ye-Qhaphela. Ingaba isebenza kwi-port 8000?",
     noFlags: "Akukho miqondiso ibomvu ithile ifunyenweyo kumbhalo.",
     notDetected: "Ayifunyanwanga",
@@ -227,6 +254,15 @@ const I18N = {
     steps: ["Re bala mongolo wa phatlalatso", "Re hlahloba mekgwa ya bomenemene ba Afrika Borwa", "Re sebedisa mohlala wa AI wa kotsi", "Re lokisetsa tlhaloso"],
     checkingLabel: "Re hlahloba phatlalatso ena",
     scanSlow: "Tlhahlobo e nka nako e telele ho feta tloaelo.",
+    aiTitle: "Qhaphela AI",
+    aiExplain: "Hlalosa sena ka mantswe a bonolo",
+    aiVerify: "Hlahloba imeile le domain ya mohiri",
+    aiNotice: "Se romela mongolo wa phatlalatso ena ho tshebeletso ya AI hore e ngole tlhaloso. Ha ho letho le leng ka wena le romelwang.",
+    aiUnavailable: "Mothusi wa AI ha a a hlophiswa sesebedisweng sena.",
+    aiThinking: "E a nahana…",
+    aiDisclaimer: "AI e ka fosa. Ha e fetole dintlha tsa kotsi.",
+    aiPlaceholder: "Botsa potso ka mosebetsi ona…",
+    aiSend: "Botsa",
     offline: "Ha e khone ho fihlela tshebeletso ea Qhaphela. Na e sebetsa ho port 8000?",
     noFlags: "Ha ho matshwao a kotsi a fumanweng sengolweng.",
     notDetected: "Ha e a fumanoa",
@@ -278,6 +314,15 @@ const I18N = {
     steps: ["Re bala sengwalwa sa papatšo", "Re hlahloba mekgwa ya bomenetša ya Afrika Borwa", "Re šomiša mohlala wa AI wa kotsi", "Re lokišetša tlhaloso"],
     checkingLabel: "Re hlahloba papatšo ye",
     scanSlow: "Tlhahlobo e tšea nako ye telele go feta tlwaelo.",
+    aiTitle: "Qhaphela AI",
+    aiExplain: "Hlalosa se ka mantšu a bonolo",
+    aiVerify: "Hlahloba imeile le domain ya mothwadi",
+    aiNotice: "Se romela sengwalwa sa papatšo ye go tirelo ya AI gore e ngwale tlhaloso. Ga go se sengwe ka wena se se romelwago.",
+    aiUnavailable: "Mothuši wa AI ga se a beakanywa sedirišwaneng se.",
+    aiThinking: "E a nagana…",
+    aiDisclaimer: "AI e ka fošagala. Ga e fetoše dintlha tša kotsi.",
+    aiPlaceholder: "Botšiša potšišo ka mošomo wo…",
+    aiSend: "Botšiša",
     offline: "Ga e kgone go fihlelela tirelo ya Qhaphela.",
     noFlags: "Ga go matshwao a kotsi a hweditšwego.",
     notDetected: "Ga se ya hwetšwa",
@@ -329,6 +374,15 @@ const I18N = {
     steps: ["Re bala mokwalo wa kitsiso", "Re tlhatlhoba mekgwa ya botsietsi ya Aforika Borwa", "Re dirisa sekao sa AI sa kotsi", "Re baakanya tlhaloso"],
     checkingLabel: "Re tlhatlhoba kitsiso e",
     scanSlow: "Tlhatlhobo e tsaya nako e telele go feta jaaka gantsi.",
+    aiTitle: "Qhaphela AI",
+    aiExplain: "Tlhalosa se ka mafoko a a motlhofo",
+    aiVerify: "Tlhatlhoba imeile le domain ya mothapi",
+    aiNotice: "Se romela mokwalo wa kitsiso e go tirelo ya AI gore e kwale tlhaloso. Ga go sepe se sengwe ka wena se se romelwang.",
+    aiUnavailable: "Mothusi wa AI ga a a rulaganngwa mo sedirisiwaneng se.",
+    aiThinking: "E a akanya…",
+    aiDisclaimer: "AI e ka fosa. Ga e fetole dintlha tsa kotsi.",
+    aiPlaceholder: "Botsa potso ka tiro e…",
+    aiSend: "Botsa",
     offline: "Ga e kgone go fitlhelela tirelo ya Qhaphela.",
     noFlags: "Ga go na matshwao a kotsi a a bonweng.",
     notDetected: "Ga e a bonwa",
@@ -380,6 +434,15 @@ const I18N = {
     steps: ["Hi hlaya matsalwa ya xitiviso", "Hi kambela maendlelo ya vukanganyisi bya Afrika Dzonga", "Hi tirhisa xikombiso xa AI xa khombo", "Hi lunghiselela nhlamuselo"],
     checkingLabel: "Hi kambela xitiviso lexi",
     scanSlow: "Ku kambela ku teka nkarhi wo leha ku tlula ntolovelo.",
+    aiTitle: "Qhaphela AI",
+    aiExplain: "Hlamusela leswi hi marito yo olova",
+    aiVerify: "Kambela imeyili na domain ya muthori",
+    aiNotice: "Swi rhumela matsalwa ya xitiviso lexi eka ntirho wa AI leswaku wu tsala nhlamuselo. A ku na swin'wana hi wena leswi rhumeriwaka.",
+    aiUnavailable: "Mupfuni wa AI a nga lulamisiwanga eka xitirhisiwa lexi.",
+    aiThinking: "Ya ehleketa…",
+    aiDisclaimer: "AI yi nga hoxa. A yi cinci nomboro ya khombo.",
+    aiPlaceholder: "Vutisa xivutiso hi ntirho lowu…",
+    aiSend: "Vutisa",
     offline: "A yi swi koti ku fikelela vukorhokeri bya Qhaphela.",
     noFlags: "A ku na swikombiso swa khombo leswi kumekeke.",
     notDetected: "A swi kumekanga",
@@ -431,6 +494,15 @@ const I18N = {
     steps: ["Sifundza umbhalo wesatiso", "Sihlola emaphethini ekukhwabanisa aseNingizimu Afrika", "Sisebentisa imodeli ye-AI yebungoti", "Silungiselela inchazelo"],
     checkingLabel: "Sihlola lesi satiso",
     scanSlow: "Kuhlola kutsatsa sikhatsi lesidze kunalokujwayelekile.",
+    aiTitle: "Qhaphela AI",
+    aiExplain: "Chaza loku ngemagama lalula",
+    aiVerify: "Hlola i-imeyili nendzawo yemcashi",
+    aiNotice: "Kutfumela umbhalo walesi satiso kunsita ye-AI kutsi ibhale inchazelo. Akukho lokunye ngawe lokutfunyelwako.",
+    aiUnavailable: "Umsiti we-AI akakalungiswa kulesisetjentiswa.",
+    aiThinking: "Iyacabanga…",
+    aiDisclaimer: "I-AI ingaphosisa. Ayiwushintjhi umklamo webungoti.",
+    aiPlaceholder: "Buta umbuto ngalomsebenti…",
+    aiSend: "Buta",
     offline: "Ayikwati kufinyelela lusito lwe-Qhaphela.",
     noFlags: "Atikho timphawu letibovu letitfoliwe.",
     notDetected: "Akutfolakalanga",
@@ -482,6 +554,15 @@ const I18N = {
     steps: ["Ri khou vhala maṅwalwa a ndivhadzo", "Ri khou ṱolisisa maitele a vhufhura ha Afrika Tshipembe", "Ri khou shumisa modele wa AI wa khombo", "Ri khou lugiselela ṱhalutshedzo"],
     checkingLabel: "Ri khou ṱolisisa ndivhadzo iyi",
     scanSlow: "U ṱolisisa hu khou dzhia tshifhinga tshilapfu u fhira zwo ḓoweleaho.",
+    aiTitle: "Qhaphela AI",
+    aiExplain: "Ṱalutshedzani hezwi nga maipfi a leluwaho",
+    aiVerify: "Ṱolisisani imeili na domain ya mupfi",
+    aiNotice: "Zwi rumela maṅwalwa a heyi ndivhadzo kha tshumelo ya AI uri i ṅwale ṱhalutshedzo. A hu na tshiṅwe nga ha inwi tshi rumelwaho.",
+    aiUnavailable: "Muthusi wa AI ha ngo lugiselelwa kha ino tshiṱirisi.",
+    aiThinking: "I khou humbula…",
+    aiDisclaimer: "AI i nga khakha. A i shanduki mbalo ya khombo.",
+    aiPlaceholder: "Vhudzisani mbudziso nga ha mushumo uyu…",
+    aiSend: "Vhudzisani",
     offline: "A i koni u swikelela tshumelo ya Qhaphela.",
     noFlags: "A hu na zwiga zwa khombo zwo wanalaho.",
     notDetected: "A zwo ngo wanala",
@@ -533,6 +614,15 @@ const I18N = {
     steps: ["Sifunda umtlolo wesaziso", "Sihlola amaphethini wekukhwabanisa yeSewula Afrika", "Sisebenzisa imodeli ye-AI yengozi", "Silungiselela ihlathululo"],
     checkingLabel: "Sihlola lesi saziso",
     scanSlow: "Ukuhlola kuthatha isikhathi eside kunalokujayelekileko.",
+    aiTitle: "Qhaphela AI",
+    aiExplain: "Hlathulula lokhu ngamagama alula",
+    aiVerify: "Hlola i-imeyili nesizinda somqashi",
+    aiNotice: "Kuthumela umtlolo walesi saziso emsebenzini we-AI bona utlole ihlathululo. Akunanto enye ngawe ethunyelwako.",
+    aiUnavailable: "Umsizi we-AI akakalungiselelwa kilesi sitjhijelo.",
+    aiThinking: "Uyacabanga…",
+    aiDisclaimer: "I-AI ingatjhapha. Ayitjhugululi amanani wengozi.",
+    aiPlaceholder: "Buza umbuzo ngalo msebenzi…",
+    aiSend: "Buza",
     offline: "Ayikwazi ukufikelela isevisi ye-Qhaphela.",
     noFlags: "Azikho iimphawu ezibovu ezitholakeleko.",
     notDetected: "Akutholakalanga",
@@ -584,6 +674,15 @@ const I18N = {
     steps: ["Lees die advertensie se teks", "Kontroleer Suid-Afrikaanse bedrogpatrone", "Voer die KI-risikomodel uit", "Berei die verduideliking voor"],
     checkingLabel: "Kontroleer hierdie advertensie",
     scanSlow: "Die kontrole neem langer as gewoonlik.",
+    aiTitle: "Qhaphela AI",
+    aiExplain: "Verduidelik dit in eenvoudige woorde",
+    aiVerify: "Kontroleer die werwer se e-pos en domein",
+    aiNotice: "Stuur hierdie advertensie se teks na 'n KI-diens om 'n verduideliking te skryf. Niks anders oor jou word gestuur nie.",
+    aiUnavailable: "Die KI-assistent is nie op hierdie toestel opgestel nie.",
+    aiThinking: "Dink tans…",
+    aiDisclaimer: "KI kan verkeerd wees. Dit verander nooit die risikotelling nie.",
+    aiPlaceholder: "Vra 'n vraag oor hierdie werk…",
+    aiSend: "Vra",
     offline: "Kan nie die Qhaphela-diens bereik nie. Loop dit op poort 8000?",
     noFlags: "Geen spesifieke rooivlae in die teks gevind nie.",
     notDetected: "Nie opgespoor nie",
@@ -613,6 +712,26 @@ const I18N = {
 
 let currentLang = "en";
 const t = (key) => (I18N[currentLang] || I18N.en)[key] || I18N.en[key] || key;
+
+// Only http(s) URLs may ever reach an href.
+//
+// Job-card links are scraped from the page, and the page may be the very
+// fraudulent site this tool exists to warn people about. Escaping alone is
+// not enough: escaping stops an attacker breaking out of the attribute, but
+// `javascript:alert(1)` contains nothing that needs escaping and would still
+// execute when someone clicked "Open job" from inside the safety panel.
+// Parsing the URL and allowing only http/https is what actually closes it.
+function safeUrl(raw) {
+  // An empty link should render as no link, not as the current page.
+  if (!raw) return "";
+  try {
+    const u = new URL(String(raw || ""), location.href);
+    if (u.protocol !== "http:" && u.protocol !== "https:") return "";
+    return escapeHtml(u.href);
+  } catch {
+    return "";
+  }
+}
 
 function escapeHtml(str) {
   const div = document.createElement("div");
@@ -749,7 +868,7 @@ function safetyTipHtml() {
 
 function trustedChannelsHtml() {
   const items = TRUSTED_JOB_LINKS.map(
-    (l) => `<li><a class="qp-job-open" href="${l.url}" target="_blank" rel="noopener noreferrer">${escapeHtml(l.label)}</a></li>`
+    (l) => `<li><a class="qp-job-open" href="${safeUrl(l.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(l.label)}</a></li>`
   ).join("");
   return cardHtml(t("verifiedChannels"), `<ul class="qp-list">${items}</ul>`);
 }
@@ -775,7 +894,7 @@ function safeMatchesHtml(scored) {
         </span>
         <span class="qp-job-side">
           <span class="qp-job-score">${s.result.score}/100 safe</span>
-          <a class="qp-job-open" href="${s.url}" target="_blank" rel="noopener noreferrer">Open job ↗</a>
+          <a class="qp-job-open" href="${safeUrl(s.url)}" target="_blank" rel="noopener noreferrer">Open job ↗</a>
         </span>
       </div>`;
     })
@@ -975,6 +1094,101 @@ function renderPanelScanning(activeStep, slow = false) {
   body.innerHTML = cardHtml("", region) + safetyTipHtml();
 }
 
+// Qhaphela AI in the panel.
+//
+// Deliberately opt-in per use: nothing is sent anywhere until the person
+// presses a button. Fraud detection has already finished and is shown above
+// this card, entirely from the local model -- the assistant only ever
+// explains that verdict. It cannot move the score, and the card says so.
+function aiPanelHtml() {
+  return cardHtml(
+    t("aiTitle"),
+    `<button class="qp-btn ghost" id="qp-ai-explain" type="button">${escapeHtml(t("aiExplain"))}</button>
+     <button class="qp-btn ghost" id="qp-ai-verify" type="button" style="margin-top:.4rem">${escapeHtml(t("aiVerify"))}</button>
+     <div class="qp-ai-ask">
+       <textarea id="qp-ai-q" rows="2" placeholder="${escapeHtml(t("aiPlaceholder"))}"></textarea>
+       <button class="qp-btn primary" id="qp-ai-send" type="button">${escapeHtml(t("aiSend"))}</button>
+     </div>
+     <div id="qp-ai-out" class="qp-ai-out hidden" role="status" aria-live="polite"></div>
+     <p class="qp-ai-note">${escapeHtml(t("aiNotice"))}</p>
+     <p class="qp-ai-note">${escapeHtml(t("aiDisclaimer"))}</p>`
+  );
+}
+
+function wireAiPanel(body) {
+  const out = body.querySelector("#qp-ai-out");
+  if (!out) return;
+
+  const show = (html) => {
+    out.classList.remove("hidden");
+    out.innerHTML = html;
+  };
+  const busy = (on) => {
+    ["#qp-ai-explain", "#qp-ai-verify", "#qp-ai-send"].forEach((sel) => {
+      const b = body.querySelector(sel);
+      if (b) b.disabled = on;
+    });
+  };
+
+  const call = (endpoint, payload) => {
+    show(`<p class="qp-ai-thinking">${escapeHtml(t("aiThinking"))}</p>`);
+    busy(true);
+    chrome.runtime.sendMessage({ type: "QHAPHELA_AI", endpoint, payload }, (resp) => {
+      busy(false);
+      // A torn-down worker returns undefined with lastError set.
+      if (chrome.runtime.lastError || !resp) {
+        show(`<p class="qp-ai-err">${escapeHtml(t("aiUnavailable"))}</p>`);
+        return;
+      }
+      if (!resp.ok) {
+        show(`<p class="qp-ai-err">${escapeHtml(resp.error || t("aiUnavailable"))}</p>`);
+        return;
+      }
+      // Model output is escaped before any formatting is applied, so nothing
+      // an LLM returns can execute inside the host page.
+      show(`<div class="qp-ai-body">${aiText(resp.answer)}</div>`);
+    });
+  };
+
+  body.querySelector("#qp-ai-explain")?.addEventListener("click", () =>
+    call("explain", { text: lastScannedText || "", language: currentLang })
+  );
+
+  body.querySelector("#qp-ai-verify")?.addEventListener("click", () =>
+    call("verify-employer", {
+      text: lastScannedText || "",
+      company: extractCompanyName(),
+      language: currentLang,
+    })
+  );
+
+  const send = () => {
+    const q = body.querySelector("#qp-ai-q");
+    const text = (q.value || "").trim();
+    if (!text) return;
+    call("ask", { question: text, language: currentLang });
+    q.value = "";
+  };
+  body.querySelector("#qp-ai-send")?.addEventListener("click", send);
+  body.querySelector("#qp-ai-q")?.addEventListener("keydown", (e) => {
+    // Enter sends; Shift+Enter makes a new line.
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      send();
+    }
+  });
+}
+
+// Escape first, then apply the small amount of formatting we allow. Doing it
+// in this order is what makes model output safe to insert.
+function aiText(raw) {
+  return escapeHtml(raw || "")
+    .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+    .replace(/^\s*[-*]\s+(.*)$/gm, "\u2022 $1")
+    .replace(/\n{2,}/g, "<br><br>")
+    .replace(/\n/g, "<br>");
+}
+
 function renderPanelResult(result) {
   lastResult = result;
   lastScored = null;
@@ -1018,6 +1232,7 @@ function renderPanelResult(result) {
        <button class="qp-btn ghost" id="qp-more" type="button" style="margin-top:.45rem">${escapeHtml(t("quickDetail"))}</button>`
     ) +
     `<div id="qp-details" class="hidden">${detailsHtml}</div>` +
+    aiPanelHtml() +
     reportHtml() +
     safeMatchesHtml(lastPageScored) +
     cvMatchHtml(lastCvMatch) +
@@ -1054,6 +1269,7 @@ function renderPanelResult(result) {
     moreBtn.textContent = nowHidden ? `${t("viewAnalysis")} →` : t("lessDetail");
   });
 
+  wireAiPanel(body);
   wireReportUi(body, result);
   wireCvUpload(body, lastScannedText || "");
   body.querySelector("#qp-privacy")?.addEventListener("click", () =>
@@ -1231,35 +1447,75 @@ function looksLikeJobPage() {
   return hits >= 4;
 }
 
-function extractPosting() {
-  const candidates = Array.from(
-    document.querySelectorAll(
-      [
-        "article",
-        "main",
-        "[role='main']",
-        ".job-description",
-        "#jobDescriptionText",
-        ".jobsearch-JobComponent-description",
-        ".jobsearch-ViewJobLayout-jobDisplay",
-        "[data-testid='jobsearch-JobComponent-description']",
-      ].join(", ")
-    )
+// Ordered most-specific first. The tier that matches wins outright; a later
+// tier is only consulted when every earlier one comes up empty.
+//
+// This ordering is the whole point. The previous version collected all these
+// selectors at once and kept whichever had the MOST text, which is exactly
+// backwards on a split-pane search page: Indeed's <main> holds both the card
+// list and the open posting, so <main> always beat #jobDescriptionText. The
+// result was that the description of the job you were reading got mixed with
+// two dozen neighbouring adverts, and the flags, the score and the underlines
+// could all belong to a different company's posting.
+const POSTING_SELECTOR_TIERS = [
+  // Tier 1: containers that can only ever be one posting's description.
+  [
+    "#jobDescriptionText",
+    ".jobsearch-JobComponent-description",
+    "[data-testid='jobsearch-JobComponent-description']",
+    "[data-automation='jobAdDetails']",
+    "[class*='JobDescription']",
+    "[class*='job-description']",
+    "[class*='jobDescription']",
+    "[itemprop='description']",
+  ],
+  // Tier 2: the detail pane of a split layout.
+  [
+    ".jobsearch-ViewJobLayout-jobDisplay",
+    "[class*='JobDetail']",
+    "[class*='job-detail']",
+    "[class*='vacancy-detail']",
+    "article[class*='job']",
+  ],
+  // Tier 3: generic page landmarks, used only when nothing better exists.
+  ["article", "main", "[role='main']"],
+];
+
+// A container holding several job cards is a results list, not one posting.
+// This is the platform-agnostic guard: it holds on job boards we have never
+// seen and could not enumerate in advance.
+function looksLikeCardList(el) {
+  if (!el) return false;
+  const cards = el.querySelectorAll(JOB_CARD_SELECTOR);
+  const distinct = Array.from(cards).filter(
+    (c) => !Array.from(cards).some((o) => o !== c && o.contains(c))
   );
-  let container = null;
-  let best = "";
-  for (const el of candidates) {
-    const text = (el.innerText || "").trim();
-    if (text.length > best.length) {
-      best = text;
-      container = el;
+  return distinct.length >= 3;
+}
+
+function extractPosting() {
+  for (const tier of POSTING_SELECTOR_TIERS) {
+    let container = null;
+    let best = "";
+    for (const el of document.querySelectorAll(tier.join(", "))) {
+      // Skip anything that is really a list of adverts.
+      if (looksLikeCardList(el)) continue;
+      const text = (el.innerText || "").trim();
+      if (text.length > best.length) {
+        best = text;
+        container = el;
+      }
+    }
+    // Within a tier, longest is the right tie-break: the candidates are all
+    // plausibly the description, so the fullest one is the most complete.
+    if (best.length >= 200) {
+      return { text: best.slice(0, 8000), container };
     }
   }
-  if (best.length < 200) {
-    best = (document.body.innerText || "").trim();
-    container = document.body;
-  }
-  return { text: best.slice(0, 4000), container };
+
+  // Nothing matched. Fall back to the page, which puts us in list mode rather
+  // than claiming to have found a single posting.
+  return { text: (document.body.innerText || "").trim().slice(0, 8000), container: document.body };
 }
 
 // Matches a listing page's repeated job cards, not one open posting -- used

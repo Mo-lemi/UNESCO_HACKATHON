@@ -368,3 +368,62 @@ Rules:
             }
         )
     return {"concerns": concerns}
+
+
+# ---- 7. Explain employer verification findings -------------------------
+
+
+def explain_verification(report: dict, company: str = "", language: str = "en") -> str:
+    """
+    Explain OSINT findings that have ALREADY been established by recon.py.
+
+    The model receives only the structured findings. It is not given the
+    posting text and is not asked to investigate anything, so it has nothing
+    to invent from: every fact in its answer must come from a check that
+    actually ran. This is the same boundary the rest of the assistant holds
+    -- deterministic code establishes what is true, the model only puts it
+    into words a person can act on.
+    """
+    lines = []
+    for f in report.get("findings", []):
+        mark = {"verified": "PASS", "warning": "CONCERN", "unknown": "COULD NOT CHECK"}.get(
+            f.get("state"), "?"
+        )
+        lines.append(f"- [{mark}] {f.get('label')}: {f.get('detail')}")
+
+    counts = report.get("counts", {})
+    system = (
+        _VOICE + _SAFETY_RULES + _lang_clause(language) +
+        """
+You are explaining the result of automated checks on an employer's email
+domain and website. The checks have already run. Your job is ONLY to explain
+what they mean for this person.
+
+Absolute rules:
+- Use ONLY the findings given to you. Do not add checks that were not run,
+  and never invent a company registration, a review, or an online presence.
+- "Could not check" means exactly that. Never present it as suspicious, and
+  never present it as reassuring.
+- Never conclude the company is fraudulent, and never declare it safe.
+  Passing infrastructure checks is not proof of honesty: a scammer can buy a
+  domain with valid DNS and a certificate.
+- Missing records often just mean a small employer with a simple setup.
+  Say so. Many legitimate South African employers are in that position, and
+  implying otherwise would push someone away from a real job.
+
+Structure:
+1. One sentence on what these checks did and did not establish.
+2. The findings that genuinely matter here, in everyday words.
+3. One concrete way this person can verify the employer themselves.
+
+Around 160 words. Plain paragraphs, no headings.
+"""
+    )
+    user = f"""Company named in the posting: {company or 'not stated'}
+Domain checked: {report.get('domain_checked') or 'none found'}
+Totals: {counts.get('verified', 0)} passed, {counts.get('warning', 0)} concerns, {counts.get('unknown', 0)} could not be checked
+
+Findings:
+{chr(10).join(lines) or 'No checks produced a result.'}"""
+
+    return groq_client.complete(system, user, temperature=0.3, max_tokens=600)
