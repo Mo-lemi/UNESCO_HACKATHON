@@ -52,6 +52,35 @@ body.dark {
   --shadow:0 1px 2px rgba(0,0,0,.4), 0 4px 16px rgba(0,0,0,.35);
 }
 
+
+/* ---- Brand watermark ----
+   The logo shield in greyscale, floating above the content as a very faint
+   overlay rather than behind it -- the cards are opaque, so a background
+   watermark was completely invisible.
+
+   Opacity was chosen by measurement, not by eye: at 7% the darkest pixels
+   darken white to #EDEDED, where the lightest text still reaches 5.11:1,
+   comfortably above the 4.5:1 AA floor. 9% still passes; 7% leaves margin.
+
+   pointer-events:none so it can never intercept a click, and it is removed
+   entirely for prefers-reduced-transparency and for print. */
+body::after {
+  content: "" !important;
+  position: fixed;
+  right: -90px;
+  bottom: -80px;
+  width: 420px;
+  height: 420px;
+  background: url(icons/watermark.png) no-repeat center / contain;
+  opacity: .07;
+  pointer-events: none;
+  z-index: 2;
+}
+body.dark::after { opacity: .11; }
+
+@media (prefers-reduced-transparency: reduce) { body::after { display: none; } }
+@media print { body::after { display: none; } }
+
 * { box-sizing: border-box; }
 html, body { margin: 0; }
 body {
