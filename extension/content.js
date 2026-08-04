@@ -1,5 +1,5 @@
 // ============================================================
-// QHAPHELA — content script
+// QHAPHELA - content script
 // ============================================================
 // Runs on job platforms. Extracts the posting text, sends it to the local
 // scoring service via the background worker (a content script can't call an
@@ -56,7 +56,7 @@ const I18N = {
     viewAnalysis: "View full report",
     lessDetail: "Hide report",
     reportPosting: "Report this posting",
-    reported: "Reported — thank you",
+    reported: "Reported - thank you",
     submitReport: "Submit report",
     safeMatches: "Safe job matches",
     verifiedChannels: "Verified job search channels",
@@ -90,7 +90,7 @@ const I18N = {
     onThisPage: "jobs on this page",
     checkNote: "Based on the posting text only. Not a company registry check.",
     foot: "Protect yourself. Stay aware. Apply smart.",
-    verdictHigh: "High risk — treat this posting with caution",
+    verdictHigh: "High risk - treat this posting with caution",
     verdictMedium: "Some signals are unclear",
     verdictLow: "No major red flags found",
     high: "Do not send your ID, banking details or any money. A real employer never asks for these before an interview.",
@@ -116,7 +116,7 @@ const I18N = {
     viewAnalysis: "Buka umbiko ogcwele",
     lessDetail: "Fihla umbiko",
     reportPosting: "Bika lesi sikhangiso",
-    reported: "Kubikiwe — siyabonga",
+    reported: "Kubikiwe - siyabonga",
     submitReport: "Thumela umbiko",
     safeMatches: "Imisebenzi ephephile",
     verifiedChannels: "Iziteshi zokusesha umsebenzi eziqinisekisiwe",
@@ -150,7 +150,7 @@ const I18N = {
     onThisPage: "imisebenzi kuleli khasi",
     checkNote: "Kusekelwe embhalweni wesikhangiso kuphela. Akuwona umhlolo wohlu lwezinkampani.",
     foot: "Zivikele. Hlala uqaphile. Faka isicelo ngokuhlakanipha.",
-    verdictHigh: "Ingozi ephezulu — qaphela lesi sikhangiso",
+    verdictHigh: "Ingozi ephezulu - qaphela lesi sikhangiso",
     verdictMedium: "Ezinye izimpawu azicaci",
     verdictLow: "Azitholakalanga izimpawu ezibomvu ezinkulu",
     high: "Ungathumeli i-ID yakho, imininingwane yasebhange noma imali. Umqashi weqiniso akaze acele lokhu ngaphambi kwenhlolokhono.",
@@ -176,7 +176,7 @@ const I18N = {
     viewAnalysis: "Jonga ingxelo epheleleyo",
     lessDetail: "Fihla ingxelo",
     reportPosting: "Xela esi saziso",
-    reported: "Kuxeliwe — enkosi",
+    reported: "Kuxeliwe - enkosi",
     submitReport: "Thumela ingxelo",
     safeMatches: "Imisebenzi ekhuselekileyo",
     verifiedChannels: "Iziteshi zokukhangela umsebenzi eziqinisekisiweyo",
@@ -210,7 +210,7 @@ const I18N = {
     onThisPage: "imisebenzi kweli phepha",
     checkNote: "Isekelwe kumbhalo wesaziso kuphela. Ayilokhangelo lwerejista yenkampani.",
     foot: "Zikhusele. Hlala uphaphile. Faka isicelo ngobulumko.",
-    verdictHigh: "Umngcipheko ophezulu — lumka ngesi saziso",
+    verdictHigh: "Umngcipheko ophezulu - lumka ngesi saziso",
     verdictMedium: "Eminye imiqondiso ayicaci",
     verdictLow: "Akukho miqondiso ibomvu mikhulu ifunyenweyo",
     high: "Sukuthumela i-ID yakho, iinkcukacha zebhanki okanye imali. Umqeshi wokwenene akaze acele ezi zinto phambi kodliwano-ndlebe.",
@@ -236,7 +236,7 @@ const I18N = {
     viewAnalysis: "Sheba tlaleho e felletseng",
     lessDetail: "Pata tlaleho",
     reportPosting: "Tlaleha tsebiso ena",
-    reported: "E tlalehiloe — kea leboha",
+    reported: "E tlalehiloe - kea leboha",
     submitReport: "Romela tlaleho",
     safeMatches: "Mesebetsi e sireletsehileng",
     verifiedChannels: "Ditsela tse netefalitsweng tsa ho batla mosebetsi",
@@ -270,7 +270,7 @@ const I18N = {
     onThisPage: "mesebetsi leqepheng lena",
     checkNote: "E ipapisitse le sengoloa sa tsebiso feela. Hase tlhahlobo ea rejistara ea khamphani.",
     foot: "Itshireletse. Lula o hlokolosi. Etsa kopo ka bohlale.",
-    verdictHigh: "Kotsi e phahameng — hlokomela tsebiso ena",
+    verdictHigh: "Kotsi e phahameng - hlokomela tsebiso ena",
     verdictMedium: "Matshwao a mang ha a hlake",
     verdictLow: "Ha ho matshwao a maholo a kotsi a fumanweng",
     high: "Se ke wa romela ID ya hao, dintlha tsa banka kapa chelete. Mohiri wa nnete ha a ke a kopa tsena pele ho inthavu.",
@@ -296,7 +296,7 @@ const I18N = {
     viewAnalysis: "Bona pego ka botlalo",
     lessDetail: "Uta pego",
     reportPosting: "Bega tsebišo ye",
-    reported: "E begilwe — re a leboga",
+    reported: "E begilwe - re a leboga",
     submitReport: "Romela pego",
     safeMatches: "Mešomo ye e bolokegilego",
     verifiedChannels: "Ditsela tše di netefaditšwego tša go nyaka mošomo",
@@ -330,7 +330,7 @@ const I18N = {
     onThisPage: "mešomo letlakaleng le",
     checkNote: "Go ya ka sengwalwa sa tsebišo fela.",
     foot: "Itšhireletše. Dula o phafogile.",
-    verdictHigh: "Kotsi ye kgolo — hlokomela",
+    verdictHigh: "Kotsi ye kgolo - hlokomela",
     verdictMedium: "Matshwao a mangwe ga a hlake",
     verdictLow: "Ga go matshwao a magolo a kotsi",
     high: "O se romele ID ya gago, dintlha tša panka goba tšhelete. Mothwadi wa nnete ga a ke a kgopela tše pele ga poledišano.",
@@ -356,7 +356,7 @@ const I18N = {
     viewAnalysis: "Bona pego e e feletseng",
     lessDetail: "Fitlha pego",
     reportPosting: "Bega kitsiso e",
-    reported: "E begilwe — re a leboga",
+    reported: "E begilwe - re a leboga",
     submitReport: "Romela pego",
     safeMatches: "Ditiro tse di babalesegileng",
     verifiedChannels: "Ditsela tse di netefaditsweng tsa go batla tiro",
@@ -390,7 +390,7 @@ const I18N = {
     onThisPage: "ditiro mo tsebeng e",
     checkNote: "Go ya ka mokwalo wa kitsiso fela.",
     foot: "Itshireletse. Nna kelotlhoko.",
-    verdictHigh: "Kotsi e kgolo — tlhokomela",
+    verdictHigh: "Kotsi e kgolo - tlhokomela",
     verdictMedium: "Matshwao mangwe ga a phepafale",
     verdictLow: "Ga go matshwao a magolo a kotsi",
     high: "O se ka wa romela ID ya gago, dintlha tsa banka kgotsa madi. Mothapi wa nnete ga a ke a kopa tse pele ga potsolotso.",
@@ -416,7 +416,7 @@ const I18N = {
     viewAnalysis: "Vona xiviko hinkwaxo",
     lessDetail: "Tumbeta xiviko",
     reportPosting: "Vika xitiviso lexi",
-    reported: "Xi vikiwile — ha khensa",
+    reported: "Xi vikiwile - ha khensa",
     submitReport: "Rhumela xiviko",
     safeMatches: "Mintirho leyi hlayisekeke",
     verifiedChannels: "Tindlela leti tiyisisiweke to lava ntirho",
@@ -450,7 +450,7 @@ const I18N = {
     onThisPage: "mintirho eka tluka leri",
     checkNote: "Hi ku ya hi matsalwa ya xitiviso ntsena.",
     foot: "Tisirhelele. Tshama u xalamukile.",
-    verdictHigh: "Khombo lerikulu — tivonele",
+    verdictHigh: "Khombo lerikulu - tivonele",
     verdictMedium: "Swikombiso swin'wana a swi twisiseki",
     verdictLow: "A ku na swikombiso leswikulu swa khombo",
     high: "U nga rhumeli ID ya wena, vuxokoxoko bya bangi kumbe mali. Mutholi wa ntiyiso a nga tshuki a kombela leswi ku nga si va ni inthavhiyu.",
@@ -476,7 +476,7 @@ const I18N = {
     viewAnalysis: "Buka umbiko lophelele",
     lessDetail: "Fihla umbiko",
     reportPosting: "Bika lesatiso",
-    reported: "Kubikiwe — siyabonga",
+    reported: "Kubikiwe - siyabonga",
     submitReport: "Tfumela umbiko",
     safeMatches: "Imisebenti lephephile",
     verifiedChannels: "Tindlela leticiniseKisiwe tekufuna umsebenti",
@@ -510,7 +510,7 @@ const I18N = {
     onThisPage: "imisebenti kulelikhasi",
     checkNote: "Kusekelwe embhalweni wesatiso kuphela.",
     foot: "Tivikele. Hlala ucaphele.",
-    verdictHigh: "Buneti lobukhulu — caphela",
+    verdictHigh: "Buneti lobukhulu - caphela",
     verdictMedium: "Letinye timphawu atikacaci",
     verdictLow: "Atikho timphawu letinkhulu letibovu",
     high: "Ungatfumeli i-ID yakho, imininingwane yasebhange nobe imali. Umcashi weliciniso akakaze acele loku ngaphambi kwenhlolokhono.",
@@ -536,7 +536,7 @@ const I18N = {
     viewAnalysis: "Vhona muvhigo wo fhelelaho",
     lessDetail: "Dzumba muvhigo",
     reportPosting: "Vhiga ndivhadzo iyi",
-    reported: "Yo vhigwa — ri a livhuwa",
+    reported: "Yo vhigwa - ri a livhuwa",
     submitReport: "Rumela muvhigo",
     safeMatches: "Mishumo yo tsireledzeaho",
     verifiedChannels: "Nḓila dzo khwaṱhisedzwaho dza u ṱoḓa mushumo",
@@ -570,7 +570,7 @@ const I18N = {
     onThisPage: "mishumo kha siaṱari ḽino",
     checkNote: "Zwo thewa kha maṅwalwa a ndivhadzo fhedzi.",
     foot: "Ḓitsireledzeni. Dzulani no ṱhogomela.",
-    verdictHigh: "Khombo khulwane — ṱhogomelani",
+    verdictHigh: "Khombo khulwane - ṱhogomelani",
     verdictMedium: "Zwiṅwe zwiga a zwi pfali",
     verdictLow: "A hu na zwiga zwihulwane zwa khombo",
     high: "Ni songo rumela ID yaṋu, zwidodombedzwa zwa bannga kana tshelede. Mushumisi wa vhukuma ha vhuyi a humbela izwi ni sa athu vha na inthaviyu.",
@@ -596,7 +596,7 @@ const I18N = {
     viewAnalysis: "Qala umbiko opheleleko",
     lessDetail: "Fihla umbiko",
     reportPosting: "Bika isaziso lesi",
-    reported: "Kubikiwe — siyathokoza",
+    reported: "Kubikiwe - siyathokoza",
     submitReport: "Thumela umbiko",
     safeMatches: "Imisebenzi ephephileko",
     verifiedChannels: "Iindlela eziqinisekisiweko zokufuna umsebenzi",
@@ -630,7 +630,7 @@ const I18N = {
     onThisPage: "imisebenzi ekhasini leli",
     checkNote: "Kusekelwe embhalweni wesaziso kwaphela.",
     foot: "Zivikele. Hlala uqaphele.",
-    verdictHigh: "Ingozi ekulu — qaphela",
+    verdictHigh: "Ingozi ekulu - qaphela",
     verdictMedium: "Ezinye iimphawu azikhanyi",
     verdictLow: "Azikho iimphawu ezikulu ezibovu",
     high: "Ungathumeli i-ID yakho, imininingwana yebhange namkha imali. Umqatjhi weqiniso akakhe acele lokhu ngaphambi kwe-inthavu.",
@@ -656,7 +656,7 @@ const I18N = {
     viewAnalysis: "Bekyk volledige verslag",
     lessDetail: "Versteek verslag",
     reportPosting: "Rapporteer hierdie advertensie",
-    reported: "Gerapporteer — dankie",
+    reported: "Gerapporteer - dankie",
     submitReport: "Dien verslag in",
     safeMatches: "Veilige werksgeleenthede",
     verifiedChannels: "Geverifieerde werksoekkanale",
@@ -690,7 +690,7 @@ const I18N = {
     onThisPage: "werksgeleenthede op hierdie bladsy",
     checkNote: "Slegs op die advertensieteks gebaseer. Nie 'n maatskappyregister-kontrole nie.",
     foot: "Beskerm jouself. Bly waaksaam. Doen slim aansoek.",
-    verdictHigh: "Hoë risiko — wees versigtig met hierdie advertensie",
+    verdictHigh: "Hoë risiko - wees versigtig met hierdie advertensie",
     verdictMedium: "Sommige seine is onduidelik",
     verdictLow: "Geen groot rooivlae gevind nie",
     high: "Moenie jou ID, bankbesonderhede of enige geld stuur nie. 'n Regte werkgewer vra nooit hiervoor voor 'n onderhoud nie.",
@@ -766,7 +766,7 @@ function ensurePanel() {
       <span class="qp-spacer"></span>
       <select class="qp-lang" id="qp-lang" aria-label="Language"></select>
       <button class="qp-icon-btn" id="qp-theme" type="button" aria-label="Toggle dark mode">☾</button>
-      <button class="qp-icon-btn" id="qp-collapse" type="button" aria-label="Collapse panel">–</button>
+      <button class="qp-icon-btn" id="qp-collapse" type="button" aria-label="Collapse panel">-</button>
     </div>
     <div class="qp-body" id="qp-body"></div>
   `;
@@ -784,7 +784,7 @@ function ensurePanel() {
   panel.querySelector("#qp-collapse").addEventListener("click", (e) => {
     e.stopPropagation();
     const collapsed = panel.classList.toggle("qhaphela-collapsed");
-    panel.querySelector("#qp-collapse").textContent = collapsed ? "+" : "–";
+    panel.querySelector("#qp-collapse").textContent = collapsed ? "+" : "-";
     panel.querySelector("#qp-body").style.display = collapsed ? "none" : "";
     document.documentElement.classList.toggle("qhaphela-shifted-collapsed", collapsed);
   });
@@ -912,7 +912,7 @@ function redFlagGridHtml(flags) {
     .map((f) => {
       const cls = f.detected ? "risks" : "ticks";
       const state = f.detected ? t("detected") : t("notDetected");
-      const ev = f.detected && f.evidence ? ` — “${escapeHtml(f.evidence)}”` : "";
+      const ev = f.detected && f.evidence ? ` - “${escapeHtml(f.evidence)}”` : "";
       return `<li class="qp-flag-row"><span><strong>${escapeHtml(f.label)}</strong><br><span class="qp-job-meta">${escapeHtml(state)}${ev} · ${escapeHtml(f.impact)}</span></span></li>`;
     })
     .join("");
@@ -923,7 +923,7 @@ function redFlagGridHtml(flags) {
     list.length
       ? `<ul class="qp-list ${cls}">${list
           .map((f) => {
-            const ev = f.detected && f.evidence ? ` — “${escapeHtml(f.evidence)}”` : "";
+            const ev = f.detected && f.evidence ? ` - “${escapeHtml(f.evidence)}”` : "";
             return `<li><span><strong>${escapeHtml(f.label)}</strong>${ev}<br><span class="qp-job-meta">${escapeHtml(f.detected ? f.impact : t("notDetected"))}</span></span></li>`;
           })
           .join("")}</ul>`
@@ -1447,6 +1447,82 @@ function looksLikeJobPage() {
   return hits >= 4;
 }
 
+// ---- Structured data: the one method that works on every board ---------
+//
+// schema.org/JobPosting is what Google for Jobs requires, so the great
+// majority of job boards publish it -- including small South African ones we
+// could never enumerate by hand. Reading it gives the description, the
+// employer and the title exactly as the site itself declares them, with no
+// per-site CSS selectors to maintain and nothing to break when a site
+// redesigns.
+//
+// This is why the extension can work on boards nobody has tested it against.
+
+function _ldNodes() {
+  const out = [];
+  for (const tag of document.querySelectorAll('script[type="application/ld+json"]')) {
+    try {
+      const raw = JSON.parse(tag.textContent);
+      const list = Array.isArray(raw) ? raw : [raw, ...(raw["@graph"] || [])];
+      for (const node of list) {
+        if (!node || typeof node !== "object") continue;
+        const t = node["@type"];
+        if (t === "JobPosting" || (Array.isArray(t) && t.includes("JobPosting"))) out.push(node);
+      }
+    } catch {
+      /* malformed JSON-LD is very common in the wild; skip it silently */
+    }
+  }
+  return out;
+}
+
+// Descriptions are usually HTML inside a JSON string. Render it as text the
+// way a browser would, rather than showing people raw markup -- and without
+// ever attaching it to the live document.
+function _htmlToText(html) {
+  const doc = new DOMParser().parseFromString(String(html || ""), "text/html");
+  return (doc.body.textContent || "").replace(/[ \t]+/g, " ").replace(/\n{3,}/g, "\n\n").trim();
+}
+
+function _orgName(org) {
+  if (!org) return "";
+  if (typeof org === "string") return org.trim();
+  if (Array.isArray(org)) return _orgName(org[0]);
+  return String(org.name || "").trim();
+}
+
+// Microdata is the older form of the same vocabulary. Some older SA boards
+// still use it, so it is worth the few lines.
+function _microdataPosting() {
+  const scope = document.querySelector('[itemtype*="schema.org/JobPosting" i]');
+  if (!scope) return null;
+  const prop = (name) => scope.querySelector(`[itemprop="${name}"]`);
+  const desc = prop("description");
+  return {
+    text: desc ? (desc.innerText || desc.getAttribute("content") || "").trim() : "",
+    title: (prop("title")?.innerText || "").trim(),
+    company: _orgName({ name: prop("hiringOrganization")?.innerText || "" }),
+    container: desc || scope,
+  };
+}
+
+function structuredPosting() {
+  for (const node of _ldNodes()) {
+    const text = _htmlToText(node.description);
+    if (text.length >= 200) {
+      return {
+        text,
+        title: String(node.title || "").trim(),
+        company: _orgName(node.hiringOrganization),
+        source: "json-ld",
+      };
+    }
+  }
+  const micro = _microdataPosting();
+  if (micro && micro.text.length >= 200) return { ...micro, source: "microdata" };
+  return null;
+}
+
 // Ordered most-specific first. The tier that matches wins outright; a later
 // tier is only consulted when every earlier one comes up empty.
 //
@@ -1493,7 +1569,11 @@ function looksLikeCardList(el) {
   return distinct.length >= 3;
 }
 
-function extractPosting() {
+// Finds the visible element that actually shows the posting, which is what
+// highlighting needs. Kept separate from getting the TEXT, because the most
+// accurate text and the best container to underline in are not always the
+// same element.
+function visiblePostingContainer() {
   for (const tier of POSTING_SELECTOR_TIERS) {
     let container = null;
     let best = "";
@@ -1512,10 +1592,36 @@ function extractPosting() {
       return { text: best.slice(0, 8000), container };
     }
   }
+  return null;
+}
+
+function extractPosting() {
+  const visible = visiblePostingContainer();
+
+  // Prefer what the site itself declares. Structured data is exact -- it
+  // contains the description and nothing else, so it cannot pick up
+  // neighbouring adverts, navigation or footer text the way a CSS selector
+  // can. It is also the only approach that works on boards we have never
+  // seen, which is the whole requirement here.
+  const structured = structuredPosting();
+  if (structured) {
+    return {
+      text: structured.text.slice(0, 8000),
+      // Highlighting still needs a visible element to underline inside.
+      container: (visible && visible.container) || structured.container || document.body,
+      source: structured.source,
+    };
+  }
+
+  if (visible) return { ...visible, source: "selector" };
 
   // Nothing matched. Fall back to the page, which puts us in list mode rather
   // than claiming to have found a single posting.
-  return { text: (document.body.innerText || "").trim().slice(0, 8000), container: document.body };
+  return {
+    text: (document.body.innerText || "").trim().slice(0, 8000),
+    container: document.body,
+    source: "body",
+  };
 }
 
 // Matches a listing page's repeated job cards, not one open posting -- used
@@ -1695,12 +1801,24 @@ async function scanListMode(cards) {
 // string is a fine answer -- the backend simply skips that one check rather
 // than guessing.
 function extractCompanyName() {
+  // What the site declares beats anything we can guess from CSS classes.
+  const structured = structuredPosting();
+  if (structured && structured.company && structured.company.length < 80) {
+    return structured.company;
+  }
   const selectors = [
     "[data-testid='inlineHeader-companyName']",
     "[data-company-name]",
     "[class*='companyName']",
     "[class*='company-name']",
     "[itemprop='hiringOrganization']",
+    "[data-testid*='company' i]",
+    "[class*='employer' i]",
+    "[class*='recruiter-name' i]",
+    "[class*='organisation' i]",
+    "[class*='organization' i]",
+    "a[href*='/company/']",
+    "a[href*='/employer/']",
   ];
   for (const sel of selectors) {
     const el = document.querySelector(sel);

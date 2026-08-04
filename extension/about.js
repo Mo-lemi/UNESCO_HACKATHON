@@ -1,5 +1,5 @@
 // ============================================================
-// QHAPHELA — Privacy, Terms and data controls
+// QHAPHELA - Privacy, Terms and data controls
 // ============================================================
 // Chrome Web Store policy (enforced from 1 August 2026) requires that data
 // handling is disclosed prominently and accessibly from within the product,
@@ -33,7 +33,7 @@ const PANELS = {
       assistant, chat, and interview / cover-letter / CV tools) sends the text
       <em>you choose to give it</em> to Groq for processing. Nothing else leaves your
       device, and no identifier for you is attached. If you would rather nothing left
-      your machine at all, simply do not use the AI features — everything else keeps
+      your machine at all, simply do not use the AI features - everything else keeps
       working offline. See “Qhaphela AI” below.</p>
     </div>
 
@@ -43,14 +43,14 @@ const PANELS = {
       your device, so here is exactly what goes and when. Nothing is sent unless you
       actively use one of these features.</p>
       <ul class="checks warn">
-        <li><strong>Ask a question / paste a message</strong> — your question or pasted text</li>
-        <li><strong>Explain this posting, Interview prep</strong> — the job advert text</li>
-        <li><strong>Cover letter, Application email, Improve my CV</strong> — the job advert text <em>and your CV text</em></li>
+        <li><strong>Ask a question / paste a message</strong> - your question or pasted text</li>
+        <li><strong>Explain this posting, Interview prep</strong> - the job advert text</li>
+        <li><strong>Cover letter, Application email, Improve my CV</strong> - the job advert text <em>and your CV text</em></li>
       </ul>
       <ul class="checks ok">
         <li>Processed by Groq. No account, no identifier, no browsing history is attached</li>
         <li>The extension holds no API key. It never contacts Groq directly</li>
-        <li>The AI never sets your risk score — it only explains the score your own machine produced</li>
+        <li>The AI never sets your risk score - it only explains the score your own machine produced</li>
       </ul>
       <p class="note">Please do not paste your ID number, banking details or passwords.
       The assistant will never ask you for them.</p>
@@ -60,14 +60,14 @@ const PANELS = {
       <div class="card">
         <h2>What is processed, and where</h2>
         <ul class="checks ok">
-          <li><strong>Job posting text</strong> — scored on your computer, not kept</li>
-          <li><strong>Company name on the page</strong> — used to check the recruiter's email domain, not kept</li>
-          <li><strong>Your CV, if you upload one</strong> — parsed in memory, never written to disk</li>
+          <li><strong>Job posting text</strong> - scored on your computer, not kept</li>
+          <li><strong>Company name on the page</strong> - used to check the recruiter's email domain, not kept</li>
+          <li><strong>Your CV, if you upload one</strong> - parsed in memory, never written to disk</li>
         </ul>
         <ul class="checks warn">
-          <li><strong>Language and theme</strong> — kept in your browser until you clear it</li>
-          <li><strong>Tracked applications</strong> — kept in your browser until you delete them</li>
-          <li><strong>Reports you submit</strong> — kept in a file on your computer</li>
+          <li><strong>Language and theme</strong> - kept in your browser until you clear it</li>
+          <li><strong>Tracked applications</strong> - kept in your browser until you delete them</li>
+          <li><strong>Reports you submit</strong> - kept in a file on your computer</li>
         </ul>
       </div>
       <div class="card">
@@ -91,7 +91,7 @@ const PANELS = {
       are stripped from it automatically.</p>
       <ul class="checks ok">
         <li>South African ID numbers, phone numbers, email addresses and account numbers are replaced</li>
-        <li>Nothing about <em>you</em> is recorded — no name, no identifier</li>
+        <li>Nothing about <em>you</em> is recorded - no name, no identifier</li>
         <li>Counts are labelled “recorded on this device”, because there is no shared network</li>
       </ul>
       <p class="note">Issued under section 18 of the Protection of Personal Information Act 4 of 2013.
@@ -133,7 +133,7 @@ const PANELS = {
           <li>Do not publish an accusation against a real employer based on a score alone</li>
         </ul>
         <p class="note">A high score reflects wording in an advertisement, which may not even have
-        been written by the company it names — impersonation is one of the frauds Qhaphela detects.</p>
+        been written by the company it names - impersonation is one of the frauds Qhaphela detects.</p>
       </div>
     </div>
 
@@ -141,7 +141,7 @@ const PANELS = {
       <h2>No warranty</h2>
       <p class="muted">Qhaphela is provided “as is”, without warranty. It is a research prototype
       and a student project, not a commercial security product. To the fullest extent permitted by
-      South African law the author is not liable for loss arising from its use — including a scam it
+      South African law the author is not liable for loss arising from its use - including a scam it
       failed to flag, or an opportunity missed because a genuine posting was flagged. This does not
       limit liability that cannot lawfully be excluded.</p>
       <p class="note">Open source under the MIT Licence. Governed by the law of the Republic of South Africa.</p>
@@ -198,7 +198,7 @@ const PANELS = {
           <li>Tshivenda · isiNdebele · Afrikaans</li>
         </ul>
         <p class="note">Translations were prepared without first-language review and corrections
-        are welcome — a safety warning that reads awkwardly undermines the trust it exists to build.</p>
+        are welcome - a safety warning that reads awkwardly undermines the trust it exists to build.</p>
       </div>
       <div class="card">
         <h2>Research basis</h2>
@@ -226,9 +226,9 @@ async function wireData() {
     ["Language preference", local["qhaphela-lang"] || "not set"],
     ["Theme preference", local["qhaphela-theme"] || "not set"],
     ["Tracked applications", `${tracked.length}`],
-    ["Personal information", "none — never collected"],
-    ["Your CV", "not stored — parsed in memory only"],
-    ["Browsing history", "not stored — never collected"],
+    ["Personal information", "none - never collected"],
+    ["Your CV", "not stored - parsed in memory only"],
+    ["Browsing history", "not stored - never collected"],
   ];
 
   summary.innerHTML = rows

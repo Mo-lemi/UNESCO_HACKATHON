@@ -1,5 +1,5 @@
 // ============================================================
-// QHAPHELA — full-page safety report
+// QHAPHELA - full-page safety report
 // ============================================================
 // Opened from the in-page panel's "View full report" button. Renders the
 // stored result for the tab that was scanned, so it never re-scores and can
@@ -139,7 +139,7 @@ function overviewPanel(r) {
              <ul class="checks bad">${idSignals.map((s) => `<li>${esc(s)}</li>`).join("")}</ul>`
           : ""
       }
-      <p class="note">Qhaphela gives you an informed recommendation. It is not a final judgement — always verify independently.</p>
+      <p class="note">Qhaphela gives you an informed recommendation. It is not a final judgement - always verify independently.</p>
     </div>
   </div>
 
@@ -171,7 +171,7 @@ function redFlagsPanel(r) {
       .map(
         (i) => `<div class="intel">
           <span class="sev ${esc(i.severity)}">${esc(i.severity)}</span>
-          <span><span class="intel-ind">${esc(i.indicator)}</span> — ${esc(i.category)}<br>
+          <span><span class="intel-ind">${esc(i.indicator)}</span> - ${esc(i.category)}<br>
           <span class="intel-note">${esc(i.note)}</span></span>
         </div>`
       )
@@ -289,7 +289,7 @@ function highlightsPanel(r) {
         <h2>What this does and does not mean</h2>
         <ul class="checks ok"><li>No fee, document or off-platform request was worded in this posting.</li></ul>
         <ul class="checks warn">
-          <li>Wording alone is not proof of legitimacy — a careful scammer avoids obvious phrases.</li>
+          <li>Wording alone is not proof of legitimacy - a careful scammer avoids obvious phrases.</li>
           <li>Requests often come <em>later</em>, by email or WhatsApp, after you apply.</li>
         </ul>
         <h3 style="margin-top:.9rem">Stay alert for</h3>
@@ -326,7 +326,7 @@ function highlightsPanel(r) {
 
   return `
   <div class="card">
-    <h2>Suspicious phrases found — ${hl.length}</h2>
+    <h2>Suspicious phrases found - ${hl.length}</h2>
     <p class="muted">Each phrase below is quoted verbatim from the posting, with the sentence it
     appeared in, so you can find and judge it yourself.</p>
     ${cards}
@@ -337,7 +337,7 @@ function highlightsPanel(r) {
     <ul class="checks warn">
       <li>Do not reply with any personal document until you have verified the employer independently</li>
       <li>Search the company name plus "scam" before responding</li>
-      <li>If money is requested at any point, stop — that is the scam, not a step in it</li>
+      <li>If money is requested at any point, stop - that is the scam, not a step in it</li>
       <li>Report the posting to the platform, and to Qhaphela using the panel</li>
     </ul>
   </div>`;
@@ -364,7 +364,7 @@ function reasoningPanel(r) {
   return `
   <div class="grid two">
     <div class="card">
-      <h2>AI reasoning — top factors</h2>
+      <h2>AI reasoning - top factors</h2>
       ${rows || '<p class="muted">No interpretable factors fired for this posting.</p>'}
       <div class="legend">
         <span><span class="dot up"></span>Increases risk</span>
@@ -377,7 +377,7 @@ function reasoningPanel(r) {
       ${checks.positive.length ? `<ul class="checks ok">${checks.positive.map((c) => `<li>${esc(c)}</li>`).join("")}</ul>` : ""}
       ${checks.warning.length ? `<ul class="checks warn">${checks.warning.map((c) => `<li>${esc(c)}</li>`).join("")}</ul>` : ""}
       ${!checks.positive.length && !checks.warning.length ? '<p class="muted">No contact details found in this posting.</p>' : ""}
-      <p class="note">Based on the posting text only. This is <strong>not</strong> a company registry check — no CIPC or LinkedIn lookup is performed.</p>
+      <p class="note">Based on the posting text only. This is <strong>not</strong> a company registry check - no CIPC or LinkedIn lookup is performed.</p>
     </div>
   </div>`;
 }
@@ -398,14 +398,14 @@ function cvPanel(r) {
               ${m.matched.length ? `<h3>You have</h3><ul class="checks ok">${m.matched.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>` : ""}
               ${m.missing.length ? `<h3 style="margin-top:.6rem">Missing from your CV</h3><ul class="checks warn">${m.missing.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>` : ""}
               ${(m.learning || []).length ? `<h3 style="margin-top:.7rem">Free ways to close the gap</h3>
-                 <ul class="checks ok">${m.learning.map((l) => `<li><a href="${safeUrl(l.url)}" target="_blank" rel="noopener">${esc(l.title)}</a> <span class="muted">— ${esc(l.skill)}</span></li>`).join("")}</ul>` : ""}
+                 <ul class="checks ok">${m.learning.map((l) => `<li><a href="${safeUrl(l.url)}" target="_blank" rel="noopener">${esc(l.title)}</a> <span class="muted">- ${esc(l.skill)}</span></li>`).join("")}</ul>` : ""}
             </div>
           </div>
           <p class="note">${esc(m.note)}</p>`;
       })()
     : `<label class="drop" for="cv-file">
          <strong>Upload your CV</strong><br>
-         <span class="muted">PDF, Word (.docx), .txt or .md — up to 5 MB.</span><br>
+         <span class="muted">PDF, Word (.docx), .txt or .md - up to 5 MB.</span><br>
          <span class="muted">Read on your own machine and never stored or uploaded anywhere.</span>
        </label>
        <input id="cv-file" type="file" accept=".pdf,.docx,.txt,.md,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain,text/markdown" class="hidden">
@@ -426,7 +426,7 @@ function cvPanel(r) {
   </div>
 
   <div class="card" style="margin-top:1rem">
-    <h2>Before you apply — safety checklist</h2>
+    <h2>Before you apply - safety checklist</h2>
     <ul class="checks ok">
       <li>Search the company name plus the word "scam" before responding</li>
       <li>Check the company has a website that is not just a social media page</li>
@@ -460,7 +460,10 @@ const JOB_PLATFORMS = [
 function roleKeyword() {
   const title = (state.meta && state.meta.title) || "";
   const cleaned = title
-    .replace(/\s*[-|–—]\s*(job|jobs|indeed|linkedin|careers?|pnet|jobsora).*/i, "")
+    // \u2013 and \u2014 are the en and em dash. Written as escapes because the
+    // source keeps to plain ASCII, but they must still be MATCHED: real job
+    // boards put them in page titles ("Data Analyst \u2014 Indeed").
+    .replace(/\s*[-|\u2013\u2014]\s*(job|jobs|indeed|linkedin|careers?|pnet|jobsora).*/i, "")
     .replace(/\bjob post(ing)?\b/i, "")
     .replace(/\s+/g, " ")
     .trim();
@@ -483,7 +486,7 @@ function platformSearchHtml() {
   ).join("");
 
   return `<div class="card" style="margin-top:1rem">
-    <h2>Search this role across every SA platform — ${JOB_PLATFORMS.length}</h2>
+    <h2>Search this role across every SA platform - ${JOB_PLATFORMS.length}</h2>
     <p class="muted">Live searches for <strong>${esc(q)}</strong>, pre-filled. Qhaphela will scan
     whichever results you open, so you can check any of them before applying.</p>
     ${rows}
@@ -503,7 +506,7 @@ function similarPanel() {
       <p class="muted">No low-risk postings were scanned on the page you came from.</p>
       <p class="note">Qhaphela only vouches for postings it has actually scanned and scored. It will
       not list vacancies from elsewhere as "safe", because it cannot verify those. Use the searches
-      below instead — open any result and Qhaphela will scan it for you.</p>
+      below instead - open any result and Qhaphela will scan it for you.</p>
     </div>${platformSearchHtml()}`;
   }
 
@@ -524,7 +527,7 @@ function similarPanel() {
     .join("");
 
   return `<div class="card">
-    <h2>Similar legitimate opportunities — ${safe.length} found</h2>
+    <h2>Similar legitimate opportunities - ${safe.length} found</h2>
     ${rows}
     <p class="note">These are real postings from the page you scanned, with their real links and the
     score our model gave each one. Nothing here is generated or estimated.</p>
@@ -546,7 +549,7 @@ async function loadMetrics() {
       <div class="stat"><div class="stat-num">${m.genuine}+${m.fraudulent}</div><div class="stat-lbl">genuine + fraudulent tested</div></div>`;
     caveat.textContent = m.caveat;
   } catch {
-    strip.innerHTML = '<p class="muted">Model service unreachable — start it on port 8000 to see evaluation figures.</p>';
+    strip.innerHTML = '<p class="muted">Model service unreachable - start it on port 8000 to see evaluation figures.</p>';
   }
 }
 
@@ -600,7 +603,7 @@ async function renderTracker() {
       </div>`).join("")
     : `<p class="muted">Nothing tracked yet. Scan a job and add it here to keep track of where you applied.</p>`;
 
-  card.innerHTML = `<h2>My applications${list.length ? ` — ${list.length}` : ""}</h2>
+  card.innerHTML = `<h2>My applications${list.length ? ` - ${list.length}` : ""}</h2>
     ${addBtn}${rows}
     <p class="note">Stored only in this browser. Qhaphela has no account system and never uploads your application history.</p>`;
 
@@ -674,7 +677,7 @@ function aiPanel() {
     <h2>Qhaphela AI</h2>
     <p class="tier-word medium">! This feature sends text to an AI service</p>
     <p class="muted">Fraud detection runs entirely on your computer. <strong>Qhaphela AI is
-    different</strong> — the posting text or question you send is processed by Groq's servers
+    different</strong> - the posting text or question you send is processed by Groq's servers
     (Llama 3.3 70B) to generate an answer. Nothing else about you is sent: no name, no CV unless
     you attach one, no browsing history.</p>
     <p class="note">Do not paste your ID number, banking details or passwords into the assistant.</p>
@@ -690,7 +693,7 @@ function aiPanel() {
         <textarea id="chat-box" rows="3" placeholder="Paste a message, or ask a question…"></textarea>
         <button class="btn primary" id="chat-send" type="button">Ask</button>
       </div>
-      <p class="note">Qhaphela AI can be wrong. It never changes the risk score — that comes from
+      <p class="note">Qhaphela AI can be wrong. It never changes the risk score - that comes from
       the model running on your machine.</p>
     </div>
 

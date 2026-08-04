@@ -30,12 +30,12 @@ If a feature can only look good by bending one of these, it does not ship.
 ## Especially welcome
 
 - **Translation review.** The 11 official language strings were written
-  without first-language review. Corrections are genuinely valuable — a safety
+  without first-language review. Corrections are genuinely valuable - a safety
   warning that reads awkwardly undermines the trust it exists to build.
 - **Real labelled postings** to strengthen evaluation (with any personal
   details removed first).
-- **Detection gaps** — a real scam pattern that gets through.
-- **False positives** — a genuine posting wrongly flagged. These matter as
+- **Detection gaps** - a real scam pattern that gets through.
+- **False positives** - a genuine posting wrongly flagged. These matter as
   much as missed scams: wrongly flagging a small employer disrupts real hiring.
 
 ## Before opening a pull request

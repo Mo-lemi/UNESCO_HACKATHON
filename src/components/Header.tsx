@@ -19,7 +19,7 @@ export const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab, apiStat
             type="button"
             className="flex items-center gap-3 cursor-pointer text-left rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-red-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900"
             onClick={() => setActiveTab('scanner')}
-            aria-label="Qhaphela home — go to the fraud scanner"
+            aria-label="Qhaphela home - go to the fraud scanner"
           >
             {/* Was "I", left over from the project's former name, Isazi. */}
             <div

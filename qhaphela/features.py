@@ -307,24 +307,24 @@ def red_flag_grid(text: str) -> list:
 # "8 week learning path" -- just where to genuinely start, free of charge,
 # which matters for an unemployed audience.
 LEARNING_RESOURCES = {
-    "active directory": [("Microsoft Learn — Windows Server &amp; Active Directory", "https://learn.microsoft.com/en-us/training/browse/?products=windows-server")],
-    "microsoft 365": [("Microsoft Learn — Microsoft 365 training", "https://learn.microsoft.com/en-us/training/browse/?products=m365")],
-    "office 365": [("Microsoft Learn — Microsoft 365 training", "https://learn.microsoft.com/en-us/training/browse/?products=m365")],
-    "azure": [("Microsoft Learn — Azure Fundamentals (AZ-900)", "https://learn.microsoft.com/en-us/training/paths/microsoft-azure-fundamentals-describe-cloud-concepts/")],
-    "networking": [("Cisco Networking Academy — free courses", "https://skillsforall.com/"), ("Professor Messer — Network+ (free video course)", "https://www.professormesser.com/network-plus/n10-009/n10-009-video/n10-009-training-course/")],
-    "ccna": [("Cisco Networking Academy — free courses", "https://skillsforall.com/")],
-    "comptia a+": [("Professor Messer — A+ (free video course)", "https://www.professormesser.com/free-a-plus-training/220-1201/220-1201-video/220-1201-training-course/")],
-    "a+": [("Professor Messer — A+ (free video course)", "https://www.professormesser.com/free-a-plus-training/220-1201/220-1201-video/220-1201-training-course/")],
-    "comptia security+": [("Professor Messer — Security+ (free video course)", "https://www.professormesser.com/security-plus/sy0-701/sy0-701-video/sy0-701-comptia-security-plus-course/")],
-    "linux": [("Linux Journey — free interactive course", "https://linuxjourney.com/"), ("TryHackMe — Linux Fundamentals", "https://tryhackme.com/module/linux-fundamentals")],
-    "python": [("Python for Everybody — free full course", "https://www.py4e.com/")],
-    "sql": [("SQLBolt — free interactive SQL lessons", "https://sqlbolt.com/")],
-    "excel": [("Microsoft Learn — Excel training", "https://support.microsoft.com/en-us/office/excel-video-training-9bc05390-e94c-46af-a5b3-d7c22f6990bb")],
-    "power bi": [("Microsoft Learn — Power BI Fundamentals", "https://learn.microsoft.com/en-us/training/paths/get-started-power-bi/")],
-    "firewall": [("TryHackMe — Network Security", "https://tryhackme.com/module/network-security")],
-    "troubleshooting": [("Professor Messer — A+ troubleshooting (free)", "https://www.professormesser.com/free-a-plus-training/220-1202/220-1202-video/220-1202-training-course/")],
-    "helpdesk": [("Professor Messer — A+ (free video course)", "https://www.professormesser.com/free-a-plus-training/220-1201/220-1201-video/220-1201-training-course/")],
-    "customer service": [("Coursera — free-to-audit customer service courses", "https://www.coursera.org/courses?query=customer%20service&productDifficultyLevel=Beginner")],
+    "active directory": [("Microsoft Learn - Windows Server &amp; Active Directory", "https://learn.microsoft.com/en-us/training/browse/?products=windows-server")],
+    "microsoft 365": [("Microsoft Learn - Microsoft 365 training", "https://learn.microsoft.com/en-us/training/browse/?products=m365")],
+    "office 365": [("Microsoft Learn - Microsoft 365 training", "https://learn.microsoft.com/en-us/training/browse/?products=m365")],
+    "azure": [("Microsoft Learn - Azure Fundamentals (AZ-900)", "https://learn.microsoft.com/en-us/training/paths/microsoft-azure-fundamentals-describe-cloud-concepts/")],
+    "networking": [("Cisco Networking Academy - free courses", "https://skillsforall.com/"), ("Professor Messer - Network+ (free video course)", "https://www.professormesser.com/network-plus/n10-009/n10-009-video/n10-009-training-course/")],
+    "ccna": [("Cisco Networking Academy - free courses", "https://skillsforall.com/")],
+    "comptia a+": [("Professor Messer - A+ (free video course)", "https://www.professormesser.com/free-a-plus-training/220-1201/220-1201-video/220-1201-training-course/")],
+    "a+": [("Professor Messer - A+ (free video course)", "https://www.professormesser.com/free-a-plus-training/220-1201/220-1201-video/220-1201-training-course/")],
+    "comptia security+": [("Professor Messer - Security+ (free video course)", "https://www.professormesser.com/security-plus/sy0-701/sy0-701-video/sy0-701-comptia-security-plus-course/")],
+    "linux": [("Linux Journey - free interactive course", "https://linuxjourney.com/"), ("TryHackMe - Linux Fundamentals", "https://tryhackme.com/module/linux-fundamentals")],
+    "python": [("Python for Everybody - free full course", "https://www.py4e.com/")],
+    "sql": [("SQLBolt - free interactive SQL lessons", "https://sqlbolt.com/")],
+    "excel": [("Microsoft Learn - Excel training", "https://support.microsoft.com/en-us/office/excel-video-training-9bc05390-e94c-46af-a5b3-d7c22f6990bb")],
+    "power bi": [("Microsoft Learn - Power BI Fundamentals", "https://learn.microsoft.com/en-us/training/paths/get-started-power-bi/")],
+    "firewall": [("TryHackMe - Network Security", "https://tryhackme.com/module/network-security")],
+    "troubleshooting": [("Professor Messer - A+ troubleshooting (free)", "https://www.professormesser.com/free-a-plus-training/220-1202/220-1202-video/220-1202-training-course/")],
+    "helpdesk": [("Professor Messer - A+ (free video course)", "https://www.professormesser.com/free-a-plus-training/220-1201/220-1201-video/220-1201-training-course/")],
+    "customer service": [("Coursera - free-to-audit customer service courses", "https://www.coursera.org/courses?query=customer%20service&productDifficultyLevel=Beginner")],
 }
 
 
@@ -733,19 +733,19 @@ def cv_guidance(text: str) -> dict:
     if exp_match:
         years = exp_match.group(1)
         tailored.append(
-            f"This role asks for {years}+ years of experience — state your years clearly near the top of your CV."
+            f"This role asks for {years}+ years of experience - state your years clearly near the top of your CV."
         )
     if quals:
         tailored.append(
-            f"Qualification named in this posting: {', '.join(quals[:3])} — list yours in the same words if you have it."
+            f"Qualification named in this posting: {', '.join(quals[:3])} - list yours in the same words if you have it."
         )
     if certs:
         tailored.append(
-            f"Certification named here: {', '.join(certs[:3])} — if you have it, name it exactly; ATS software matches the literal term."
+            f"Certification named here: {', '.join(certs[:3])} - if you have it, name it exactly; ATS software matches the literal term."
         )
     if skills:
         tailored.append(
-            f"Skills this posting names: {', '.join(skills[:5])} — mirror the ones you genuinely have."
+            f"Skills this posting names: {', '.join(skills[:5])} - mirror the ones you genuinely have."
         )
 
     general = [

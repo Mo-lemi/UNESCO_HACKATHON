@@ -130,7 +130,7 @@ def evaluate():
 
 if __name__ == "__main__":
     r = evaluate()
-    print("\nQHAPHELA — evaluation on hand-labelled REAL postings")
+    print("\nQHAPHELA - evaluation on hand-labelled REAL postings")
     print("=" * 62)
     print(f"Sample: {r['sample_size']} postings ({r['genuine']} genuine, {r['fraudulent']} fraudulent)\n")
     for label, pred, score, snippet in r["rows"]:

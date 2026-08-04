@@ -4,8 +4,8 @@
 
 Qhaphela ("watch out!" / "be careful!" in Zulu/Xhosa) is an AI-powered job posting fraud detection tool and media literacy resource for South African job seekers. It ships two surfaces:
 
-- **`extension/`** — the real product: a Chrome extension that runs on job platforms and shows a live risk verdict directly on the page.
-- **The web app** (`src/`, `server.ts`) — a secondary demo/testing surface for showing the same scoring engine in a browser tab, without installing the extension.
+- **`extension/`** - the real product: a Chrome extension that runs on job platforms and shows a live risk verdict directly on the page.
+- **The web app** (`src/`, `server.ts`) - a secondary demo/testing surface for showing the same scoring engine in a browser tab, without installing the extension.
 
 The scoring engine itself is a real trained model, not a hardcoded rules engine: a scikit-learn Random Forest + TF-IDF pipeline (`qhaphela/`) trained on labelled SA job posting data, with SHAP explanations for every score. Both surfaces call the same FastAPI service, so they always agree.
 
@@ -21,7 +21,7 @@ pip install -r requirements.txt
 cd qhaphela
 uvicorn app:app --port 8000
 ```
-This must be running before the extension or the web app can score anything — both are thin clients over this service.
+This must be running before the extension or the web app can score anything - both are thin clients over this service.
 
 ### Step 2: Start the web app (optional, for the demo surface)
 In a second terminal, from the project root:
@@ -56,7 +56,7 @@ Open `http://localhost:3000`.
 5. Select the `extension/` folder inside this project directory.
 
 The extension runs on **any job board**, not a fixed list. It loads on all sites but stays
-completely inert unless the page is genuinely a job posting — detected via schema.org
+completely inert unless the page is genuinely a job posting - detected via schema.org
 `JobPosting` metadata, job-shaped URLs, or several independent hiring phrases. No page text
 leaves the browser otherwise, and it is switched off entirely on banking, tax and webmail
 sites. It then docks a panel into the page layout:
@@ -87,7 +87,7 @@ taken out in your name) is different in kind from "this job isn't real".
 **Contact & domain checks**: whether the recruiter's email uses a company domain or a free
 provider, whether a company website is linked, and whether the email domain actually
 matches the company name being advertised (a common impersonation signal). These are
-observations from the posting text — deliberately **not** labelled "verified", because no
+observations from the posting text - deliberately **not** labelled "verified", because no
 company registry (CIPC) is queried.
 
 **CV guidance**: qualifications, certifications, skills and experience requirements are
@@ -115,7 +115,7 @@ cd qhaphela && pytest -q          # runs both suites
 ```
 
 **53 tests.** `test_app.py` (38) covers detection accuracy on real scam and real legitimate
-postings — including a regression test for every false positive found during live testing —
+postings - including a regression test for every false positive found during live testing -
 fairness toward small informal employers, excerpt anonymisation, multi-class scam typing,
 explainability output, the identity-theft layer, contact checks, CV matching, input validation
 and reporting. `test_ai.py` (15) covers the assistant's security properties: that the API key
@@ -135,7 +135,7 @@ production pipeline on hand-labelled real postings.
 
 > The `1.0` figures in `models/metadata.json` are **deliberately not quoted anywhere**: they
 > come from a held-out split of the synthetic training data, where the classes are trivially
-> separable. A small honest sample beats an inflated one — and the tooling reports a fraction
+> separable. A small honest sample beats an inflated one - and the tooling reports a fraction
 > with its caveat rather than a percentage that implies more than was shown.
 
 ---
@@ -150,20 +150,20 @@ Both the web app (`localhost:3000`) and the model service directly (`localhost:8
   - Returns: score, tier, itemised `rule_reasons` with points, `identity_theft_signals`,
     `contact_checks`, `cv_guidance`, `highlights` (literal phrases for in-page underlining),
     and raw SHAP `top_reasons`
-- **Report a posting**: `POST /report` — `{"url", "domain", "category", "excerpt", "score"}`
+- **Report a posting**: `POST /report` - `{"url", "domain", "category", "excerpt", "score"}`
 - **Report counts**: `GET /report-stats?url=…&domain=…`
-- **CV match (text)**: `POST /match` — `{"cv_text", "job_text"}`
-- **CV match (file)**: `POST /match-file` — PDF, .docx, .txt or .md, up to 5 MB
-- **Model evaluation**: `GET /metrics` — real-posting results with their caveat
-- **Local impact figures**: `GET /impact` — counted, never estimated
+- **CV match (text)**: `POST /match` - `{"cv_text", "job_text"}`
+- **CV match (file)**: `POST /match-file` - PDF, .docx, .txt or .md, up to 5 MB
+- **Model evaluation**: `GET /metrics` - real-posting results with their caveat
+- **Local impact figures**: `GET /impact` - counted, never estimated
 
 Requests are capped at 20,000 characters and rate-limited to 60/minute per client. CORS is
 restricted to extension and localhost origins.
 
 > **Privacy note**: reports are stored in a local SQLite file (`qhaphela/reports.db`, gitignored)
-> and record only a hash of the posting URL, its domain, a category, and a short excerpt —
-> never any reporter identity. Excerpts are **anonymised before storage** — SA ID numbers,
-> phone numbers, email addresses and account numbers are stripped — per the research
+> and record only a hash of the posting URL, its domain, a category, and a short excerpt -
+> never any reporter identity. Excerpts are **anonymised before storage** - SA ID numbers,
+> phone numbers, email addresses and account numbers are stripped - per the research
 > protocol's POPIA commitment. Report counts are shown as "recorded on this device" because
 > the store is local; they are never presented as community-wide figures.
 

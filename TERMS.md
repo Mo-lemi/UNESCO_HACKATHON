@@ -1,4 +1,4 @@
-# Qhaphela — Terms of Use
+# Qhaphela - Terms of Use
 
 **Protecting Opportunities. Empowering Futures.**
 
@@ -16,8 +16,8 @@ already viewing and estimates how likely they are to be fraudulent. It explains
 its reasoning, warns about requests that could enable identity theft, and helps
 you compare your CV against what a posting asks for.
 
-It exists to protect South African job seekers — especially young people and
-first-time job seekers — from recruitment fraud.
+It exists to protect South African job seekers - especially young people and
+first-time job seekers - from recruitment fraud.
 
 ---
 
@@ -44,7 +44,7 @@ Being clear about the limits is part of using it safely.
   WhatsApp, where Qhaphela cannot see.
 - **It does not verify companies.** No company registry, CIPC record or
   LinkedIn profile is checked. The "contact and domain checks" describe what
-  appears in the posting text — nothing more.
+  appears in the posting text - nothing more.
 - **It can be wrong in both directions.** Small and informal employers can look
   unusual to software. Qhaphela is deliberately built not to penalise informal
   wording, but no automated system is perfect.
@@ -66,7 +66,7 @@ You agree to use Qhaphela to protect yourself and others, and **not** to:
 
 Employers named in postings have not been assessed as businesses. A high score
 reflects **wording in an advertisement**, which may not even have been written
-by the company it names — impersonation is one of the frauds Qhaphela detects.
+by the company it names - impersonation is one of the frauds Qhaphela detects.
 
 ---
 
@@ -95,7 +95,7 @@ Qhaphela is provided **"as is"**, without warranty of any kind. It is a research
 prototype and a student project, not a commercial security product.
 
 To the fullest extent permitted by South African law, the author is not liable
-for any loss arising from use of, or reliance on, Qhaphela — including loss
+for any loss arising from use of, or reliance on, Qhaphela - including loss
 caused by a fraudulent posting it failed to flag, or an opportunity missed
 because a legitimate posting was flagged.
 

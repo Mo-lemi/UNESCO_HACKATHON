@@ -58,7 +58,7 @@ function renderResult(result) {
   whyEl.innerHTML = "";
   const ruleReasons = result.rule_reasons || [];
   whyLabelEl.textContent = ruleReasons.length
-    ? `why — ${result.rule_points_total}/100 from disclosed risk factors`
+    ? `why - ${result.rule_points_total}/100 from disclosed risk factors`
     : "why";
   if (ruleReasons.length === 0) {
     whyEl.innerHTML = '<p class="muted dim">No specific red flags found in the text.</p>';

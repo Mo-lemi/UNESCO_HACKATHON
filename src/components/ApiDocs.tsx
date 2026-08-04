@@ -48,7 +48,7 @@ export const ApiDocs: React.FC = () => {
           <h2 className="text-lg font-bold font-mono text-slate-100">Qhaphela Scoring API Specification</h2>
         </div>
         <p className="text-xs text-slate-400 leading-relaxed">
-          The FastAPI & Express endpoint called by background service workers or mobile clients. POST a job posting's text to obtain a 0–100 risk score, tier classification, top SHAP feature contributions, rule safety flags, and phrase highlights.
+          The FastAPI & Express endpoint called by background service workers or mobile clients. POST a job posting's text to obtain a 0-100 risk score, tier classification, top SHAP feature contributions, rule safety flags, and phrase highlights.
         </p>
       </div>
 

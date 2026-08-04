@@ -25,7 +25,7 @@ period to fix before disclosing publicly.
 - Anything that could cause a scam to be scored as safe
 
 **Out of scope**
-- The job platforms Qhaphela runs on — report those to their owners
+- The job platforms Qhaphela runs on - report those to their owners
 - Model accuracy on a given posting (open a normal issue instead)
 - Findings that require an already-compromised machine
 

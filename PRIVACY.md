@@ -1,4 +1,4 @@
-# Qhaphela — Privacy Policy
+# Qhaphela - Privacy Policy
 
 **Protecting Opportunities. Empowering Futures.**
 
@@ -16,11 +16,11 @@ disclosure requirements that took effect on 1 August 2026.
 no analytics, no advertising, no tracking.
 
 **Fraud detection runs entirely on your own computer.** The risk score, the red
-flags, the phrase highlighting, the CV matching — all of it happens locally.
+flags, the phrase highlighting, the CV matching - all of it happens locally.
 None of it is transmitted anywhere.
 
-**One feature is different, and you should know exactly how.** *Qhaphela AI* —
-the assistant, the chat, and the interview/cover-letter/CV tools — sends the
+**One feature is different, and you should know exactly how.** *Qhaphela AI* -
+the assistant, the chat, and the interview/cover-letter/CV tools - sends the
 text you give it to **Groq** (`api.groq.com`) to be processed by the Llama 3.3
 70B model. That text leaves your device. Nothing else does: no name, no
 identifier, no browsing history, and no CV unless you attach one to an AI tool.
@@ -54,7 +54,7 @@ by us and is not reachable from the internet.
 |---|---|---|---|
 | Text of the job posting you are viewing | To score it for fraud indicators | Your own computer only | No |
 | Company name shown on the page | To check whether the recruiter's email domain matches | Your own computer only | No |
-| Your CV, if you choose to upload one | To compare against the job's stated requirements | Your own computer only | **No — parsed in memory, never written to disk** |
+| Your CV, if you choose to upload one | To compare against the job's stated requirements | Your own computer only | **No - parsed in memory, never written to disk** |
 | Your language and theme choice | To remember your preference | Your browser's local storage | Yes, until you clear it |
 | Jobs you add to the tracker | So you can see where you applied | Your browser's local storage | Yes, until you delete them |
 | Reports you submit | To build local threat intelligence | A file on your own computer | Yes, until you delete it |
@@ -74,7 +74,7 @@ board, including small South African sites we could not list in advance.
 A page qualifies only if it declares itself a job posting in its own metadata,
 has a job-shaped web address, or contains several independent hiring phrases.
 
-On every other page — news, social media, shopping, anything personal — the
+On every other page - news, social media, shopping, anything personal - the
 extension adds nothing to the page and **reads nothing that is sent anywhere.**
 
 It is switched off entirely on banking, tax and webmail sites.
@@ -118,7 +118,7 @@ none exists.
 **Who processes it:** Groq Inc. Their handling is governed by their own privacy
 policy at <https://groq.com/privacy-policy/>. Qhaphela has no control over their
 retention. If you are not comfortable with that, **simply do not use the AI
-features** — every other part of Qhaphela continues to work fully offline.
+features** - every other part of Qhaphela continues to work fully offline.
 
 **Please do not paste** your ID number, banking details, passwords or any
 document you would not want processed by a third party. The assistant will never
@@ -134,7 +134,7 @@ domain, not yours:
 | Domain registration date | `rdap.org` | The employer's domain name only |
 | HTTPS certificate | The employer's own website | An ordinary HTTPS connection, as any browser makes |
 
-**Nothing about you is sent in these lookups** — no name, no identifier, not the
+**Nothing about you is sent in these lookups** - no name, no identifier, not the
 posting text, not your CV. Only the employer's domain. These run **only when you
 press the button**, never automatically, and every other feature works without
 them.
@@ -158,7 +158,7 @@ computer:
 **Before that excerpt is saved, identifiers are automatically stripped from
 it:** South African ID numbers, phone numbers, email addresses and
 account-length numbers are replaced with placeholders. Nothing about *you* is
-recorded — no name, no identifier, no timestamp tied to you.
+recorded - no name, no identifier, no timestamp tied to you.
 
 Report counts shown in the interface are labelled **"recorded on this device"**
 because that is the truth. There is no shared reporting network.

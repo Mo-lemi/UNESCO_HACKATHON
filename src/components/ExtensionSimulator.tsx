@@ -170,7 +170,7 @@ export const ExtensionSimulator: React.FC = () => {
                   that mean nothing to a non-technical reader. */}
               <div className="space-y-1.5 pt-1">
                 <p className="text-[11px] font-mono text-slate-400 uppercase font-semibold">
-                  why{result.rule_reasons.length > 0 ? ` — ${result.rule_points_total}/100` : ''}
+                  why{result.rule_reasons.length > 0 ? ` - ${result.rule_points_total}/100` : ''}
                 </p>
                 <div className="space-y-1 bg-slate-900/60 p-2.5 rounded-lg border border-slate-800">
                   {result.rule_reasons.length === 0 ? (
