@@ -1560,11 +1560,38 @@ const POSTING_SELECTOR_TIERS = [
 // A container holding several job cards is a results list, not one posting.
 // This is the platform-agnostic guard: it holds on job boards we have never
 // seen and could not enumerate in advance.
+// Must look like a link to ONE posting, not to another search. The trailing
+// separator is what does that: "/jobs/adverts/123" and "/jobs--Helpdesk-..."
+// are postings, while "/jobs?q=IT+support" is a query and matched before,
+// which is how "People also searched:" became a job card on Indeed.
+const DETAIL_LINK = /\/(a-|ad\/|rc\/clk|viewjob|job[-\/]|jobs[-\/]|vacanc|advert|position|listing|learnership)/i;
+
+function hasDetailLink(el) {
+  return Array.from(el.querySelectorAll("a[href]")).some((a) =>
+    DETAIL_LINK.test(a.getAttribute("href") || "")
+  );
+}
+
 function looksLikeCardList(el) {
   if (!el) return false;
+
+  // Distinct links to separate postings. This is the test that generalises:
+  // it needs no class names, so it holds on boards we have never seen.
+  //
+  // Without it, Gumtree's <main> -- 37,000 characters containing every
+  // advert on the page -- was accepted as a single posting and scored
+  // 64/100 MEDIUM. That number described nothing at all, which is precisely
+  // the class of bug that had the Indeed panel flagging a neighbouring
+  // company's salary.
+  const hrefs = new Set();
+  for (const a of el.querySelectorAll("a[href]")) {
+    const href = a.getAttribute("href") || "";
+    if (DETAIL_LINK.test(href)) hrefs.add(href);
+    if (hrefs.size >= 3) return true;
+  }
+
+  // Class-based count, kept for boards whose links do not follow the pattern.
   const cards = Array.from(el.querySelectorAll(JOB_CARD_SELECTOR));
-  // Count only the innermost matches, so a wrapper inside the candidate does
-  // not mask the several real cards beneath it.
   const distinct = cards.filter((c) => !cards.some((o) => o !== c && c.contains(o)));
   return distinct.length >= 3;
 }
@@ -1705,17 +1732,6 @@ function selectorCards() {
 // class names. Gumtree is the case that forced it -- its adverts are
 // `div.tile-item` with no heading anywhere, so the other two found nothing,
 // while this finds all 16.
-// Must look like a link to ONE posting, not to another search. The trailing
-// separator is what does that: "/jobs/adverts/123" and "/jobs--Helpdesk-..."
-// are postings, while "/jobs?q=IT+support" is a query and matched before,
-// which is how "People also searched:" became a job card on Indeed.
-const DETAIL_LINK = /\/(a-|ad\/|rc\/clk|viewjob|job[-\/]|jobs[-\/]|vacanc|advert|position|listing|learnership)/i;
-
-function hasDetailLink(el) {
-  return Array.from(el.querySelectorAll("a[href]")).some((a) =>
-    DETAIL_LINK.test(a.getAttribute("href") || "")
-  );
-}
 
 // One way of reading a card's title, used by every strategy. Without this the
 // selector strategy always reported no title and was unfairly ranked last,

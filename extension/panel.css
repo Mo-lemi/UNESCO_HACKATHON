@@ -248,9 +248,13 @@ html.qhaphela-shifted.qhaphela-shifted-collapsed { margin-left: var(--qp-width-c
   display: inline-flex !important; align-items: center !important; justify-content: center !important;
   font-size: .8rem !important; font-weight: 700 !important;
 }
-#qhaphela-panel .qp-job-main { flex: 1 !important; min-width: 0 !important; }
-#qhaphela-panel .qp-job-title { font-size: .8rem !important; font-weight: 700 !important; color: var(--ink) !important; overflow: hidden !important; text-overflow: ellipsis !important; white-space: nowrap !important; }
-#qhaphela-panel .qp-job-meta { font-size: .7rem !important; color: var(--ink-muted) !important; overflow: hidden !important; text-overflow: ellipsis !important; white-space: nowrap !important; }
+#qhaphela-panel .qp-job-main { display: block !important; flex: 1 !important; min-width: 0 !important; overflow: hidden !important; }
+/* display:block matters here. These are <span> elements, and text-overflow
+   has no effect on an inline box, so a long job title ran straight over the
+   score badge instead of truncating. The parent is a flex item and so gets
+   blockified automatically, but that does not cascade to its children. */
+#qhaphela-panel .qp-job-title { display: block !important; font-size: .8rem !important; font-weight: 700 !important; color: var(--ink) !important; overflow: hidden !important; text-overflow: ellipsis !important; white-space: nowrap !important; }
+#qhaphela-panel .qp-job-meta { display: block !important; font-size: .7rem !important; color: var(--ink-muted) !important; overflow: hidden !important; text-overflow: ellipsis !important; white-space: nowrap !important; }
 #qhaphela-panel .qp-job-side { display: flex !important; flex-direction: column !important; align-items: flex-end !important; gap: .25rem !important; flex-shrink: 0 !important; }
 #qhaphela-panel .qp-job-score { font-size: .7rem !important; font-weight: 700 !important; color: var(--safe) !important; white-space: nowrap !important; }
 #qhaphela-panel .qp-job-open {
