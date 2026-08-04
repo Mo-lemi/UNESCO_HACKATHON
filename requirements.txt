@@ -8,6 +8,11 @@ fastapi
 uvicorn[standard]
 pydantic
 joblib
+# CV file parsing (qhaphela/cv_extract.py) -- PDF text extraction.
+# .docx is handled with the standard library, no dependency needed.
+pymupdf
+python-multipart
+
 # Test suite (qhaphela/test_app.py)
 pytest
 httpx

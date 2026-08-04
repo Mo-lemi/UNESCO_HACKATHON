@@ -18,16 +18,18 @@ from contextlib import asynccontextmanager
 
 import joblib
 import numpy as np
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, File, Form, HTTPException, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
+import cv_extract
 import reports
 import threat_intel
 from features import (
     class1_shap_values,
     combine_features,
     contact_consistency,
+    classify_scam_type,
     cv_guidance,
     hard_floor_flags,
     job_match,
@@ -127,6 +129,17 @@ class CvGuidance(BaseModel):
     general: list[str]
 
 
+class ScamType(BaseModel):
+    key: str
+    label: str
+    description: str
+
+
+class ScamClassification(BaseModel):
+    types: list[ScamType]
+    primary: str
+
+
 class ThreatIndicator(BaseModel):
     indicator: str
     category: str
@@ -180,6 +193,7 @@ class ScoreResponse(BaseModel):
     positive_signals: list[RuleReason]
     ai_confidence: int
     threat_intel: ThreatIntel
+    scam_type: ScamClassification
 
 
 TIER_THRESHOLDS = (30, 70)  # <30 Low, 30-70 Medium, >70 High
@@ -332,6 +346,39 @@ def metrics():
     }
 
 
+MAX_UPLOAD_BYTES = 5 * 1024 * 1024  # a CV over 5 MB is not a CV
+
+
+@app.post("/match-file", response_model=MatchResponse)
+async def match_file(
+    request: Request,
+    cv_file: UploadFile = File(...),
+    job_text: str = Form(""),
+):
+    """
+    Compare an uploaded CV (.txt, .md, .pdf, .docx) against a job posting.
+
+    Privacy: the file is parsed in memory on this machine and used for one
+    keyword comparison. It is never written to disk, logged, or sent
+    anywhere -- there is no storage call on this path.
+    """
+    _rate_limit(request)
+
+    data = await cv_file.read()
+    if len(data) > MAX_UPLOAD_BYTES:
+        raise HTTPException(status_code=413, detail="That file is larger than 5 MB.")
+
+    try:
+        cv_text = cv_extract.extract(cv_file.filename or "", data)
+    except ValueError as exc:
+        # These messages are written for the user, so pass them straight through.
+        raise HTTPException(status_code=400, detail=str(exc))
+
+    result = job_match(cv_text[:MAX_TEXT_CHARS], job_text[:MAX_TEXT_CHARS])
+    result["learning"] = learning_for(result["missing"])
+    return MatchResponse(**result)
+
+
 @app.get("/health")
 def health():
     return {"status": "ok", "model_loaded": _model is not None, "model_name": _model_name}
@@ -405,4 +452,5 @@ def score(req: ScoreRequest, request: Request):
         positive_signals=[RuleReason(**s) for s in positives],
         ai_confidence=_confidence_for(proba, points["items"], positives),
         threat_intel=ThreatIntel(**threat_intel.lookup(text, req.domain)),
+        scam_type=ScamClassification(**classify_scam_type(text)),
     )

@@ -328,6 +328,69 @@ LEARNING_RESOURCES = {
 }
 
 
+# ---- Multi-class scam typing ----
+# Naudé et al. (2023) found that classifying the *type* of fraud gives better
+# insight than a binary real/fake verdict, because different scam types cause
+# different harm and call for different action. This assigns a type from the
+# signals already detected -- it does not add a second model, and it returns
+# "Unclassified" rather than guessing when the evidence doesn't fit a pattern.
+SCAM_TYPES = {
+    "identity_harvesting": (
+        "Identity harvesting",
+        "Collects documents that enable identity theft, SIM-swap fraud, or credit taken out in your name.",
+    ),
+    "advance_fee": (
+        "Advance-fee scam",
+        "Extracts money up front for a job that does not exist.",
+    ),
+    "fake_agency": (
+        "Fake recruitment agency",
+        "Impersonates a recruiter or company to appear legitimate while harvesting applicants.",
+    ),
+    "off_platform": (
+        "Off-platform lure",
+        "Moves you to an untraceable channel where there is no record and no recourse.",
+    ),
+    "youth_programme": (
+        "Fake learnership or internship",
+        "Targets first-time job seekers with a programme that does not exist.",
+    ),
+}
+
+
+def classify_scam_type(text: str) -> dict:
+    """
+    Assign a fraud type from the signals already detected.
+
+    Multi-label by nature -- a single posting often harvests documents *and*
+    charges a fee -- so all matching types are returned, ordered by severity.
+    """
+    matched = []
+
+    if (_ID_NUMBER_RE.search(text) or _DOC_REQUEST_RE.search(text)
+            or _PASSPORT_RE.search(text) or _PROOF_RESIDENCE_RE.search(text)
+            or _TAX_DOC_RE.search(text) or _BANK_RE.search(text)):
+        matched.append("identity_harvesting")
+    if _PAYMENT_RE.search(text):
+        matched.append("advance_fee")
+    if _YOUTH_PROGRAMME_RE.search(text) and _NO_EXPERIENCE_RE.search(text):
+        matched.append("youth_programme")
+    if _WHATSAPP_RE.search(text) and _PHONE_RE.search(text):
+        matched.append("off_platform")
+    if _FREEMAIL_RE.search(text) and (_BBBEE_RE.search(text) or _POPIA_RE.search(text)):
+        matched.append("fake_agency")
+
+    return {
+        "types": [
+            {"key": k, "label": SCAM_TYPES[k][0], "description": SCAM_TYPES[k][1]}
+            for k in matched
+        ],
+        # Honest default: no pattern matched means we do not know the type,
+        # not that the posting is a type we invented to fill the field.
+        "primary": SCAM_TYPES[matched[0]][0] if matched else "Unclassified",
+    }
+
+
 def learning_for(missing_terms: list) -> list:
     """
     Free learning resources for skills a CV is missing.

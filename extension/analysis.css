@@ -230,6 +230,11 @@ mark.flagphrase {
 }
 .drop:hover { border-color: var(--primary); background: var(--primary-soft); }
 
+.cv-error {
+  margin: .6rem 0 0; font-size: .82rem; color: var(--risk);
+  background: var(--risk-soft); border-radius: 8px; padding: .5rem .6rem;
+}
+
 /* ---- Metrics strip ---- */
 .stat { text-align: center; }
 .stat-num { font-size: 1.7rem; font-weight: 700; font-variant-numeric: tabular-nums; }

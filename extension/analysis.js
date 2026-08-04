@@ -307,9 +307,11 @@ function cvPanel(r) {
       })()
     : `<label class="drop" for="cv-file">
          <strong>Upload your CV</strong><br>
-         <span class="muted">Plain text (.txt). Compared on your machine and never stored.</span>
+         <span class="muted">PDF, Word (.docx), .txt or .md — up to 5 MB.</span><br>
+         <span class="muted">Read on your own machine and never stored or uploaded anywhere.</span>
        </label>
-       <input id="cv-file" type="file" accept=".txt,.md,text/plain" class="hidden">`;
+       <input id="cv-file" type="file" accept=".pdf,.docx,.txt,.md,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain,text/markdown" class="hidden">
+       <p class="cv-error hidden" id="cv-error"></p>`;
 
   return `
   <div class="grid two">
@@ -495,20 +497,35 @@ function render(which) {
 function wireCv() {
   const input = document.getElementById("cv-file");
   if (!input) return;
+  const errEl = document.getElementById("cv-error");
+  const showError = (msg) => {
+    if (!errEl) return;
+    errEl.textContent = msg;
+    errEl.classList.remove("hidden");
+  };
+
   input.addEventListener("change", async () => {
     const file = input.files && input.files[0];
     if (!file) return;
-    const cvText = (await file.text()).slice(0, 20000);
+    errEl?.classList.add("hidden");
+
+    // Sent as a file so the local service can extract text from PDF and
+    // Word documents. It runs on 127.0.0.1 -- the user's own machine -- and
+    // parses in memory without writing anything to disk.
+    const form = new FormData();
+    form.append("cv_file", file);
+    form.append("job_text", state.posting || "");
     try {
-      const res = await fetch(`${API_BASE}/match`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ cv_text: cvText, job_text: state.posting || "" }),
-      });
-      state.cvMatch = await res.json();
+      const res = await fetch(`${API_BASE}/match-file`, { method: "POST", body: form });
+      const data = await res.json();
+      if (!res.ok) {
+        showError(data.detail || "That file could not be read.");
+        return;
+      }
+      state.cvMatch = data;
       render("cv");
     } catch {
-      /* leave the upload prompt in place if the service is down */
+      showError("Cannot reach the Qhaphela service. Is it running on port 8000?");
     }
   });
 }

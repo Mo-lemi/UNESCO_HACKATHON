@@ -141,6 +141,28 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     return true;
   }
 
+  if (message.type === "QHAPHELA_MATCH_FILE") {
+    // Rebuilds the file from base64 (content scripts can't post multipart to
+    // an http:// endpoint themselves) and forwards it to the local service.
+    // Nothing is retained here.
+    (async () => {
+      try {
+        const bin = atob(message.data_b64 || "");
+        const bytes = new Uint8Array(bin.length);
+        for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+        const form = new FormData();
+        form.append("cv_file", new Blob([bytes]), message.filename || "cv");
+        form.append("job_text", message.job_text || "");
+        const res = await fetch(`${API_BASE}/match-file`, { method: "POST", body: form });
+        const data = await res.json();
+        sendResponse(res.ok ? { ok: true, match: data } : { ok: false, error: data.detail });
+      } catch (err) {
+        sendResponse({ ok: false, error: String(err) });
+      }
+    })();
+    return true;
+  }
+
   if (message.type === "QHAPHELA_MATCH") {
     // CV text is forwarded for a single comparison and is never persisted
     // here or on the backend -- see the /match route in qhaphela/app.py.

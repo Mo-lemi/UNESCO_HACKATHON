@@ -16,6 +16,7 @@ No user identifier, IP, or browser fingerprint is collected or stored.
 
 import hashlib
 import os
+import re
 import sqlite3
 import threading
 from datetime import datetime, timezone
@@ -35,6 +36,28 @@ SCAM_CATEGORIES = [
 ]
 
 _lock = threading.Lock()
+
+# Anonymisation before storage, per the research protocol's ethics section:
+# "No personal or sensitive information such as identity numbers, contact
+# details or emails will be disclosed and all data will be anonymised during
+# preprocessing." A reported posting can contain a victim's own details
+# pasted into it, or a scammer's harvesting instructions -- neither belongs
+# in a stored excerpt.
+_SA_ID_RE = re.compile(r"\b\d{13}\b")                       # SA ID number
+_PHONE_RE_PII = re.compile(r"\b0[6-8]\d[\s-]?\d{3}[\s-]?\d{4}\b")
+_EMAIL_RE_PII = re.compile(r"[\w.+-]+@[\w-]+(?:\.[\w-]+)+")
+_ACCOUNT_RE = re.compile(r"\b\d{9,12}\b")                   # bank account-ish runs
+
+
+def anonymise(text: str) -> str:
+    """Strip identifiers from an excerpt before it is ever written to disk."""
+    if not text:
+        return ""
+    text = _SA_ID_RE.sub("[ID REMOVED]", text)
+    text = _EMAIL_RE_PII.sub("[EMAIL REMOVED]", text)
+    text = _PHONE_RE_PII.sub("[PHONE REMOVED]", text)
+    text = _ACCOUNT_RE.sub("[NUMBER REMOVED]", text)
+    return text
 
 
 def _connect():
@@ -70,10 +93,9 @@ def add_report(url: str, domain: str, category: str, excerpt: str, score: int) -
     if category not in SCAM_CATEGORIES:
         category = "other"
     url_hash = hash_url(url)
-    # Excerpt is capped hard: enough to recognise the posting later, short
-    # enough that a full CV or personal details pasted into a posting body
-    # can't be retained wholesale.
-    excerpt = (excerpt or "")[:300]
+    # Capped hard, then anonymised: enough to recognise the posting later,
+    # never enough to retain someone's identity documents or contact details.
+    excerpt = anonymise((excerpt or "")[:300])
     with _lock, _connect() as conn:
         conn.execute(
             "INSERT INTO reports (url_hash, domain, category, excerpt, score, created_at)"
