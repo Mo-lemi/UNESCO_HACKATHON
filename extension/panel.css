@@ -279,4 +279,9 @@ html.qhaphela-shifted.qhaphela-shifted-collapsed { margin-left: var(--qp-width-c
 #qhaphela-panel .qp-empty { font-size: .8rem !important; color: var(--ink-muted) !important; margin: 0 !important; }
 #qhaphela-panel .qp-note { margin: .4rem 0 0 !important; font-size: .68rem !important; color: var(--ink-muted) !important; font-style: italic !important; }
 #qhaphela-panel .qp-foot { text-align: center !important; font-size: .7rem !important; color: var(--ink-muted) !important; padding: .3rem 0 .6rem !important; }
+#qhaphela-panel .qp-privacy-link {
+  all: unset !important; cursor: pointer !important; color: var(--primary) !important;
+  font-size: .72rem !important; font-weight: 700 !important; text-decoration: underline !important;
+}
+#qhaphela-panel .qp-privacy-link:hover { opacity: .8 !important; }
 #qhaphela-panel .hidden { display: none !important; }

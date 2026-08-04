@@ -141,6 +141,12 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     return true;
   }
 
+  if (message.type === "QHAPHELA_OPEN_ABOUT") {
+    chrome.tabs.create({ url: chrome.runtime.getURL("about.html") });
+    sendResponse({ ok: true });
+    return true;
+  }
+
   if (message.type === "QHAPHELA_MATCH_FILE") {
     // Rebuilds the file from base64 (content scripts can't post multipart to
     // an http:// endpoint themselves) and forwards it to the local service.

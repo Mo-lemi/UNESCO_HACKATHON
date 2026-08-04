@@ -92,6 +92,8 @@ const I18N = {
     match: "match",
     youHave: "You have",
     missing: "Missing from your CV",
+    slogan: "Protecting Opportunities. Empowering Futures.",
+    privacyTerms: "Privacy & terms",
     quickDetail: "Quick detail",
   },
   zu: {
@@ -138,6 +140,8 @@ const I18N = {
     match: "ukufana",
     youHave: "Onakho",
     missing: "Okushodayo ku-CV yakho",
+    slogan: "Sivikela Amathuba. Sinika Amandla Ikusasa.",
+    privacyTerms: "Ubumfihlo nemigomo",
     quickDetail: "Imininingwane esheshayo",
   },
   xh: {
@@ -184,6 +188,8 @@ const I18N = {
     match: "ukungqamana",
     youHave: "Onako",
     missing: "Okulahlekileyo kwi-CV yakho",
+    slogan: "Sikhusela Amathuba. Someleza Ikamva.",
+    privacyTerms: "Ubumfihlo nemigaqo",
     quickDetail: "Iinkcukacha ezikhawulezayo",
   },
   st: {
@@ -230,6 +236,8 @@ const I18N = {
     match: "ho lumellana",
     youHave: "Seo o nang le sona",
     missing: "Se sieo ho CV ya hao",
+    slogan: "Re Sireletsa Menyetla. Re Matlafatsa Bokamoso.",
+    privacyTerms: "Lekunutu le melawana",
     quickDetail: "Lintlha tse potlakileng",
   },
   nso: {
@@ -276,6 +284,8 @@ const I18N = {
     match: "go swana",
     youHave: "Seo o nago le sona",
     missing: "Se se hlokegago go CV ya gago",
+    slogan: "Re Šireletša Dibaka. Re Matlafatša Bokamoso.",
+    privacyTerms: "Sephiri le melao",
     quickDetail: "Dintlha ka pela",
   },
   tn: {
@@ -322,6 +332,8 @@ const I18N = {
     match: "go tsamaisana",
     youHave: "Se o nang le sona",
     missing: "Se se tlhaelang mo CV ya gago",
+    slogan: "Re Sireletsa Ditšhono. Re Nonotsha Isago.",
+    privacyTerms: "Sephiri le melao",
     quickDetail: "Dintlha ka bonako",
   },
   ts: {
@@ -368,6 +380,8 @@ const I18N = {
     match: "ku fambisana",
     youHave: "Leswi u nga na swona",
     missing: "Leswi pfumalekaka eka CV ya wena",
+    slogan: "Hi Sirhelela Mikateko. Hi Tiyisa Vumundzuku.",
+    privacyTerms: "Vuxifihli na milawu",
     quickDetail: "Vuxokoxoko byo hatlisa",
   },
   ss: {
@@ -414,6 +428,8 @@ const I18N = {
     match: "kufana",
     youHave: "Lonakho",
     missing: "Lokushodzako ku-CV yakho",
+    slogan: "Sivikela Ematfuba. Sicinisa Likusasa.",
+    privacyTerms: "Imfihlo nemitsetfo",
     quickDetail: "Imininingwane lesheshako",
   },
   ve: {
@@ -460,6 +476,8 @@ const I18N = {
     match: "u tendelana",
     youHave: "Zwine na vha nazwo",
     missing: "Zwi shaeaho kha CV yaṋu",
+    slogan: "Ri Tsireledza Zwibuli. Ri Khwathisedza Vhumatshelo.",
+    privacyTerms: "Tshiphiri na milayo",
     quickDetail: "Zwidodombedzwa zwa u ṱavhanya",
   },
   nr: {
@@ -506,6 +524,8 @@ const I18N = {
     match: "ukuvumelana",
     youHave: "Onakho",
     missing: "Okutlhogekako ku-CV yakho",
+    slogan: "Sivikela Amathuba. Siqinisa Ikusasa.",
+    privacyTerms: "Imfihlo nemithetho",
     quickDetail: "Imininingwana ekhambako",
   },
   af: {
@@ -552,6 +572,8 @@ const I18N = {
     match: "passing",
     youHave: "Wat jy het",
     missing: "Wat in jou CV ontbreek",
+    slogan: "Beskerm Geleenthede. Bemagtig Toekomste.",
+    privacyTerms: "Privaatheid en voorwaardes",
     quickDetail: "Vinnige besonderhede",
   },
 };
@@ -956,7 +978,8 @@ function renderPanelResult(result) {
     cvMatchHtml(lastCvMatch) +
     cvTipsHtml(result.cv_guidance) +
     safetyTipHtml() +
-    `<p class="qp-foot">${escapeHtml(t("foot"))} ♥</p>`;
+    `<p class="qp-foot">${escapeHtml(t("slogan"))}<br>
+       <button class="qp-privacy-link" id="qp-privacy" type="button">${escapeHtml(t("privacyTerms"))}</button></p>`;
 
   // Hand the full-report page everything it needs: the posting text (so it
   // can highlight phrases in place) and the page's other scanned jobs (so
@@ -988,6 +1011,9 @@ function renderPanelResult(result) {
 
   wireReportUi(body, result);
   wireCvUpload(body, lastScannedText || "");
+  body.querySelector("#qp-privacy")?.addEventListener("click", () =>
+    chrome.runtime.sendMessage({ type: "QHAPHELA_OPEN_ABOUT" })
+  );
 }
 
 function renderPanelUnreachable() {
@@ -1050,7 +1076,8 @@ function renderPanelListStats(scored) {
     safeMatchesHtml(scored) +
     cvTipsHtml(null) +
     safetyTipHtml() +
-    `<p class="qp-foot">${escapeHtml(t("foot"))} ♥</p>`;
+    `<p class="qp-foot">${escapeHtml(t("slogan"))}<br>
+       <button class="qp-privacy-link" id="qp-privacy" type="button">${escapeHtml(t("privacyTerms"))}</button></p>`;
 }
 
 // ---- Reporting --------------------------------------------------------

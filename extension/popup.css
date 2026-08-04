@@ -175,3 +175,11 @@ textarea{
   font-family:var(--ui); font-size:0.82rem; padding:0.5rem; resize:vertical;
 }
 textarea:focus{ outline:2px solid var(--gold); outline-offset:-1px; }
+
+/* Required disclosure link, and the standing reminder that a score is advice
+   rather than a verdict -- kept visible rather than buried in a settings page. */
+.legal-line {
+  margin: 0; padding: .55rem .75rem .7rem; font-size: .7rem;
+  color: var(--ink-dim); border-top: 1px solid var(--rule); line-height: 1.5;
+}
+.legal-line a { color: var(--gold); font-weight: 700; }

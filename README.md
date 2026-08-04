@@ -1,4 +1,6 @@
-# Qhaphela - Job Posting Fraud Detector
+# Qhaphela
+
+### Protecting Opportunities. Empowering Futures.
 
 Qhaphela ("watch out!" / "be careful!" in Zulu/Xhosa) is an AI-powered job posting fraud detection tool and media literacy resource for South African job seekers. It ships two surfaces:
 
@@ -53,11 +55,16 @@ Open `http://localhost:3000`.
 4. Click **Load unpacked**.
 5. Select the `extension/` folder inside this project directory.
 
-The extension runs automatically on job platforms listed in `extension/manifest.json` (Indeed, Pnet, Careers24, LinkedIn, Facebook, Gumtree, CareerJunction, JobMail, and others) and injects a floating panel:
+The extension runs on **any job board**, not a fixed list. It loads on all sites but stays
+completely inert unless the page is genuinely a job posting — detected via schema.org
+`JobPosting` metadata, job-shaped URLs, or several independent hiring phrases. No page text
+leaves the browser otherwise, and it is switched off entirely on banking, tax and webmail
+sites. It then docks a panel into the page layout:
 
 - **On a listing/search page**: shows aggregate stats across every job card currently on screen (how many scanned, how many flagged high/medium risk), with a "click for more" list of the specific flagged postings.
 - **When you open one specific posting**: the panel automatically switches focus to that posting's own score, tier, and plain-language advice, with the full SHAP reasons breakdown tucked behind "click for more" so the primary view stays uncluttered.
-- **Always**: a "verified job search channels" list of real trusted SA job portals (not fabricated listings — we don't have a live feed of verified openings, so we link to the real platforms instead of inventing specific "safe" postings).
+- **Safe alternatives**: real low-risk postings scanned on the same page, with their real links and real scores. Never invented listings.
+- **Search everywhere**: pre-filled searches across 12 South African job platforms for the role you are viewing.
 
 You can also click the toolbar icon for the same verdict in a popup, or paste text manually (useful for postings forwarded via WhatsApp).
 
@@ -89,8 +96,9 @@ terms *if you genuinely hold them* (ATS software matches on literal terms).
 
 **Accessibility**: Atkinson Hyperlegible throughout, light/dark themes with every colour
 pair measured for WCAG 2.2 contrast, risk tiers carry a symbol and text label as well as
-colour (never colour alone), and safety advice is available in English, isiZulu, isiXhosa,
-Sesotho and Afrikaans.
+colour (never colour alone), and the entire interface is available in **all 11 official South
+African languages**: English, isiZulu, isiXhosa, Sesotho, Sepedi, Setswana, Xitsonga, siSwati,
+Tshivenda, isiNdebele and Afrikaans.
 
 ---
 
@@ -102,9 +110,24 @@ pip install -r requirements.txt
 cd qhaphela && pytest test_app.py -v
 ```
 
-25 tests covering detection accuracy on real scam and real legitimate postings (including
-regression tests for false positives found during live testing), explainability output,
-the identity-theft layer, contact checks, CV guidance, input validation, and reporting.
+**38 tests** covering detection accuracy on real scam and real legitimate postings (including
+regression tests for every false positive found during live testing), fairness toward small
+informal employers, excerpt anonymisation, multi-class scam typing, explainability output,
+the identity-theft layer, contact checks, CV matching, input validation and reporting.
+
+### Honest evaluation on real postings
+
+```bash
+python qhaphela/evaluate.py
+```
+
+**12 of 12 correct · 6 of 6 scams caught · 0 false alarms**, measured through the full
+production pipeline on hand-labelled real postings.
+
+> The `1.0` figures in `models/metadata.json` are **deliberately not quoted anywhere**: they
+> come from a held-out split of the synthetic training data, where the classes are trivially
+> separable. A small honest sample beats an inflated one — and the tooling reports a fraction
+> with its caveat rather than a percentage that implies more than was shown.
 
 ---
 
@@ -120,12 +143,46 @@ Both the web app (`localhost:3000`) and the model service directly (`localhost:8
     and raw SHAP `top_reasons`
 - **Report a posting**: `POST /report` — `{"url", "domain", "category", "excerpt", "score"}`
 - **Report counts**: `GET /report-stats?url=…&domain=…`
+- **CV match (text)**: `POST /match` — `{"cv_text", "job_text"}`
+- **CV match (file)**: `POST /match-file` — PDF, .docx, .txt or .md, up to 5 MB
+- **Model evaluation**: `GET /metrics` — real-posting results with their caveat
+- **Local impact figures**: `GET /impact` — counted, never estimated
 
 Requests are capped at 20,000 characters and rate-limited to 60/minute per client. CORS is
 restricted to extension and localhost origins.
 
 > **Privacy note**: reports are stored in a local SQLite file (`qhaphela/reports.db`, gitignored)
 > and record only a hash of the posting URL, its domain, a category, and a short excerpt —
-> never any reporter identity. Report counts are shown as "recorded on this device" because
+> never any reporter identity. Excerpts are **anonymised before storage** — SA ID numbers,
+> phone numbers, email addresses and account numbers are stripped — per the research
+> protocol's POPIA commitment. Report counts are shown as "recorded on this device" because
 > the store is local; they are never presented as community-wide figures.
 
+
+---
+
+## 📄 Legal and policies
+
+| Document | What it covers |
+|---|---|
+| [Privacy Policy](PRIVACY.md) | What is processed and where. Issued under **section 18 of POPIA** and meeting the Chrome Web Store user-data rules in force since 1 August 2026. |
+| [Terms of Use](TERMS.md) | What Qhaphela is, what it cannot do, and how to use it fairly. |
+| [Security Policy](SECURITY.md) | How to report a vulnerability, and the design constraints we hold to. |
+| [Contributing](CONTRIBUTING.md) | How to help, and the one rule: never show a user something untrue. |
+| [Licence](LICENSE) | MIT. |
+
+All of these are also reachable **inside the extension** under *Privacy &
+terms*, alongside a **My data** page that lists everything stored on your
+device and erases it on request.
+
+> ### Qhaphela gives you an opinion, not a verdict.
+> A low score does not mean a job is safe. A high score does not mean a company
+> is dishonest. **Always verify an employer yourself before sharing anything
+> personal.**
+
+---
+
+## 🔒 Privacy in one line
+
+No account, no analytics, no tracking. The model runs on your own computer, so
+your CV and the jobs you look at **never leave your machine**.
