@@ -114,15 +114,30 @@ cd qhaphela && pytest test_app.py -v
 cd qhaphela && pytest -q          # runs both suites
 ```
 
-**53 tests.** `test_app.py` (38) covers detection accuracy on real scam and real legitimate
-postings - including a regression test for every false positive found during live testing -
-fairness toward small informal employers, excerpt anonymisation, multi-class scam typing,
-explainability output, the identity-theft layer, contact checks, CV matching, input validation
-and reporting. `test_ai.py` (15) covers the assistant's security properties: that the API key
-can never appear in any response, that prompt-injection attempts are detected while ordinary
-recruiter wording is not, that fabricated evidence quotes are discarded, and that scoring is
-completely unaffected when the AI is unreachable. The AI tests stub the network, so they keep
-protecting you with no internet and no key.
+**72 tests**, across three suites.
+
+`test_app.py` (38) covers detection accuracy on real scam and real legitimate
+postings, including a regression test for every false positive found during live
+testing: fairness toward small informal employers, excerpt anonymisation,
+multi-class scam typing, explainability output, the identity-theft layer,
+contact checks, CV matching, input validation and reporting.
+
+`test_ai.py` (19) covers the assistant's security properties: that the API key
+can never appear in any response, that prompt-injection attempts are detected
+while ordinary recruiter wording is not, that fabricated evidence quotes are
+discarded, that a malformed chat history is rejected rather than crashing the
+route, and that scoring is completely unaffected when the AI is unreachable.
+
+`test_recon.py` (15) covers employer verification, and two of its tests pin
+bugs found in live testing that had the same shape: a scam posting being shown
+reassuring green ticks. Infrastructure checks must never run against a free
+email provider (checking `gmail.com` returns "registered 30 years ago, valid
+SPF, valid certificate" - all true, all about Google, none of it evidence about
+the employer), and a near-miss domain must never be reported as matching the
+company, because that is precisely the domain an impersonator registers.
+
+The AI and recon tests stub the network, so they keep protecting you with no
+internet and no key.
 
 ### Honest evaluation on real postings
 
