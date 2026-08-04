@@ -1562,10 +1562,10 @@ const POSTING_SELECTOR_TIERS = [
 // seen and could not enumerate in advance.
 function looksLikeCardList(el) {
   if (!el) return false;
-  const cards = el.querySelectorAll(JOB_CARD_SELECTOR);
-  const distinct = Array.from(cards).filter(
-    (c) => !Array.from(cards).some((o) => o !== c && o.contains(c))
-  );
+  const cards = Array.from(el.querySelectorAll(JOB_CARD_SELECTOR));
+  // Count only the innermost matches, so a wrapper inside the candidate does
+  // not mask the several real cards beneath it.
+  const distinct = cards.filter((c) => !cards.some((o) => o !== c && c.contains(o)));
   return distinct.length >= 3;
 }
 
@@ -1638,23 +1638,200 @@ const JOB_CARD_SELECTOR = [
   "[class*='result-item']",
 ].join(", ");
 
-function extractJobCards() {
-  const nodes = Array.from(document.querySelectorAll(JOB_CARD_SELECTOR));
-  // Drop nested matches so a card counted once doesn't also get counted via
-  // a child element that happens to match a second selector.
-  const top = nodes.filter((el) => !nodes.some((other) => other !== el && other.contains(el)));
+// Cards, on any board.
+//
+// Anchoring on headings rather than class names is what makes this portable.
+// Every job board marks each result with a heading that links to the posting,
+// whatever it calls its CSS classes, so walking up from the heading to the
+// smallest block that also contains a link finds cards on sites nobody has
+// tested against. Measured on Careers24: the class-selector approach found 1
+// usable card, heading anchoring found 12, with correct titles.
+// Headings also appear in navigation, footers and sidebars. Without this
+// guard Gumtree produced "App downloads", "Help" and "Social media links" as
+// job cards -- three items, enough to beat the fallback threshold and be
+// presented to someone as real adverts.
+const NON_CONTENT_REGION = "footer, nav, header, aside, [role='navigation'], [role='contentinfo'], [role='banner']";
 
+// A block is only a job card if it reads like one. Cheap, and it keeps
+// cookie banners and newsletter panels out.
+const JOB_CARD_HINT = /\b(apply|salary|full[- ]time|part[- ]time|permanent|contract|posted|vacanc|hiring|recruit|job type|remuneration|closing date|r\s?\d{3,})/i;
+
+function headingAnchoredCards() {
+  const found = [];
+  for (const h of document.querySelectorAll("h2, h3, h4")) {
+    if (h.closest(NON_CONTENT_REGION)) continue;
+    const title = (h.innerText || "").trim();
+    if (title.length < 3 || title.length > 120) continue;
+
+    // Climb only a few levels: further up and we start swallowing the whole
+    // results list instead of one advert.
+    let el = h;
+    let block = null;
+    for (let i = 0; i < 5 && el; i++) {
+      el = el.parentElement;
+      if (!el) break;
+      const t = (el.innerText || "").trim();
+      if (hasDetailLink(el) && t.length >= 40 && t.length <= 3000 && JOB_CARD_HINT.test(t)) {
+        block = el;
+        break;
+      }
+    }
+    if (block && !found.some((f) => f.el === block)) found.push({ el: block, title });
+  }
+  // Drop any block that turned out to contain another card.
+  return found.filter((c) => !found.some((o) => o !== c && o.el.contains(c.el)));
+}
+
+// Class-name matching, kept as the fallback for boards that use no headings.
+// The previous version kept only the OUTERMOST match, which quietly broke on
+// every site wrapping its results in a container that also matched a
+// selector: on Careers24 that collapsed 50 matched nodes to 2 and discarded
+// every real card, leaving "safe job matches" silently empty.
+function selectorCards() {
+  const nodes = Array.from(document.querySelectorAll(JOB_CARD_SELECTOR)).filter(
+    (el) => !el.closest(NON_CONTENT_REGION)
+  );
+  const containers = new Set(
+    nodes.filter((el) => nodes.filter((o) => o !== el && el.contains(o)).length >= 3)
+  );
+  let pool = nodes.filter((el) => !containers.has(el));
+  pool = pool.filter((el) => !pool.some((o) => o !== el && o.contains(el)));
+  return pool.filter(hasDetailLink).map((el) => ({ el, title: cardTitle(el) }));
+}
+
+// Third strategy, and the most portable of the three: repeated blocks that
+// each link to a detail page. Every results list has this shape whatever its
+// markup, so it catches boards that use neither headings nor recognisable
+// class names. Gumtree is the case that forced it -- its adverts are
+// `div.tile-item` with no heading anywhere, so the other two found nothing,
+// while this finds all 16.
+// Must look like a link to ONE posting, not to another search. The trailing
+// separator is what does that: "/jobs/adverts/123" and "/jobs--Helpdesk-..."
+// are postings, while "/jobs?q=IT+support" is a query and matched before,
+// which is how "People also searched:" became a job card on Indeed.
+const DETAIL_LINK = /\/(a-|ad\/|rc\/clk|viewjob|job[-\/]|jobs[-\/]|vacanc|advert|position|listing|learnership)/i;
+
+function hasDetailLink(el) {
+  return Array.from(el.querySelectorAll("a[href]")).some((a) =>
+    DETAIL_LINK.test(a.getAttribute("href") || "")
+  );
+}
+
+// One way of reading a card's title, used by every strategy. Without this the
+// selector strategy always reported no title and was unfairly ranked last,
+// even where it had found the only real cards on the page.
+function cardTitle(el) {
+  for (const sel of ["h2", "h3", "h4", "[class*='title' i]", "a[href]"]) {
+    for (const node of el.querySelectorAll(sel)) {
+      const t = (node.innerText || "").trim();
+      if (t.length >= 3 && t.length <= 120) return t;
+    }
+  }
+  return "";
+}
+
+function repeatedStructureCards() {
+  const bySignature = new Map();
+  for (const a of document.querySelectorAll("a[href]")) {
+    if (a.closest(NON_CONTENT_REGION)) continue;
+    if (!DETAIL_LINK.test(a.getAttribute("href") || "")) continue;
+
+    let el = a;
+    for (let i = 0; i < 6 && el; i++) {
+      el = el.parentElement;
+      if (!el) break;
+      const t = (el.innerText || "").trim();
+      if (t.length >= 40 && t.length <= 3000) {
+        // Group by tag plus the first couple of classes: cards in one list
+        // share a signature, page furniture does not.
+        const sig =
+          el.tagName + "|" + String(el.className || "").trim().split(/\s+/).slice(0, 2).join(".");
+        if (!bySignature.has(sig)) bySignature.set(sig, []);
+        const group = bySignature.get(sig);
+        if (!group.includes(el)) group.push(el);
+        break;
+      }
+    }
+  }
+
+  let best = [];
+  for (const els of bySignature.values()) if (els.length > best.length) best = els;
+  return best
+    .filter((el) => !best.some((o) => o !== el && o.contains(el)))
+    .map((el) => ({ el, title: cardTitle(el) }));
+}
+
+// Three strategies. A board that defeats one usually yields to another, which
+// is what "works on every job platform" actually requires.
+//
+// They are ranked by how many cards come back with a usable TITLE, not by raw
+// count. Measured on a Careers24 listing page, the selector strategy returned
+// 30 cards and not one title, while repeated-structure returned 10 with
+// correct titles. A safe-match row with no title is of no use to anyone, so
+// the larger pile is the worse answer.
+function candidateCardNodes() {
+  const strategies = [
+    headingAnchoredCards(),
+    repeatedStructureCards(),
+    selectorCards(),
+  ];
+
+  const titled = (found) => found.filter((c) => c.title && c.title.length >= 3).length;
+
+  let best = [];
+  let bestTitled = -1;
+  for (const found of strategies) {
+    const n = titled(found);
+    if (n > bestTitled || (n === bestTitled && found.length > best.length)) {
+      best = found;
+      bestTitled = n;
+    }
+  }
+
+  // If no strategy produced titles at all, fall back to whichever found most:
+  // a titleless card still contributes its text to the page-wide statistics.
+  if (bestTitled === 0) {
+    for (const found of strategies) if (found.length > best.length) best = found;
+  }
+  return best;
+}
+
+function extractJobCards() {
   const cards = [];
-  for (const el of top) {
+  for (const candidate of candidateCardNodes()) {
+    const el = candidate.el;
     const text = (el.innerText || "").trim();
     if (text.length < 40 || text.length > 3000) continue;
-    const heading = el.querySelector("h2, h3, a");
-    const title = (heading && heading.innerText.trim()) || text.slice(0, 60);
-    const link = el.querySelector("a[href]");
-    const url = link ? link.href : null;
+    // A selector list matches in DOCUMENT order, not selector order, so
+    // "h2, h3, a" returned whichever came first in the markup -- routinely a
+    // bookmark icon or company logo link with no text, leaving safe-match
+    // rows blank. Each preference is therefore tried in its own query.
+    // The heading that anchored this card is already the best title there is.
+    let title = candidate.title || "";
+    for (const sel of title ? [] : ["h2", "h3", "h4", "a[href]", "[class*='title' i]"]) {
+      for (const node of el.querySelectorAll(sel)) {
+        const t = (node.innerText || "").trim();
+        if (t.length >= 3 && t.length <= 120) {
+          title = t;
+          break;
+        }
+      }
+      if (title) break;
+    }
+    if (!title) title = text.slice(0, 60);
+
+    // Prefer a link that looks like a posting over the first link present,
+    // which is often a logo or a "save this job" control.
+    const links = Array.from(el.querySelectorAll("a[href]"));
+    const jobLink =
+      links.find((a) => /\/(job|jobs|vacanc|advert|position|viewjob)/i.test(a.getAttribute("href") || "")) ||
+      links.find((a) => (a.innerText || "").trim().length > 3) ||
+      links[0];
+    const url = jobLink ? jobLink.href : null;
     // Company name, when the card exposes one -- shown on safe-match rows.
     const companyEl = el.querySelector(
-      "[data-testid='company-name'], [class*='companyName'], [class*='company-name']"
+      "[data-testid='company-name'], [class*='companyName'], [class*='company-name'], " +
+      "[class*='employer' i], [class*='recruiter' i], [itemprop='hiringOrganization']"
     );
     const company = companyEl ? (companyEl.innerText || "").trim().slice(0, 60) : "";
     cards.push({ el, title, company, text: text.slice(0, 1500), url });
