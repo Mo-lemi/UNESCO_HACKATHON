@@ -487,6 +487,50 @@ def identity_theft_signals(text: str) -> list:
     return signals
 
 
+# Signals strong enough to justify raising a posting above LOW risk on their
+# own. Everything else -- a free email address, urgency wording, an
+# unverified B-BBEE line -- is genuinely ambiguous: small and informal South
+# African employers use Gmail and write urgently without being fraudulent.
+#
+# The research protocol names this exact harm: a classifier may
+# "systematically misclassify legitimate postings from small local businesses
+# or newly established South African start-ups because their informal
+# linguistic patterns differ", which "could disrupt legitimate hiring
+# pipelines and introduce bias against non-standard employers". The stated
+# mitigation is to rely on "genuine security indicators such as requests for
+# upfront payment or demands for identity document uploads rather than
+# penalising unconventional grammar, layout choices or regional language
+# variation". These keys are those genuine indicators.
+STRONG_SIGNAL_KEYS = {
+    "id_or_banking_request",
+    "upfront_payment_request",
+    "passport_request",
+    "tax_document_request",
+    "proof_of_residence_request",
+    "whatsapp_migration",
+    "salary_mismatch",
+    "fake_popia_clause",
+}
+
+
+def has_strong_signal(text: str) -> bool:
+    """True when at least one non-ambiguous fraud indicator is present."""
+    labels_to_keys = {
+        "Requests ID number/document or banking details": "id_or_banking_request",
+        "Requests an upfront payment or registration fee": "upfront_payment_request",
+        "Requests passport details before an interview": "passport_request",
+        "Requests tax/SARS documents before an interview": "tax_document_request",
+        "Requests proof of residence before an interview": "proof_of_residence_request",
+        "Pushes you off-platform to WhatsApp": "whatsapp_migration",
+        "Salary far above market rate for this role": "salary_mismatch",
+        "Cites POPIA to sound official while requesting documents": "fake_popia_clause",
+    }
+    for item in rule_points(text)["items"]:
+        if labels_to_keys.get(item["reason"]) in STRONG_SIGNAL_KEYS:
+            return True
+    return False
+
+
 def rule_points(text: str) -> dict:
     """Itemized, disclosed point breakdown of interpretable rule-layer hits."""
     has_popia = bool(_POPIA_RE.search(text))

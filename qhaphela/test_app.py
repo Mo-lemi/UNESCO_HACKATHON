@@ -104,6 +104,75 @@ def test_legit_learnership_not_flagged_by_youth_pattern(client):
     assert not any("Youth programme" in r for r in reasons)
 
 
+# --- Fairness: bias against small/informal employers ---------------------
+
+SMALL_INFORMAL_BUSINESS = (
+    "Small bakery in Soweto looking for a shop assistant. Duties include serving customers, "
+    "stock taking and keeping the shop clean. Grade 10 or higher. R4500 per month. Send your CV "
+    "to sowetobakery.jobs@gmail.com. We are a family business, no experience needed, we will "
+    "train you. Please come in person to discuss."
+)
+
+
+def test_small_informal_business_is_not_flagged(client):
+    """
+    Regression, from the research protocol's bias section: a genuine small
+    South African employer using a free email address and informal wording
+    must not be pushed above LOW. It previously scored 58/MEDIUM purely for
+    using Gmail, which is exactly the "bias against non-standard employers"
+    the protocol commits to preventing.
+    """
+    r = _score(client, SMALL_INFORMAL_BUSINESS)
+    assert r["tier"] == "LOW", f"small informal employer wrongly flagged: {r['score']}"
+    assert r["score"] <= 25
+
+
+def test_ambiguous_signal_alone_cannot_raise_risk(client):
+    """A free email address on its own is not evidence of fraud."""
+    r = _score(client, "We are hiring a cleaner. Please email your CV to smallshop@gmail.com. Start soon.")
+    assert r["tier"] == "LOW"
+
+
+def test_strong_signal_still_raises_risk(client):
+    """The guard must not blunt genuine indicators."""
+    r = _score(client, "Send a certified copy of your ID document and a R250 registration fee to apply.")
+    assert r["tier"] == "HIGH"
+
+
+# --- Privacy: excerpt anonymisation --------------------------------------
+
+
+def test_report_excerpt_is_anonymised_before_storage():
+    """
+    The research protocol commits to removing telephone numbers, personal
+    email addresses and identity numbers from stored data.
+    """
+    raw = "Send ID 0108175401083, call 067 675 9901, email someone@example.com, acct 1234567890"
+    cleaned = reports.anonymise(raw)
+    assert "0108175401083" not in cleaned
+    assert "067 675 9901" not in cleaned
+    assert "someone@example.com" not in cleaned
+    assert "1234567890" not in cleaned
+
+
+# --- Multi-class scam typing ---------------------------------------------
+
+
+def test_scam_type_classification(client):
+    r = _score(client, SCAM_YOUTH_LEARNERSHIP)
+    labels = " ".join(t["label"] for t in r["scam_type"]["types"]).lower()
+    assert "identity harvesting" in labels
+    assert "advance-fee" in labels
+    assert r["scam_type"]["primary"] != "Unclassified"
+
+
+def test_scam_type_unclassified_when_no_pattern(client):
+    """Must say it does not know, rather than inventing a type."""
+    r = _score(client, LEGIT_IT_HELPDESK)
+    assert r["scam_type"]["types"] == []
+    assert r["scam_type"]["primary"] == "Unclassified"
+
+
 # --- Explainability -------------------------------------------------------
 
 

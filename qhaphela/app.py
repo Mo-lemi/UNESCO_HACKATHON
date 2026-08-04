@@ -32,6 +32,7 @@ from features import (
     classify_scam_type,
     cv_guidance,
     hard_floor_flags,
+    has_strong_signal,
     job_match,
     learning_for,
     positive_signals,
@@ -409,6 +410,16 @@ def score(req: ScoreRequest, request: Request):
     # fired (excludes posting_length_norm, which isn't a fraud signal).
     has_rule_evidence = any(v > 0 for v in rule_vec[0][:8])
     if not has_rule_evidence:
+        score_val = min(score_val, 25)
+
+    # Fairness guard, from the research protocol's bias section: ambiguous
+    # signals alone (a free email address, urgent wording) must not push a
+    # posting above LOW. Small and informal South African employers use
+    # Gmail and write informally without being fraudulent, and wrongly
+    # flagging them disrupts legitimate hiring. Only a genuine security
+    # indicator -- a payment demand, a document request, off-platform
+    # migration, a salary far off market -- can raise the verdict.
+    if not hard_floor_flags(text) and not has_strong_signal(text):
         score_val = min(score_val, 25)
 
     reasons: list[Reason] = []
