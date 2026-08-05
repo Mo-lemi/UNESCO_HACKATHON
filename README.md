@@ -16,7 +16,8 @@ The scoring engine itself is a real trained model, not a hardcoded rules engine:
 ### Step 1: Start the ML model service
 ```bash
 python3 -m venv venv          # first time only
-source venv/bin/activate
+source venv/bin/activate   # for Linux/macOS
+.\venv\Scripts\Activate.ps1  # for Windows
 pip install -r requirements.txt
 cd qhaphela
 uvicorn app:app --port 8000
