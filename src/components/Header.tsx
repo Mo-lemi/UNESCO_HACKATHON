@@ -16,7 +16,7 @@ export const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab, apiStat
           {/* Official Shield Logo */}
           <img src="/icons/logo-mark.png" alt="Qhaphela" className="w-8 h-8 object-contain" />
           <span className="font-bold tracking-widest text-lg text-slate-100 uppercase">
-            QHAPHELA
+            QHAPHELA: Know Before You Apply!
           </span>
         </div>
         
