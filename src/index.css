@@ -1,12 +1,27 @@
 @import "tailwindcss";
+@import url('../extension/popup.css');
 
 @layer base {
   body {
     font-family: 'Plus Jakarta Sans', sans-serif;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    margin: 0;
+    padding: 0;
   }
   code, pre, .font-mono {
     font-family: 'IBM Plex Mono', monospace;
   }
+}
+
+.full-report-container {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 24px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
 }
 
 /* Custom scrollbar styling */
