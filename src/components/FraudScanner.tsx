@@ -324,76 +324,98 @@ export const FraudScanner: React.FC = () => {
         {/* Right Column: Scoring Readout, SHAP Reasons & Safety Advice */}
         <div className="lg:col-span-5 space-y-4">
           
-          {/* Main Risk Gauge Card */}
-          <div className={`border rounded-xl p-6 shadow-xl transition-all ${tierStyle.bg} ${tierStyle.border} ${tierStyle.glow}`}>
+          {/* NEW 2-CARD DASHBOARD LAYOUT */}
+          <div className="flex flex-col gap-4">
             
-            <div className="flex items-start justify-between mb-4">
-              <div>
-                <span className="text-xs font-mono uppercase text-slate-400 tracking-wider">Scoring Verdict</span>
-                <div className="flex items-baseline gap-2 mt-1">
-                  <span className={`text-5xl font-extrabold font-mono tracking-tight ${tierStyle.text}`}>
-                    {result.score}
-                  </span>
-                  <span className="text-slate-400 font-mono text-lg">/100</span>
+            {/* Risk Overview Card */}
+            <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-md flex flex-col">
+              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-6 block">Risk Overview</span>
+              
+              <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
+                {/* Circular SVG Progress Ring */}
+                <div className="relative flex items-center justify-center flex-shrink-0">
+                  <svg className="w-28 h-28 transform -rotate-90">
+                    <circle cx="56" cy="56" r="48" stroke="currentColor" strokeWidth="8" fill="transparent" className="text-slate-800" />
+                    <circle 
+                      cx="56" 
+                      cy="56" 
+                      r="48" 
+                      stroke="currentColor" 
+                      strokeWidth="8" 
+                      fill="transparent" 
+                      strokeDasharray={2 * Math.PI * 48} 
+                      strokeDashoffset={(2 * Math.PI * 48) - ((result.score / 100) * (2 * Math.PI * 48))} 
+                      className={`${tierStyle.text} transition-all duration-1000 ease-out`} 
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                  <div className="absolute flex flex-col items-center justify-center">
+                    <span className={`text-3xl font-extrabold font-mono ${tierStyle.text}`}>{result.score}</span>
+                    <span className="text-[10px] text-slate-500 font-mono">/100</span>
+                  </div>
+                </div>
+
+                {/* Status Checklist */}
+                <div className="space-y-3 flex-1">
+                   <div className="flex items-center gap-2 mb-1">
+                      {result.tier === 'LOW' && <CheckCircle2 className="w-5 h-5 text-emerald-500" />}
+                      {result.tier === 'MEDIUM' && <AlertTriangle className="w-5 h-5 text-amber-500" />}
+                      {result.tier === 'HIGH' && <ShieldAlert className="w-5 h-5 text-red-500" />}
+                      <span className={`font-bold text-lg uppercase tracking-wide ${tierStyle.text}`}>{result.tier} RISK</span>
+                   </div>
+                   
+                   <p className="text-xs text-slate-400 mb-2">
+                      {result.tier === 'LOW' ? 'This posting appears legitimate based on our analysis.' : result.tier === 'MEDIUM' ? 'Proceed with caution. Some signals are unclear.' : 'High risk of fraud detected.'}
+                   </p>
+                   
+                   <ul className="space-y-2">
+                     {result.positive_signals.slice(0, 4).map((sig, i) => (
+                       <li key={`pos-${i}`} className="flex items-start gap-2 text-xs text-slate-300">
+                          <CheckCircle2 className="w-4 h-4 text-emerald-500 flex-shrink-0" />
+                          <span className="leading-tight">{sig.reason}</span>
+                       </li>
+                     ))}
+                     {result.rule_reasons.slice(0, 4).map((sig, i) => (
+                       <li key={`neg-${i}`} className="flex items-start gap-2 text-xs text-slate-300">
+                          <AlertTriangle className="w-4 h-4 text-red-500 flex-shrink-0" />
+                          <span className="leading-tight">{sig.reason}</span>
+                       </li>
+                     ))}
+                   </ul>
                 </div>
               </div>
+              
+              <div className="mt-6 pt-4 border-t border-slate-800">
+                 <div className="inline-block bg-slate-800/50 border border-slate-700/50 rounded px-3 py-1.5 mb-2">
+                   <span className="text-xs font-mono font-semibold text-emerald-400">AI confidence: {result.ai_confidence}%</span>
+                 </div>
+                 <p className="text-[10px] text-slate-500 italic">
+                   Confidence reflects how much interpretable evidence supports this verdict, blended with the model's own certainty.
+                 </p>
+              </div>
+            </div>
 
-              <div className="flex flex-col items-end gap-1">
-                <span className={`px-3 py-1 rounded-full text-xs font-mono font-bold tracking-wider uppercase border shadow-sm ${tierStyle.badge}`}>
-                  {result.tier} RISK
-                </span>
-                {result.hard_floor_flags.length > 0 && (
-                  <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-red-950/80 text-red-400 border border-red-800/80 font-bold uppercase">
-                    • RULE FLOOR
+            {/* Overall Verdict Card */}
+            <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-md flex flex-col">
+              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 block">Overall Verdict</span>
+              <div className="flex items-center gap-2 mb-3">
+                  {result.tier === 'LOW' && <CheckCircle2 className="w-5 h-5 text-emerald-500" />}
+                  {result.tier === 'MEDIUM' && <AlertTriangle className="w-5 h-5 text-amber-500" />}
+                  {result.tier === 'HIGH' && <ShieldAlert className="w-5 h-5 text-red-500" />}
+                  <span className={`font-bold text-lg uppercase tracking-wide ${tierStyle.text}`}>
+                     {result.tier === 'LOW' ? 'SAFE' : result.tier === 'MEDIUM' ? 'PROCEED WITH CAUTION' : 'DANGEROUS'}
                   </span>
-                )}
               </div>
+              <p className="text-sm text-slate-300 leading-relaxed mb-6">
+                 {result.tier === 'HIGH' ? 'Legitimate South African employers never request ID copies or banking details before an interview. Verify the company independently before responding.' : result.tier === 'MEDIUM' ? 'Some signals are ambiguous. Verify the company\'s registration on CIPC and never pay to apply before treating this opportunity as safe.' : 'Proceed with normal caution. Verify the company and recruiter before sharing personal information.'}
+              </p>
+              <p className="text-xs text-slate-500 italic mt-auto">
+                 Qhaphela gives you an informed recommendation. It is not a final judgement - always verify independently.
+              </p>
             </div>
-
-            {/* Meter Fill Bar */}
-            <div className="w-full h-3 bg-slate-900/90 rounded-full overflow-hidden border border-slate-800 p-0.5 mb-4">
-              <motion.div
-                initial={{ width: 0 }}
-                animate={{ width: `${result.score}%` }}
-                transition={{ duration: 0.5, ease: 'easeOut' }}
-                className={`h-full rounded-full ${tierStyle.barFill}`}
-              />
-            </div>
-
-            {/* Hard Floor Flag Alerts */}
-            {result.hard_floor_flags.length > 0 && (
-              <div className="mb-4 p-3 bg-red-950/60 border border-red-800/80 rounded-lg text-xs space-y-1">
-                <div className="flex items-center gap-1.5 font-semibold text-red-300">
-                  <AlertTriangle className="w-4 h-4 text-red-400 flex-shrink-0" />
-                  <span>Hard Safety Floor Triggered</span>
-                </div>
-                {result.hard_floor_flags.map((flag, idx) => (
-                  <p key={idx} className="text-red-200 pl-5 font-mono">
-                    • {FLAG_LABELS[flag] || flag}
-                  </p>
-                ))}
-              </div>
-            )}
-
-            {/* Action Advice Box */}
-            <div className="p-3.5 bg-slate-950/80 border border-slate-800/80 rounded-lg text-xs text-slate-300 leading-relaxed">
-              <span className="font-mono text-slate-400 uppercase font-semibold block mb-1">Safety Advice:</span>
-              {result.tier === 'HIGH' ? (
-                <span>
-                  Legitimate South African employers <strong>never request ID copies or banking details before an interview</strong>.
-                  Verify the company independently via official registries before providing personal information.
-                </span>
-              ) : result.tier === 'MEDIUM' ? (
-                <span>
-                  Some signals are ambiguous. Verify the company's registration on CIPC and <strong>never pay to apply</strong> before treating this opportunity as safe.
-                </span>
-              ) : (
-                <span>
-                  No major red flags detected. Standard advice still applies: <strong>never pay to apply</strong> and never send banking details prior to a formal interview.
-                </span>
-              )}
-            </div>
+            
           </div>
+          
 
           {/* SHAP Feature Contribution Breakdown */}
           <div className="bg-slate-950 border border-slate-800 rounded-xl p-5 shadow-sm space-y-3">

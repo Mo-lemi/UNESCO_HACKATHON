@@ -43,6 +43,10 @@ export interface ScoreResponse {
   identity_theft_signals: string[];
   contact_checks: ContactChecks;
   cv_guidance: CvGuidance;
+  
+  /* === ADD THE MISSING PROPERTIES BELOW === */
+  positive_signals: RuleReason[];
+  ai_confidence: number;
 }
 
 export interface SamplePosting {

@@ -1,11 +1,10 @@
 @import "tailwindcss";
-@import url('../extension/popup.css');
 
 @layer base {
   body {
     font-family: 'Plus Jakarta Sans', sans-serif;
-    background-color: var(--bg-primary);
-    color: var(--text-primary);
+    background-color: #0B1120; /* Deep dark slate to match screenshot */
+    color: #f8fafc;
     margin: 0;
     padding: 0;
   }
@@ -14,14 +13,20 @@
   }
 }
 
-.full-report-container {
-  max-width: 800px;
-  margin: 2rem auto;
-  padding: 24px;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  background-color: var(--bg-secondary);
-  border: 1px solid var(--border-color);
+/* Faint Shield Watermark */
+body::after {
+  content: "";
+  position: fixed;
+  right: -5vw;
+  bottom: -5vh;
+  width: 50vw;
+  height: 50vw;
+  min-width: 400px;
+  min-height: 400px;
+  background: url('/icons/watermark.png') no-repeat bottom right / contain;
+  opacity: 0.03;
+  pointer-events: none;
+  z-index: -1;
 }
 
 /* Custom scrollbar styling */
