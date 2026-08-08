@@ -32,6 +32,7 @@ export const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab, apiStat
         </div>
       </div>
 
+
       {/* Bottom Row: Flat Navigation Tabs */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <nav className="flex items-center gap-8 overflow-x-auto no-scrollbar">
