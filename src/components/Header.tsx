@@ -38,7 +38,6 @@ export const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab, apiStat
           {[
             { id: 'scanner', label: 'Overview' },
             { id: 'academy', label: 'Red Flags' },
-            { id: 'api', label: 'Qhaphela AI' }
           ].map((tab) => (
             <button
               key={tab.id}
