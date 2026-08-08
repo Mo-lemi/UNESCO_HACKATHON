@@ -182,18 +182,47 @@ document.getElementById("btn-report").addEventListener("click", (e) => {
 });
 
 // Theme shared with the in-page panel via chrome.storage.local, so
-// switching it in either surface applies to both.
+// switching it in either surface applies to both. Adapts natively to OS theme unless overridden.
 chrome.storage.local.get(["qhaphela-theme"]).then((data) => {
+  const toggle = document.getElementById("theme-toggle");
   if (data["qhaphela-theme"] === "light") {
     document.body.classList.add("light");
-    document.getElementById("theme-toggle").textContent = "☀";
+    toggle.textContent = "☀";
+  } else if (data["qhaphela-theme"] === "dark") {
+    document.body.classList.add("dark");
+    toggle.textContent = "☾";
+  } else {
+    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    toggle.textContent = prefersDark ? "☾" : "☀";
   }
 });
 document.getElementById("theme-toggle").addEventListener("click", () => {
-  const light = document.body.classList.toggle("light");
-  document.getElementById("theme-toggle").textContent = light ? "☀" : "☾";
-  chrome.storage.local.set({ "qhaphela-theme": light ? "light" : "dark" });
+  const isLight = document.body.classList.contains("light") || 
+                 (!document.body.classList.contains("dark") && !window.matchMedia("(prefers-color-scheme: dark)").matches);
+  
+  document.body.classList.remove("light", "dark");
+  document.body.classList.add(isLight ? "dark" : "light");
+  document.getElementById("theme-toggle").textContent = isLight ? "☾" : "☀";
+  chrome.storage.local.set({ "qhaphela-theme": isLight ? "dark" : "light" });
 });
+
+// New Refresh Mechanism
+const refreshBtn = document.getElementById("refresh-analysis-btn");
+if (refreshBtn) {
+  refreshBtn.addEventListener("click", () => {
+    refreshBtn.classList.add("loading");
+    show("view-loading");
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      chrome.tabs.sendMessage(tabs[0].id, { type: "FORCE_REFRESH" }, () => {
+        setTimeout(() => {
+          refreshBtn.classList.remove("loading");
+          loadForActiveTab();
+        }, 1200); 
+      });
+    });
+  });
+}
+
 
 checkApiHealth();
 loadForActiveTab();

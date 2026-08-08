@@ -40,65 +40,69 @@
 
 /* Palette derived from the Qhaphela AI logo itself, sampled from the
    artwork rather than guessed: navy #081A2F (the Q), blue #083E7D,
-   green #084729, gold #F4C74A.
+   green #084729, gold #F4C74A. */
 
-   One correction the measurement forced: the logo's gold is 1.60:1 on
-   white -- far below AA -- so a darkened #8A6200 is used for gold text on
-   light surfaces, and the true logo gold is used only on dark, where it
-   reaches 11.26:1. The mark itself always renders in its original colours. */
 #qhaphela-panel {
-  /* ---- LIGHT (default) - ratios quoted against --surface (#FFFFFF) ---- */
-  --page:#F4F6FA;        /* cool page behind the cards */
+  /* ---- LIGHT (default fallback) - ratios quoted against --surface (#FFFFFF) ---- */
+  --page:#F4F6FA;        
   --surface:#FFFFFF;
   --surface-2:#F7F9FC;
-  --ink:#081A2F;         /* 17.51:1 AAA - logo navy */
-  --ink-body:#2E3A4B;    /* 11.30:1 AAA */
-  --ink-muted:#5B6472;   /*  5.94:1 AA  */
+  --ink:#081A2F;         
+  --ink-body:#2E3A4B;    
+  --ink-muted:#5B6472;   
   --line:#E2E8F0;
-  --primary:#083E7D;     /* 10.52:1 AAA - logo blue */
-  --primary-ink:#FFFFFF; /* 10.52:1 AAA on --primary */
+  --primary:#083E7D;     
+  --primary-ink:#FFFFFF; 
   --primary-soft:#EAF1FB;
-  --safe:#0B6B3A;        /*  6.61:1 AA  - logo green, usable weight */
+  --safe:#0B6B3A;        
   --safe-soft:#E8F5EE;
-  --risk:#C0281C;        /*  5.90:1 AA  */
+  --risk:#C0281C;        
   --risk-soft:#FDECEA;
-  --warn:#8A6200;        /*  5.49:1 AA  - logo gold darkened for legibility */
+  --warn:#8A6200;        
   --warn-soft:#FCF4E3;
   --shadow:0 1px 2px rgba(8,26,47,.06), 0 4px 16px rgba(8,26,47,.07);
 }
+
+@media (prefers-color-scheme: dark) {
+  #qhaphela-panel:not(.qhaphela-light) {
+    /* ---- DARK - each colour re-picked against #14161F, never inverted ---- */
+    --page:#080A0F;
+    --surface:#14161F;
+    --surface-2:#1B1E28;
+    --ink:#F2F2F5;         
+    --ink-body:#D7D8DE;    
+    --ink-muted:#9DA0AC;   
+    --line:#262A36;
+    --primary:#7FB3FF;     
+    --primary-ink:#081A2F;
+    --primary-soft:#12203A;
+    --safe:#4ADE80;        
+    --safe-soft:#0F2419;
+    --risk:#FF7B6B;        
+    --risk-soft:#2A1512;
+    --warn:#F4C74A;        
+    --warn-soft:#2A2110;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 4px 16px rgba(0,0,0,.35);
+  }
+}
+
+/* Manual Theme Overrides */
+#qhaphela-panel.qhaphela-light {
+  --page:#F4F6FA; --surface:#FFFFFF; --surface-2:#F7F9FC; --ink:#081A2F; 
+  --ink-body:#2E3A4B; --ink-muted:#5B6472; --line:#E2E8F0; --primary:#083E7D; 
+  --primary-ink:#FFFFFF; --primary-soft:#EAF1FB; --safe:#0B6B3A; --safe-soft:#E8F5EE;
+  --risk:#C0281C; --risk-soft:#FDECEA; --warn:#8A6200; --warn-soft:#FCF4E3;
+  --shadow:0 1px 2px rgba(8,26,47,.06), 0 4px 16px rgba(8,26,47,.07);
+}
 #qhaphela-panel.qhaphela-dark {
-  /* ---- DARK - each colour re-picked against #14161F, never inverted ---- */
-  --page:#080A0F;
-  --surface:#14161F;
-  --surface-2:#1B1E28;
-  --ink:#F2F2F5;         /* 15.2:1  AAA */
-  --ink-body:#D7D8DE;    /* 11.4:1  AAA */
-  --ink-muted:#9DA0AC;   /*  6.4:1  AA  */
-  --line:#262A36;
-  --primary:#7FB3FF;     /*  8.41:1 AAA - logo blue lightened for dark */
-  --primary-ink:#081A2F;
-  --primary-soft:#12203A;
-  --safe:#4ADE80;        /* 10.35:1 AAA */
-  --safe-soft:#0F2419;
-  --risk:#FF7B6B;        /*  6.9:1  AA  */
-  --risk-soft:#2A1512;
-  --warn:#F4C74A;        /* 11.26:1 AAA - the true logo gold works here */
-  --warn-soft:#2A2110;
+  --page:#080A0F; --surface:#14161F; --surface-2:#1B1E28; --ink:#F2F2F5;
+  --ink-body:#D7D8DE; --ink-muted:#9DA0AC; --line:#262A36; --primary:#7FB3FF;
+  --primary-ink:#081A2F; --primary-soft:#12203A; --safe:#4ADE80; --safe-soft:#0F2419;
+  --risk:#FF7B6B; --risk-soft:#2A1512; --warn:#F4C74A; --warn-soft:#2A2110;
   --shadow:0 1px 2px rgba(0,0,0,.4), 0 4px 16px rgba(0,0,0,.35);
 }
 
-
-/* ---- Brand watermark ----
-   The logo shield in greyscale, floating above the content as a very faint
-   overlay rather than behind it -- the cards are opaque, so a background
-   watermark was completely invisible.
-
-   Opacity was chosen by measurement, not by eye: at 7% the darkest pixels
-   darken white to #EDEDED, where the lightest text still reaches 5.11:1,
-   comfortably above the 4.5:1 AA floor. 9% still passes; 7% leaves margin.
-
-   pointer-events:none so it can never intercept a click, and it is removed
-   entirely for prefers-reduced-transparency and for print. */
+/* ---- Brand watermark ---- */
 #qhaphela-panel::after {
   content: "" !important;
   position: absolute !important;
@@ -169,6 +173,9 @@ html.qhaphela-shifted.qhaphela-shifted-collapsed { margin-left: var(--qp-width-c
   font-size: .9rem !important; line-height: 1 !important; padding: .2rem !important; border-radius: 5px !important;
 }
 #qhaphela-panel .qp-icon-btn:hover { color: var(--primary) !important; }
+#qhaphela-panel .qp-icon-btn.loading { animation: qp-spin 1s linear infinite !important; }
+@keyframes qp-spin { 100% { transform: rotate(360deg); } }
+
 #qhaphela-panel .qp-lang {
   all: unset !important; cursor: pointer !important; font-size: .72rem !important;
   color: var(--ink-body) !important; background: var(--surface-2) !important;
@@ -249,10 +256,6 @@ html.qhaphela-shifted.qhaphela-shifted-collapsed { margin-left: var(--qp-width-c
   font-size: .8rem !important; font-weight: 700 !important;
 }
 #qhaphela-panel .qp-job-main { display: block !important; flex: 1 !important; min-width: 0 !important; overflow: hidden !important; }
-/* display:block matters here. These are <span> elements, and text-overflow
-   has no effect on an inline box, so a long job title ran straight over the
-   score badge instead of truncating. The parent is a flex item and so gets
-   blockified automatically, but that does not cascade to its children. */
 #qhaphela-panel .qp-job-title { display: block !important; font-size: .8rem !important; font-weight: 700 !important; color: var(--ink) !important; overflow: hidden !important; text-overflow: ellipsis !important; white-space: nowrap !important; }
 #qhaphela-panel .qp-job-meta { display: block !important; font-size: .7rem !important; color: var(--ink-muted) !important; overflow: hidden !important; text-overflow: ellipsis !important; white-space: nowrap !important; }
 #qhaphela-panel .qp-job-side { display: flex !important; flex-direction: column !important; align-items: flex-end !important; gap: .25rem !important; flex-shrink: 0 !important; }
@@ -309,9 +312,6 @@ html.qhaphela-shifted.qhaphela-shifted-collapsed { margin-left: var(--qp-width-c
 #qhaphela-panel .qp-step.active { color: var(--ink) !important; font-weight: 700 !important; }
 #qhaphela-panel .qp-step.active .m { color: var(--primary) !important; }
 #qhaphela-panel .qp-step .m { flex-shrink: 0 !important; width: 1em !important; }
-/* Shown only once the scan has genuinely exceeded its expected time, so the
-   readout states the delay instead of sitting on a step that implies work is
-   still progressing. */
 /* Qhaphela AI card in the panel. */
 #qhaphela-panel .qp-ai-ask { margin-top: .5rem !important; }
 #qhaphela-panel .qp-ai-ask textarea {

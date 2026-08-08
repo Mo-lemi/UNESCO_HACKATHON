@@ -440,7 +440,7 @@ const I18N = {
     aiNotice: "Swi rhumela matsalwa ya xitiviso lexi eka ntirho wa AI leswaku wu tsala nhlamuselo. A ku na swin'wana hi wena leswi rhumeriwaka.",
     aiUnavailable: "Mupfuni wa AI a nga lulamisiwanga eka xitirhisiwa lexi.",
     aiThinking: "Ya ehleketa…",
-    aiDisclaimer: "AI yi nga hoxa. A yi cinci nomboro ya khombo.",
+    aiDisclaimer: "AI yi nga hoxa. A yi cinca nomboro ya khombo.",
     aiPlaceholder: "Vutisa xivutiso hi ntirho lowu…",
     aiSend: "Vutisa",
     offline: "A yi swi koti ku fikelela vukorhokeri bya Qhaphela.",
@@ -752,7 +752,11 @@ const CV_TIPS_GENERAL = [
 let panelEl = null;
 
 function ensurePanel() {
-  if (panelEl) return panelEl;
+  if (panelEl) {
+    panelEl.style.display = 'block';
+    document.documentElement.classList.add("qhaphela-shifted");
+    return panelEl;
+  }
 
   const panel = document.createElement("div");
   panel.id = "qhaphela-panel";
@@ -765,6 +769,7 @@ function ensurePanel() {
       </span>
       <span class="qp-spacer"></span>
       <select class="qp-lang" id="qp-lang" aria-label="Language"></select>
+      <button class="qp-icon-btn" id="qp-refresh-panel" type="button" aria-label="Refresh analysis" title="Refresh">↻</button>
       <button class="qp-icon-btn" id="qp-theme" type="button" aria-label="Toggle dark mode">☾</button>
       <button class="qp-icon-btn" id="qp-collapse" type="button" aria-label="Collapse panel">-</button>
     </div>
@@ -793,10 +798,27 @@ function ensurePanel() {
   });
   panel.querySelector("#qp-theme").addEventListener("click", (e) => {
     e.stopPropagation();
-    const dark = panel.classList.toggle("qhaphela-dark");
-    panel.querySelector("#qp-theme").textContent = dark ? "☀" : "☾";
-    chrome.storage.local.set({ "qhaphela-theme": dark ? "dark" : "light" });
+    const isLight = panel.classList.contains("qhaphela-light") || 
+                   (!panel.classList.contains("qhaphela-dark") && !window.matchMedia("(prefers-color-scheme: dark)").matches);
+    panel.classList.remove("qhaphela-light", "qhaphela-dark");
+    panel.classList.add(isLight ? "qhaphela-dark" : "qhaphela-light");
+    panel.querySelector("#qp-theme").textContent = isLight ? "☾" : "☀";
+    chrome.storage.local.set({ "qhaphela-theme": isLight ? "dark" : "light" });
   });
+
+// Refresh analysis explicitly inside the panel
+  panel.querySelector("#qp-refresh-panel").addEventListener("click", (e) => {
+    e.stopPropagation();
+    renderPanelConnecting();
+    
+    // Clear the caches so the scanner doesn't short-circuit and hang
+    lastScannedText = null;
+    lastListSignature = null;
+    bgSignature = null;
+    
+    sendForScoring();
+  });
+
   langEl.addEventListener("change", (e) => {
     e.stopPropagation();
     currentLang = langEl.value;
@@ -807,12 +829,18 @@ function ensurePanel() {
     else if (lastScored) renderPanelListStats(lastScored);
   });
 
-  // Theme and language are shared with the toolbar popup via storage, so a
-  // choice made in one surface applies to the other.
+  // Theme and language are shared with the toolbar popup via storage.
   chrome.storage.local.get(["qhaphela-theme", "qhaphela-lang"]).then((data) => {
-    if (data["qhaphela-theme"] === "dark") {
+    const toggle = panel.querySelector("#qp-theme");
+    if (data["qhaphela-theme"] === "light") {
+      panel.classList.add("qhaphela-light");
+      toggle.textContent = "☀";
+    } else if (data["qhaphela-theme"] === "dark") {
       panel.classList.add("qhaphela-dark");
-      panel.querySelector("#qp-theme").textContent = "☀";
+      toggle.textContent = "☾";
+    } else {
+      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      toggle.textContent = prefersDark ? "☾" : "☀";
     }
     if (data["qhaphela-lang"] && I18N[data["qhaphela-lang"]]) {
       currentLang = data["qhaphela-lang"];
@@ -1094,101 +1122,6 @@ function renderPanelScanning(activeStep, slow = false) {
   body.innerHTML = cardHtml("", region) + safetyTipHtml();
 }
 
-// Qhaphela AI in the panel.
-//
-// Deliberately opt-in per use: nothing is sent anywhere until the person
-// presses a button. Fraud detection has already finished and is shown above
-// this card, entirely from the local model -- the assistant only ever
-// explains that verdict. It cannot move the score, and the card says so.
-function aiPanelHtml() {
-  return cardHtml(
-    t("aiTitle"),
-    `<button class="qp-btn ghost" id="qp-ai-explain" type="button">${escapeHtml(t("aiExplain"))}</button>
-     <button class="qp-btn ghost" id="qp-ai-verify" type="button" style="margin-top:.4rem">${escapeHtml(t("aiVerify"))}</button>
-     <div class="qp-ai-ask">
-       <textarea id="qp-ai-q" rows="2" placeholder="${escapeHtml(t("aiPlaceholder"))}"></textarea>
-       <button class="qp-btn primary" id="qp-ai-send" type="button">${escapeHtml(t("aiSend"))}</button>
-     </div>
-     <div id="qp-ai-out" class="qp-ai-out hidden" role="status" aria-live="polite"></div>
-     <p class="qp-ai-note">${escapeHtml(t("aiNotice"))}</p>
-     <p class="qp-ai-note">${escapeHtml(t("aiDisclaimer"))}</p>`
-  );
-}
-
-function wireAiPanel(body) {
-  const out = body.querySelector("#qp-ai-out");
-  if (!out) return;
-
-  const show = (html) => {
-    out.classList.remove("hidden");
-    out.innerHTML = html;
-  };
-  const busy = (on) => {
-    ["#qp-ai-explain", "#qp-ai-verify", "#qp-ai-send"].forEach((sel) => {
-      const b = body.querySelector(sel);
-      if (b) b.disabled = on;
-    });
-  };
-
-  const call = (endpoint, payload) => {
-    show(`<p class="qp-ai-thinking">${escapeHtml(t("aiThinking"))}</p>`);
-    busy(true);
-    chrome.runtime.sendMessage({ type: "QHAPHELA_AI", endpoint, payload }, (resp) => {
-      busy(false);
-      // A torn-down worker returns undefined with lastError set.
-      if (chrome.runtime.lastError || !resp) {
-        show(`<p class="qp-ai-err">${escapeHtml(t("aiUnavailable"))}</p>`);
-        return;
-      }
-      if (!resp.ok) {
-        show(`<p class="qp-ai-err">${escapeHtml(resp.error || t("aiUnavailable"))}</p>`);
-        return;
-      }
-      // Model output is escaped before any formatting is applied, so nothing
-      // an LLM returns can execute inside the host page.
-      show(`<div class="qp-ai-body">${aiText(resp.answer)}</div>`);
-    });
-  };
-
-  body.querySelector("#qp-ai-explain")?.addEventListener("click", () =>
-    call("explain", { text: lastScannedText || "", language: currentLang })
-  );
-
-  body.querySelector("#qp-ai-verify")?.addEventListener("click", () =>
-    call("verify-employer", {
-      text: lastScannedText || "",
-      company: extractCompanyName(),
-      language: currentLang,
-    })
-  );
-
-  const send = () => {
-    const q = body.querySelector("#qp-ai-q");
-    const text = (q.value || "").trim();
-    if (!text) return;
-    call("ask", { question: text, language: currentLang });
-    q.value = "";
-  };
-  body.querySelector("#qp-ai-send")?.addEventListener("click", send);
-  body.querySelector("#qp-ai-q")?.addEventListener("keydown", (e) => {
-    // Enter sends; Shift+Enter makes a new line.
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      send();
-    }
-  });
-}
-
-// Escape first, then apply the small amount of formatting we allow. Doing it
-// in this order is what makes model output safe to insert.
-function aiText(raw) {
-  return escapeHtml(raw || "")
-    .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
-    .replace(/^\s*[-*]\s+(.*)$/gm, "\u2022 $1")
-    .replace(/\n{2,}/g, "<br><br>")
-    .replace(/\n/g, "<br>");
-}
-
 function renderPanelResult(result) {
   lastResult = result;
   lastScored = null;
@@ -1232,7 +1165,6 @@ function renderPanelResult(result) {
        <button class="qp-btn ghost" id="qp-more" type="button" style="margin-top:.45rem">${escapeHtml(t("quickDetail"))}</button>`
     ) +
     `<div id="qp-details" class="hidden">${detailsHtml}</div>` +
-    aiPanelHtml() +
     reportHtml() +
     safeMatchesHtml(lastPageScored) +
     cvMatchHtml(lastCvMatch) +
@@ -1269,7 +1201,6 @@ function renderPanelResult(result) {
     moreBtn.textContent = nowHidden ? `${t("viewAnalysis")} →` : t("lessDetail");
   });
 
-  wireAiPanel(body);
   wireReportUi(body, result);
   wireCvUpload(body, lastScannedText || "");
   body.querySelector("#qp-privacy")?.addEventListener("click", () =>
@@ -1821,7 +1752,7 @@ function extractJobCards() {
     // A selector list matches in DOCUMENT order, not selector order, so
     // "h2, h3, a" returned whichever came first in the markup -- routinely a
     // bookmark icon or company logo link with no text, leaving safe-match
-    // rows blank. Each preference is therefore tried in its own query.
+    // rows blank. Each preference is tried in its own query.
     // The heading that anchored this card is already the best title there is.
     let title = candidate.title || "";
     for (const sel of title ? [] : ["h2", "h3", "h4", "a[href]", "[class*='title' i]"]) {
@@ -2092,7 +2023,7 @@ function scanDetailMode(text, container) {
 function sendForScoring() {
   // Re-checked each time: single-page job boards swap content without a
   // navigation, so a page can become a job page after first load.
-  if (!IS_JOB_PAGE && !looksLikeJobPage()) return;
+  if (!looksLikeJobPage()) return;
   const { text, container } = extractPosting();
   const isDetail = container !== document.body && text.length >= 200;
   const cards = extractJobCards();
@@ -2117,21 +2048,114 @@ function sendForScoring() {
   }
 }
 
-// Only activate on pages that genuinely look like job listings. Everywhere
-// else the extension stays completely inert: no panel, no DOM changes, and
-// no page text leaves the browser.
-const IS_JOB_PAGE = looksLikeJobPage();
+// ============================================================
+// ACTIVATION GATE & AUTO-CLOSE
+// ============================================================
 
-if (IS_JOB_PAGE) {
-  ensurePanel();
-  renderPanelConnecting();
+let panelActive = false;
+
+function injectActivationTrigger() {
+  if (document.getElementById('qhaphela-activation-trigger')) return;
+
+  const triggerBtn = document.createElement('button');
+  triggerBtn.id = 'qhaphela-activation-trigger';
+  triggerBtn.innerText = 'Analyze Job Posting';
+  
+  // Clean styling aligned to the rest of the application
+  triggerBtn.style.cssText = `
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 2147483647;
+    padding: 12px 20px;
+    background-color: #083E7D;
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(8, 26, 47, 0.15);
+    font-family: 'Atkinson Hyperlegible', -apple-system, sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    transition: transform 0.2s ease, background-color 0.2s ease;
+  `;
+
+  triggerBtn.addEventListener('mouseenter', () => triggerBtn.style.transform = 'translateY(-2px)');
+  triggerBtn.addEventListener('mouseleave', () => triggerBtn.style.transform = 'translateY(0)');
+
+  triggerBtn.addEventListener('click', () => {
+    triggerBtn.style.display = 'none';
+    panelActive = true;
+    ensurePanel();
+    renderPanelConnecting();
+    sendForScoring();
+  });
+
+  document.body.appendChild(triggerBtn);
 }
 
-// Run once the page has settled, and again on SPA-style content swaps
-// (Facebook/LinkedIn/Indeed re-render without a full navigation).
-window.addEventListener("load", () => setTimeout(sendForScoring, 1200));
-const observer = new MutationObserver(() => {
+function closeExtensionUI() {
+  if (panelEl) {
+    panelEl.style.display = 'none';
+  }
+  document.documentElement.classList.remove("qhaphela-shifted", "qhaphela-shifted-collapsed");
+  panelActive = false;
+}
+
+// Handle URL changes cleanly (Detect SPA navigations)
+let lastKnownUrl = location.href;
+const navigationObserver = new MutationObserver(() => {
+  if (location.href !== lastKnownUrl) {
+    lastKnownUrl = location.href;
+
+    if (!looksLikeJobPage()) {
+      closeExtensionUI();
+      const trigger = document.getElementById('qhaphela-activation-trigger');
+      if (trigger) trigger.remove();
+    } else {
+      if (!panelActive) {
+        injectActivationTrigger();
+      } else {
+        // Panel is already open; automatically rescore the new job posting
+        sendForScoring();
+      }
+    }
+  }
+});
+navigationObserver.observe(document, { subtree: true, childList: true });
+
+// Listen for explicit refresh requests from the Popup or Injected Panel
+chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+  if (msg.type === "FORCE_REFRESH") {
+    if (panelActive) {
+      renderPanelConnecting();
+      
+      // Clear the caches here as well
+      lastScannedText = null;
+      lastListSignature = null;
+      bgSignature = null;
+      
+      sendForScoring();
+    }
+    sendResponse({ ok: true });
+  }
+});
+
+// Run once the page has settled, if the panel is actively showing
+window.addEventListener("load", () => {
+  if (panelActive) setTimeout(sendForScoring, 1200);
+});
+
+// Single Page Application swaps (Facebook/LinkedIn/Indeed re-render without navigation).
+// Now guarded by whether the user actually opted-in to show the panel yet.
+const contentObserver = new MutationObserver(() => {
+  if (!panelActive) return;
   clearTimeout(window.__qhaphelaDebounce);
   window.__qhaphelaDebounce = setTimeout(sendForScoring, 1500);
 });
-observer.observe(document.body, { childList: true, subtree: true });
+contentObserver.observe(document.body, { childList: true, subtree: true });
+
+// Startup check
+if (looksLikeJobPage()) {
+  injectActivationTrigger();
+}

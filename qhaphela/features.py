@@ -702,7 +702,10 @@ _SKILL_TERMS = [
     "sage", "quickbooks", "power bi", "salesforce", "communication skills",
     "problem solving", "troubleshooting", "reporting", "data capturing",
 ]
-_EXPERIENCE_RE = re.compile(r"\b(\d+)\s*(?:-\s*\d+\s*)?(?:\+\s*)?years?\b", re.I)
+_EXPERIENCE_RE = re.compile(
+    r"\b(\d+)\s*(?:-\s*\d+\s*)?(?:\+\s*)?years?(?:\s+of)?\s+(?:post-qualification\s+|relevant\s+|working\s+)?experience\b", 
+    re.I
+)
 
 
 def _find_terms(text_lower: str, terms: list) -> list:

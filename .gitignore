@@ -12,3 +12,4 @@ dist/
 # Local community-report store (qhaphela/reports.py). Runtime data, and it
 # can contain excerpts of pages the user visited -- never commit it.
 *.db
+.env.example

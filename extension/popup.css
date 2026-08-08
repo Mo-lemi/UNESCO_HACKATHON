@@ -22,36 +22,46 @@
   src: url(fonts/atkinson-bold.woff2) format('woff2');
 }
 
-/* Colour system is shared with panel.css -- see the long note there. Every
-   pair below was measured for WCAG 2.2 contrast against its own theme
-   background; dark --ink-dim and light --gold were both corrected after
-   measurement showed them under AA. */
-:root, body{
-  /* dark theme (default) -- ratios vs #0E1330 */
-  --bg:#0E1330;
-  --ink:#F3F1E6;        /* 16.06:1 AAA */
-  --ink-soft:#9C9BC2;   /*  6.83:1 AA  */
-  --ink-dim:#8385AE;    /*  5.14:1 AA  (was #5E5F86 at 2.99:1 -- failed) */
-  --rule:#252B57;
-  --gold:#D9A441;       /*  8.09:1 AAA */
-  --teal:#3BB596;       /*  7.13:1 AAA */
-  --amber:#D89A45;      /*  7.47:1 AAA */
-  --crimson:#E06B5C;    /*  5.57:1 AA  */
-  --ui:'Atkinson Hyperlegible', -apple-system, sans-serif;
-}
-body.light{
-  /* light theme -- ratios vs #FBFAF6 */
+/* Colour system is shared with panel.css. Adapts automatically to the
+   OS/Browser prefers-color-scheme setting. */
+:root, body {
+  /* light theme (default fallback) -- ratios vs #FBFAF6 */
   --bg:#FBFAF6;
   --ink:#14162E;        /* 16.98:1 AAA */
   --ink-soft:#4B4D66;   /*  7.88:1 AAA */
   --ink-dim:#6E7086;    /*  4.65:1 AA  */
   --rule:#E3E1EC;
-  --gold:#8F6109;       /*  5.18:1 AA  (was #9C6A0E at 4.49:1 -- under AA) */
+  --gold:#8F6109;       /*  5.18:1 AA  */
   --teal:#14795C;       /*  5.13:1 AA  */
   --amber:#8A5A00;      /*  5.67:1 AA  */
   --crimson:#B3261E;    /*  6.26:1 AA  */
+  --ui:'Atkinson Hyperlegible', -apple-system, sans-serif;
 }
 
+@media (prefers-color-scheme: dark) {
+  :root, body {
+    /* dark theme -- ratios vs #0E1330 */
+    --bg:#0E1330;
+    --ink:#F3F1E6;        /* 16.06:1 AAA */
+    --ink-soft:#9C9BC2;   /*  6.83:1 AA  */
+    --ink-dim:#8385AE;    /*  5.14:1 AA  */
+    --rule:#252B57;
+    --gold:#D9A441;       /*  8.09:1 AAA */
+    --teal:#3BB596;       /*  7.13:1 AAA */
+    --amber:#D89A45;      /*  7.47:1 AAA */
+    --crimson:#E06B5C;    /*  5.57:1 AA  */
+  }
+}
+
+/* Manual overrides for the theme toggle */
+body.light {
+  --bg:#FBFAF6; --ink:#14162E; --ink-soft:#4B4D66; --ink-dim:#6E7086;
+  --rule:#E3E1EC; --gold:#8F6109; --teal:#14795C; --amber:#8A5A00; --crimson:#B3261E;
+}
+body.dark {
+  --bg:#0E1330; --ink:#F3F1E6; --ink-soft:#9C9BC2; --ink-dim:#8385AE;
+  --rule:#252B57; --gold:#D9A441; --teal:#3BB596; --amber:#D89A45; --crimson:#E06B5C;
+}
 
 /* ---- Brand watermark ----
    The logo shield in greyscale, floating above the content as a very faint
@@ -109,6 +119,8 @@ button{ font-family:inherit; }
   cursor:pointer; padding:0.1rem 0.25rem; line-height:1;
 }
 .theme-toggle:hover{ color:var(--gold); }
+.theme-toggle.loading { animation: qp-spin 1s linear infinite; }
+@keyframes qp-spin { 100% { transform: rotate(360deg); } }
 
 .purpose{
   margin:0; padding:0.45rem 0.75rem; font-family:var(--ui); font-size:0.76rem;
